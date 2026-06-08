@@ -74,4 +74,6 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 
-
+# large file
+v1_050130_050302
+data/HippoRAG2/dataset
