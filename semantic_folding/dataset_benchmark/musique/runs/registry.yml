@@ -1,0 +1,77 @@
+runs:
+  benchmark_20260520_194850:
+    created_at: '2026-05-20T19:48:50.451106'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260520_194850
+    status: completed
+    type: benchmark
+  benchmark_20260520_205547:
+    created_at: '2026-05-20T20:55:47.219382'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      max_queries: '100'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      query_end: '100'
+      query_start: '0'
+      smoothing_sigma: '1.5'
+      split: dev
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260520_205547
+    status: completed
+    type: benchmark
+  run_20260520_194203:
+    created_at: '2026-05-20T19:42:03.485668'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260520_194203
+    status: completed
+    type: index
+  run_20260520_194326:
+    created_at: '2026-05-20T19:43:26.485191'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260520_194326
+    status: completed
+    type: index

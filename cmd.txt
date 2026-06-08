@@ -1,0 +1,45 @@
+pip install  --index-url https://mirror2.chabokan.net/pypi/simple/ uv
+cd Moradi\SemanticFolding
+uv sync 
+.venv\Scripts\activate
+uv run python .\brain_approaches\semantic_folding\semantic_folder.py 
+
+### Install Python Libs
+uv add --trusted-host mirror2.chabokan.net -i https://mirror2.chabokan.net/pypi/simple/ umap-learn
+uv add --trusted-host mirror-pypi.runflare.com -i https://mirror-pypi.runflare.com/simple/ umap-learn
+
+pip install -i https://mirror-pypi.runflare.com/simple spacy
+
+data\quran\quran_ayahs.txt
+data\quran\quran_ayahs_tail764.txt
+data\quran\quran_ayahs_tail20ta.txt
+
+data\quran\quran_ayahs_NE.txt
+
+edit doc_visualizer line 552 for add name doc to png or html
+
+pip install --upgrade kaleido
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Set-ExecutionPolicy Restricted -Scope CurrentUser
+
+
+1
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\phrase_extractor.py --corpus data\quran\quran_ayahs_tail20ta.txt --output outputs/run_20260525_101152/extracted_phrases --min-freq 1 --min-word-length 3 --keep-verbs
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\phrase_extractor.py --corpus data\quran\quran_ayahs_NE.txt --output outputs/run_20260606_171525/extracted_phrases --min-freq 1 --keep-verbs
+5
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\doc_fingerprints.py --corpus data\corpus.txt --fingerprints outputs/run_20260529_183030/phrase_fingerprints --output outputs/run_20260529_183030/doc_fingerprints --grid-size 64 --idf-weights outputs\run_20260529_183030\term_context_matrix\idf_weights.json --top-percent 0.1 --no-normalize --normalize-method l2 --min-word-length 3 --keep-verbs --min-peak-distance 2 --smoothing-sigma 1.5 --diversity-sample 100
+
+6
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_fingerprints.py --corpus data\customtexts.txt --fingerprints outputs/run_20260602_090147/phrase_fingerprints --output outputs/run_20260602_090147/customtext_fingerprints --grid-size 64 --idf-weights outputs\run_20260602_090147\term_context_matrix\idf_weights.json --top-percent 0.1 --no-normalize --normalize-method l2 --min-word-length 3 --keep-verbs --min-peak-distance 2 --smoothing-sigma 1.5 --diversity-sample 100
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_fingerprints.py --corpus data\customtexts.txt --fingerprints outputs/run_20260606_132832/phrase_fingerprints --output outputs/run_20260606_132832/customtext_fingerprints --grid-size 64 --idf-weights outputs\run_20260606_132832\term_context_matrix\idf_weights.json --keep-verbs --smoothing-sigma 1.5
+
+Main Menu:
+  1. Start new run
+  2. Change current run/step
+  3. Manage runs
+  4. Visualize results
+  5. Exit
+
+Enter choice (1-5): 
+

@@ -1,0 +1,315 @@
+# ============================================================
+# Semantic Folding Pipeline Configuration
+# ============================================================
+# Production-ready settings for brain-inspired semantic retrieval
+# Based on extensive testing and quality analysis
+
+# ============================================================
+# GLOBAL SETTINGS
+# ============================================================
+grid_size: 64                  # Shared across semantic_space and phrase_fingerprints
+                                 # Sweep results: 64×64 beats 128×128 for 20-doc corpus
+                                 # (MRR 1.000 vs 0.900, AP 0.869 vs 0.836)
+min_freq: 1                    # Minimum phrase frequency to keep 
+keep_verbs : true              # Include verbal elements in phrases
+smoothing_sigma: 1.5           # Gaussian smoothing sigma before peak detection
+
+# ============================================================
+# INPUT/OUTPUT PATHS
+# ============================================================
+paths:
+  # Input data files
+  corpus_path: "data\\corpus.txt"
+  queries_path: null             # Optional: path to queries file
+
+  # Output directory structure
+  output_base: "outputs"
+  output_timestamp: true         # Append timestamp to output folder names
+
+  # Optional: Pre-computed artifacts (skip earlier stages)
+  phrases_path: null
+  matrix_path: null
+  coordinates_path: null
+  phrase_fingerprints_path: null
+  doc_fingerprints_path: null
+
+
+# ============================================================
+# PHASE 1: PHRASE EXTRACTION
+# ============================================================
+phrase_extraction:
+  # Frequency filtering
+  min_word_length: 3             # Minimum character length for single words
+  max_ngram: 3                   # N-gram ceiling (fallback if spaCy unavailable)
+
+  # Extraction method
+  no_spacy: false
+  no_filter_generic: false
+
+  # Output options
+  stats: false                   # Print extraction statistics
+
+# ============================================================
+# PHASE 2: TERM-CONTEXT MATRIX
+# ============================================================
+term_context_matrix:
+  # Matrix construction
+  min_phrase_freq: 1             # Additional frequency filter for matrix
+  no_tfidf: false                # Apply TF-IDF normalization
+  use_word_boundaries: true      # Use word boundary matching (not substring)
+ 
+
+# ============================================================
+# PHASE 3: SEMANTIC SPACE
+# ============================================================
+semantic_space:
+  # Dimensionality reduction method
+  method: "tsne"                 # Options: tsne, umap, pca
+
+  # Grid configuration
+  grid_size: 128                  # Semantic space resolution (8, 16, 32, 64, 128)
+  grid_padding: 0                # Padding around grid edges
+  enable_grid: true              # Generate discrete grid coordinates
+
+  # t-SNE specific parameters
+  tsne:
+    perplexity: 30               # Balance local vs global structure (5–50)
+    max_iter: 1000               # Maximum iterations
+    learning_rate: 200           # Step size (auto, or 10–1000)
+    early_exaggeration: 12       # Initial separation strength
+    metric: "cosine"             # Distance metric
+
+  # UMAP specific parameters
+  umap:
+    n_neighbors: 15              # Local neighborhood size (2–100)
+    min_dist: 0.1                # Minimum separation (0.0–0.99)
+    metric: "cosine"             # Distance metric
+
+  # PCA specific parameters
+  pca:
+    n_components: 2              # Number of dimensions (always 2 for 2D space)
+
+  # Collision resolution
+  collision_resolution: true     # Use Morton Z-order curve for collisions
+
+  # Performance
+  n_jobs: 1                      # Parallel jobs (-1 = all cores)
+  use_sparse: false              # Use sparse matrices (UMAP/PCA only)
+
+  # Visualization
+  visualize: true                # Generate PNG plots
+  show_density: false            # Add density heatmap overlay
+
+# ============================================================
+# PHASE 4: PHRASE FINGERPRINTS
+# ============================================================
+phrase_fingerprints:
+  smooth: true
+  sigma: 1.5
+  morton: true              # Use Morton encoding (default: True)
+  no_smooth: false
+# ============================================================
+# PHASE 5: DOCUMENT FINGERPRINTS
+# ============================================================
+document_fingerprints:
+  top_percent: 0.10
+  no_normalize: true
+  normalize_method: "l2"
+  min_word_length: 3
+  remove_verbs: false           # you already have this, good
+  filter_generic: true
+  min_peak_distance: 2          # added
+  smoothing_sigma: 1.0          # added
+  use_morton: true
+  compute_diversity: false      # if you want it off by default
+  diversity_sample: 100
+# ============================================================
+# PHASE 6: QUERY PROCESSING
+# ============================================================
+# Maps to new query_processing.py CLI:
+#   top_k            → --top-k
+#   spreading_steps  → --spreading-steps
+#
+# NOT in CLI (handled internally or via --config):
+#   idf path is resolved by runner from Step 3 output directory
+# ============================================================
+query_processing:
+  # Result count
+  top_k: 5                      # Number of ranked documents to return
+
+  # Spatial spreading (context expansion via grid neighbours)
+  # Each step expands the active cell set by one Moore-neighbourhood ring.
+  # Set to 0 to disable spreading entirely (exact-match only).
+  spreading_steps: 1             # Neighbourhood expansion steps (0 = disabled)
+  weighting: "idf"
+
+# ============================================================
+# PHASE 7: PHRASE VISUALIZATION
+# ============================================================
+phrase_visualization:
+  # Enable/disable visualization generation
+  enabled: true                  # Generate phrase pair visualizations
+  
+  # Activation threshold
+  threshold: 0.0                 # Minimum value to consider a cell "activated"
+  
+  # Encoding method
+  morton: true             # Grid encoding: "Morton" | "Row-major"
+  
+  # Output formats
+  generate_html: true            # Generate interactive HTML visualization
+  generate_png: true             # Generate static PNG image
+  
+  # Visual styling
+  grid_borders: true             # Show 4×4 block borders
+  border_color: "lightgray"      # Color of 4×4 block borders
+  border_width: 1                # Width of block border lines
+  
+  # Performance
+  max_shapes: 300                # Maximum shapes to render (prevents hanging)
+  
+  # Layout
+  figure_width: 1800             # Width of output figure in pixels
+  figure_height: 1500             # Height of output figure in pixels
+  
+  # Color scheme
+  colorscale: "Blues"            # Plotly colorscale for heatmaps
+  
+  # Metadata
+  save_metadata: true            # Save visualization metadata as JSON
+
+doc_visualization:
+  no_grid_borders: false
+  border_color: "lightgray"
+  border_width: 1.0
+  output: "doc_viz"
+
+# ============================================================
+# SEMANTIC GRAPH (VISUALIZATION)
+# ============================================================
+semantic_graph:
+  enabled: false                 # Generate semantic graph visualization
+  max_edges: 200                 # Maximum edges in graph
+  edge_threshold: 0.05           # Minimum similarity for edge creation
+  layout: "force"                # Layout algorithm: force | circular | spring
+
+
+# ============================================================
+# LOGGING & DEBUGGING
+# ============================================================
+logging:
+  level: "INFO"                  # Console log level: DEBUG | INFO | WARNING | ERROR
+  debug: false                   # Enable debug mode with stack traces
+  log_file: null                 # Optional: write logs to file
+  progress_bars: true            # Show tqdm progress bars
+
+
+# ============================================================
+# PERFORMANCE & OPTIMIZATION
+# ============================================================
+performance:
+  # Memory management
+  max_memory_gb: null            # Maximum memory usage (null = unlimited)
+  clear_intermediate: false      # Delete intermediate files after each phase
+
+  # Parallel processing
+  n_jobs: 1                      # Number of parallel workers (-1 = all cores)
+
+  # Batch processing
+  batch_size: 1000               # Default batch size for chunked operations
+
+
+# ============================================================
+# EXPERIMENTAL FEATURES
+# ============================================================
+experimental:
+  use_dependency_parsing: false  # Use dependency trees for phrase extraction
+  similarity_metric: "cosine"    # Options: cosine | euclidean | manhattan
+  quantize_fingerprints: false   # Quantize values to reduce storage
+  quantization_bits: 8           # Bits per value: 4 | 8 | 16
+
+
+# ============================================================
+# PRESETS (QUICK CONFIGURATIONS)
+# ============================================================
+# Uncomment one preset block to override individual settings above.
+
+# presets:
+#
+#   # Fast prototyping — small grid, minimal processing
+#   fast:
+#     semantic_space:
+#       grid_size: 16
+#       tsne:
+#         max_iter: 500
+#     document_fingerprints:
+#       top_percent: 0.10
+#     query_processing:
+#       spreading_steps: 0
+#       top_k: 5
+#
+#   # Balanced quality — recommended for most use cases
+#   balanced:
+#     semantic_space:
+#       grid_size: 32
+#       tsne:
+#         perplexity: 30
+#         max_iter: 1000
+#     document_fingerprints:
+#       top_percent: 0.05
+#     query_processing:
+#       spreading_steps: 1
+#       top_k: 10
+#
+#   # High precision — large grid, aggressive filtering
+#   precision:
+#     semantic_space:
+#       grid_size: 64
+#       tsne:
+#         perplexity: 50
+#         max_iter: 2000
+#     document_fingerprints:
+#       top_percent: 0.03
+#     query_processing:
+#       spreading_steps: 1
+#       remove_verbs: true
+#       top_k: 10
+#
+#   # High recall — spreading enabled, relaxed thresholds
+#   recall:
+#     semantic_space:
+#       grid_size: 32
+#     document_fingerprints:
+#       top_percent: 0.10
+#     query_processing:
+#       spreading_steps: 2
+#       top_k: 20
+
+
+# ============================================================
+# NOTES
+# ============================================================
+# Grid Size Recommendations:
+#   16  → Fast prototyping, small corpora  (< 1K docs)
+#   32  → Balanced quality, medium corpora (1K–10K docs)
+#   64  → High precision, large corpora    (> 10K docs)
+#
+# spreading_steps Guidelines (Phase 6):
+#   0   → Exact cell matching (high precision, low recall)
+#   1   → Moderate context expansion (balanced) ← default
+#   2–3 → Aggressive expansion (high recall, lower precision)
+#
+# top_percent Guidelines (Phase 5):
+#   0.03–0.05 → Sparse, distinctive fingerprints
+#   0.05–0.10 → Balanced representation
+#   0.10–0.20 → Dense, comprehensive coverage
+#
+# Memory Considerations:
+#   Grid 16 → ~256  cells, minimal memory
+#   Grid 32 → ~1024 cells, moderate memory
+#   Grid 64 → ~4096 cells, high memory usage
+#
+# Removed from Phase 6 (handled internally or not used by new CLI):
+#   weighting, normalization, spreading.radius, spreading.decay,
+#   spreading.normalize_after, min_similarity, use_batch,
+#   verbose, output_json, max_ngram, min_word_length

@@ -1,0 +1,1866 @@
+last_run_id: '20260519_155710'
+last_step: 6
+runs:
+  '20260424_152545':
+    created_at: '2026-04-24T15:25:57.353751'
+    steps: {}
+  '20260424_153030':
+    created_at: '2026-04-24T15:30:31.324206'
+    steps: {}
+  '20260424_154155':
+    created_at: '2026-04-24T15:41:57.090119'
+    steps: {}
+  '20260424_154454':
+    created_at: '2026-04-24T15:44:56.725613'
+    steps: {}
+  '20260424_154528':
+    created_at: '2026-04-24T15:45:30.777001'
+    steps: {}
+  '20260424_155033':
+    created_at: '2026-04-24T15:50:34.070043'
+    steps: {}
+  '20260424_155131':
+    created_at: '2026-04-24T15:51:32.516426'
+    steps: {}
+  '20260424_161046':
+    created_at: '2026-04-24T16:10:47.655636'
+    steps: {}
+  '20260424_161940':
+    created_at: '2026-04-24T16:19:42.738929'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-04-24T16:21:00.062565'
+        parameters:
+          corpus: data\corpus.txt
+          output: outputs\20260424_161940\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260424_161940\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260424_161940\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260424_161940\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-04-24T16:28:42.865657'
+        parameters:
+          corpus: data\corpus.txt
+          vocab: outputs\20260424_161940\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260424_161940\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260424_161940\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260424_161940\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260424_161940\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260424_161940\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260424_161940\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-04-24T16:29:38.208002'
+        parameters:
+          matrix: outputs\20260424_161940\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260424_161940\term_context_matrix\term_context_matrix.json
+          output: outputs\20260424_161940\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260424_161940\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-04-24T16:38:18.795938'
+        parameters:
+          coordinates: outputs\20260424_161940\semantic_space\context_coordinates.json
+          metadata: outputs\20260424_161940\term_context_matrix\term_context_matrix.json
+          output: outputs\20260424_161940\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260424_161940\phrase_fingerprints
+  '20260425_093145':
+    created_at: '2026-04-25T09:31:48.430594'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-04-25T09:33:07.836351'
+        parameters:
+          corpus: data\corpus.txt
+          output: outputs\20260425_093145\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260425_093145\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260425_093145\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260425_093145\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-04-25T09:33:53.111202'
+        parameters:
+          corpus: data\corpus.txt
+          vocab: outputs\20260425_093145\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260425_093145\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260425_093145\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260425_093145\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260425_093145\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260425_093145\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260425_093145\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-04-25T09:36:35.823069'
+        parameters:
+          matrix: outputs\20260425_093145\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260425_093145\term_context_matrix\term_context_matrix.json
+          output: outputs\20260425_093145\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260425_093145\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-04-25T10:52:19.630211'
+        parameters:
+          coordinates: outputs\20260425_093145\semantic_space\context_coordinates.json
+          metadata: outputs\20260425_093145\term_context_matrix\term_context_matrix.json
+          output: outputs\20260425_093145\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260425_093145\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-04-25T11:41:18.625122'
+        parameters:
+          corpus: data\corpus.txt
+          fingerprints: outputs\20260425_093145\phrase_fingerprints
+          output: outputs\20260425_093145\doc_fingerprints
+          idf_weights: outputs\20260425_093145\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260425_093145\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-04-25T11:47:14.395668'
+        parameters:
+          query: How do adaptive changes in the human brain facilitate the recovery
+            of mental functions and enhancement of cognitive skills?
+          phrase_fp_dir: outputs\20260425_093145\phrase_fingerprints
+          doc_fp_dir: outputs\20260425_093145\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260425_093145\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260425_093145\query_results.json
+          grid_size: '128'
+        output: outputs\20260425_093145\query_results.json
+  '20260425_114729':
+    created_at: '2026-04-25T11:47:31.702515'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-04-25T11:47:49.610094'
+        parameters:
+          query: What role do sentence structure and the contextual meaning of words
+            play in the development of natural language processing systems?
+          phrase_fp_dir: outputs\20260425_093145\phrase_fingerprints
+          doc_fp_dir: outputs\20260425_093145\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260425_093145\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260425_114729\query_results.json
+          grid_size: '128'
+        output: outputs\20260425_114729\query_results.json
+  '20260425_114815':
+    created_at: '2026-04-25T11:48:17.304777'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-04-25T11:48:28.547260'
+        parameters:
+          query: How do researchers piece together the history, cultural exchanges,
+            and technological advancements of ancient populations?
+          phrase_fp_dir: outputs\20260425_093145\phrase_fingerprints
+          doc_fp_dir: outputs\20260425_093145\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260425_093145\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260425_114815\query_results.json
+          grid_size: '128'
+        output: outputs\20260425_114815\query_results.json
+  '20260425_114946':
+    created_at: '2026-04-25T11:49:47.754554'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-04-25T11:49:58.865276'
+        parameters:
+          query: What are the impacts of dense population centers on social structures,
+            community networks, and resource distribution?
+          phrase_fp_dir: outputs\20260425_093145\phrase_fingerprints
+          doc_fp_dir: outputs\20260425_093145\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260425_093145\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260425_114946\query_results.json
+          grid_size: '128'
+        output: outputs\20260425_114946\query_results.json
+  '20260425_115024':
+    created_at: '2026-04-25T11:50:25.427328'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-04-25T11:50:34.878288'
+        parameters:
+          query: How does the ability to understand emotions and individual behavioral
+            characteristics influence interactions and success in diverse social groups?
+          phrase_fp_dir: outputs\20260425_093145\phrase_fingerprints
+          doc_fp_dir: outputs\20260425_093145\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260425_093145\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260425_115024\query_results.json
+          grid_size: '128'
+        output: outputs\20260425_115024\query_results.json
+  '20260425_115136':
+    created_at: '2026-04-25T11:51:37.610218'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-04-26T09:26:47.869234'
+        parameters:
+          query: What role do sentence structure and the contextual meaning of words
+            play in the development of natural language processing systems?
+          phrase_fp_dir: outputs\20260425_093145\phrase_fingerprints
+          doc_fp_dir: outputs\20260425_093145\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260425_093145\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260425_115136\query_results.json
+          grid_size: '128'
+        output: outputs\20260425_115136\query_results.json
+  '20260426_092331':
+    created_at: '2026-04-26T09:23:33.840926'
+    steps: {}
+  '20260426_092650':
+    created_at: '2026-04-26T09:26:52.610529'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-04-26T09:28:00.801847'
+        parameters:
+          corpus: data\corpus_100.txt
+          output: outputs\20260426_092650\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260426_092650\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260426_092650\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260426_092650\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-04-26T09:28:13.647367'
+        parameters:
+          corpus: data\corpus.txt
+          vocab: outputs\20260426_092650\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260426_092650\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260426_092650\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260426_092650\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260426_092650\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260426_092650\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260426_092650\term_context_matrix\idf_weights.json
+  '20260426_093023':
+    created_at: '2026-04-26T09:30:25.439374'
+    steps: {}
+  '20260426_093039':
+    created_at: '2026-04-26T09:30:40.885521'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-04-26T09:31:05.564325'
+        parameters:
+          corpus: data\corpus.txt
+          output: outputs\20260426_093039\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260426_093039\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260426_093039\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260426_093039\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-04-26T09:31:12.976344'
+        parameters:
+          corpus: data\corpus.txt
+          vocab: outputs\20260426_093039\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260426_093039\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260426_093039\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260426_093039\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260426_093039\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260426_093039\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260426_093039\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-04-26T09:31:30.521359'
+        parameters:
+          matrix: outputs\20260426_093039\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260426_093039\term_context_matrix\term_context_matrix.json
+          output: outputs\20260426_093039\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260426_093039\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-04-26T09:31:40.691616'
+        parameters:
+          coordinates: outputs\20260426_093039\semantic_space\context_coordinates.json
+          metadata: outputs\20260426_093039\term_context_matrix\term_context_matrix.json
+          output: outputs\20260426_093039\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260426_093039\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-04-26T09:33:34.784525'
+        parameters:
+          corpus: data\corpus.txt
+          fingerprints: outputs\20260426_093039\phrase_fingerprints
+          output: outputs\20260426_093039\doc_fingerprints
+          idf_weights: outputs\20260426_093039\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260426_093039\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-04-26T09:35:26.892055'
+        parameters:
+          query: How do adaptive changes in the human brain facilitate the recovery
+            of mental functions and enhancement of cognitive skills?
+          phrase_fp_dir: outputs\20260426_093039\phrase_fingerprints
+          doc_fp_dir: outputs\20260426_093039\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260426_093039\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260426_093039\query_results.json
+          grid_size: '128'
+        output: outputs\20260426_093039\query_results.json
+  '20260426_093846':
+    created_at: '2026-04-26T09:38:47.618622'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-04-26T09:39:11.163205'
+        parameters:
+          query: How do researchers piece together the history, cultural exchanges,
+            and technological advancements of ancient populations?
+          phrase_fp_dir: outputs\20260426_093039\phrase_fingerprints
+          doc_fp_dir: outputs\20260426_093039\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260426_093039\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260426_093846\query_results.json
+          grid_size: '128'
+        output: outputs\20260426_093846\query_results.json
+  '20260426_095454':
+    created_at: '2026-04-26T09:54:55.963008'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-04-26T09:55:18.650494'
+        parameters:
+          corpus: data\corpus100.txt
+          output: outputs\20260426_095454\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260426_095454\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260426_095454\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260426_095454\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-04-26T09:55:24.645546'
+        parameters:
+          corpus: data\corpus.txt
+          vocab: outputs\20260426_095454\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260426_095454\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260426_095454\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260426_095454\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260426_095454\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260426_095454\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260426_095454\term_context_matrix\idf_weights.json
+  '20260427_094443':
+    created_at: '2026-04-27T09:44:44.879145'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-04-27T09:49:01.601100'
+        parameters:
+          corpus: data\corpus_100_id.txt
+          output: outputs\20260427_094443\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260427_094443\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260427_094443\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260427_094443\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-04-27T09:50:16.805438'
+        parameters:
+          corpus: data\corpus_100_id.txt
+          vocab: outputs\20260427_094443\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260427_094443\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260427_094443\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260427_094443\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260427_094443\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260427_094443\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260427_094443\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-04-27T09:50:43.168405'
+        parameters:
+          matrix: outputs\20260427_094443\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260427_094443\term_context_matrix\term_context_matrix.json
+          output: outputs\20260427_094443\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260427_094443\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-04-27T09:51:01.558105'
+        parameters:
+          coordinates: outputs\20260427_094443\semantic_space\context_coordinates.json
+          metadata: outputs\20260427_094443\term_context_matrix\term_context_matrix.json
+          output: outputs\20260427_094443\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260427_094443\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-04-27T09:52:39.589455'
+        parameters:
+          corpus: data\corpus_100_id.txt
+          fingerprints: outputs\20260427_094443\phrase_fingerprints
+          output: outputs\20260427_094443\doc_fingerprints
+          idf_weights: outputs\20260427_094443\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260427_094443\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-04-27T09:53:32.999560'
+        parameters:
+          query: How do adaptive changes in the human brain facilitate the recovery
+            of mental functions and enhancement of cognitive skills?
+          phrase_fp_dir: outputs\20260427_094443\phrase_fingerprints
+          doc_fp_dir: outputs\20260427_094443\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260427_094443\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260427_094443\query_results.json
+          grid_size: '128'
+        output: outputs\20260427_094443\query_results.json
+  '20260427_095540':
+    created_at: '2026-04-27T09:55:41.424563'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-04-27T09:55:57.737081'
+        parameters:
+          query: LLMs (Large Language Models) are advanced natural language processing
+            models?
+          phrase_fp_dir: outputs\20260427_094443\phrase_fingerprints
+          doc_fp_dir: outputs\20260427_094443\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260427_094443\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260427_095540\query_results.json
+          grid_size: '128'
+        output: outputs\20260427_095540\query_results.json
+  '20260504_115137':
+    created_at: '2026-05-04T11:51:38.790178'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-04T11:55:38.988375'
+        parameters:
+          corpus: data\cleaned_corpus_11198.txt
+          output: outputs\20260504_115137\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260504_115137\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260504_115137\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260504_115137\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-04T12:05:57.272887'
+        parameters:
+          corpus: data\cleaned_corpus_11198.txt
+          vocab: outputs\20260504_115137\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260504_115137\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260504_115137\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260504_115137\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260504_115137\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260504_115137\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260504_115137\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-04T12:07:54.370329'
+        parameters:
+          matrix: outputs\20260504_115137\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260504_115137\term_context_matrix\term_context_matrix.json
+          output: outputs\20260504_115137\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260504_115137\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-05-04T12:11:09.001956'
+        parameters:
+          coordinates: outputs\20260504_115137\semantic_space\context_coordinates.json
+          metadata: outputs\20260504_115137\term_context_matrix\term_context_matrix.json
+          output: outputs\20260504_115137\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260504_115137\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-05-04T14:25:07.258739'
+        parameters:
+          corpus: data\cleaned_corpus_11198.txt
+          fingerprints: outputs\20260504_115137\phrase_fingerprints
+          output: outputs\20260504_115137\doc_fingerprints
+          idf_weights: outputs\20260504_115137\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260504_115137\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-05-04T14:34:28.424589'
+        parameters:
+          query: zoo public exhibition view
+          phrase_fp_dir: outputs\20260504_115137\phrase_fingerprints
+          doc_fp_dir: outputs\20260504_115137\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260504_115137\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260504_115137\query_results.json
+          grid_size: '128'
+        output: outputs\20260504_115137\query_results.json
+  '20260506_093716':
+    created_at: '2026-05-06T09:37:18.771778'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-06T09:40:23.244802'
+        parameters:
+          corpus: data\corpus.txt
+          output: outputs\20260506_093716\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260506_093716\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260506_093716\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260506_093716\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-06T09:40:31.934857'
+        parameters:
+          corpus: data\corpus.txt
+          vocab: outputs\20260506_093716\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260506_093716\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260506_093716\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260506_093716\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260506_093716\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260506_093716\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260506_093716\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-06T09:40:51.239726'
+        parameters:
+          matrix: outputs\20260506_093716\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260506_093716\term_context_matrix\term_context_matrix.json
+          output: outputs\20260506_093716\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260506_093716\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-05-06T09:41:28.631136'
+        parameters:
+          coordinates: outputs\20260506_093716\semantic_space\context_coordinates.json
+          metadata: outputs\20260506_093716\term_context_matrix\term_context_matrix.json
+          output: outputs\20260506_093716\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260506_093716\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-05-06T09:42:39.191050'
+        parameters:
+          corpus: data\corpus.txt
+          fingerprints: outputs\20260506_093716\phrase_fingerprints
+          output: outputs\20260506_093716\doc_fingerprints
+          idf_weights: outputs\20260506_093716\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260506_093716\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T09:45:27.166888'
+        parameters:
+          query: How do adaptive changes in the human brain facilitate the recovery
+            of mental functions and enhancement of cognitive skills?
+          phrase_fp_dir: outputs\20260506_093716\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_093716\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_093716\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_093716\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_093716\query_results.json
+  '20260506_094558':
+    created_at: '2026-05-06T09:46:00.382266'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T09:46:30.339442'
+        parameters:
+          query: Blockchain technology offers a decentralized approach to data management,
+            enabling secure and transparent transactions without the need for intermediaries.
+            It has gained prominence through cryptocurrencies like Bitcoin, but its
+            potential applications extend far beyond digital currencies. Blockchain's
+            distributed ledger system ensures that data is stored across multiple
+            nodes, making it highly resistant to tampering and fraud. Industries such
+            as supply chain management, healthcare, and finance are exploring blockchain
+            for its ability to improve security, traceability, and efficiency. Smart
+            contracts, which automatically execute transactions when certain conditions
+            are met, are another promising aspect of blockchain technology. While
+            blockchain offers significant benefits, it also faces challenges such
+            as scalability and regulatory uncertainty, which must be addressed for
+            broader adoption.
+          phrase_fp_dir: outputs\20260506_093716\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_093716\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_093716\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_094558\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_094558\query_results.json
+  '20260506_094642':
+    created_at: '2026-05-06T09:46:43.725058'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T09:46:54.838197'
+        parameters:
+          query: The development of early human societies was profoundly influenced
+            by the availability of natural resources such as water, fertile soil,
+            and minerals. These resources determined settlement patterns, trade routes,
+            and the rise of complex civilizations, shaping human history in profound
+            ways. Access to these resources also influenced the development of agricultural
+            techniques and the domestication of animals. The distribution of resources
+            often dictated the emergence of power dynamics and hierarchies, which
+            laid the foundation for modern political structures. Understanding these
+            early societal developments sheds light on the evolution of human civilization.
+            Societies that mastered resource management were often able to create
+            more stable and prosperous environments, paving the way for the development
+            of cities, trade, and cultural exchange.
+          phrase_fp_dir: outputs\20260506_093716\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_093716\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_093716\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_094642\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_094642\query_results.json
+  '20260506_094722':
+    created_at: '2026-05-06T09:47:23.947967'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T09:47:34.950884'
+        parameters:
+          query: The study of artifacts, from simple tools to intricate artworks,
+            reveals the technological advancements and cultural priorities of prehistoric
+            communities. These objects provide crucial insights into the daily lives,
+            religious beliefs, and social hierarchies of our ancestors. Through the
+            examination of tools, researchers can gain a better understanding of the
+            development of early human intelligence and craftsmanship. Artifacts such
+            as pottery and jewelry also provide evidence of the aesthetic values and
+            spiritual practices of past societies. By studying these material remnants,
+            anthropologists piece together the cultural and technological history
+            of humanity. Artifacts often serve as symbols of cultural identity and
+            social status,
+          phrase_fp_dir: outputs\20260506_093716\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_093716\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_093716\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_094722\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_094722\query_results.json
+  '20260506_094749':
+    created_at: '2026-05-06T09:47:50.600825'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T09:48:01.259685'
+        parameters:
+          query: enhances cognitive abilities, such as memory and problem-solving,
+            while also fostering cultural empathy.
+          phrase_fp_dir: outputs\20260506_093716\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_093716\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_093716\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_094749\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_094749\query_results.json
+  '20260506_094827':
+    created_at: '2026-05-06T09:48:32.037552'
+    steps: {}
+  '20260506_094940':
+    created_at: '2026-05-06T09:49:43.233392'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-06T09:57:05.754307'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail.txt
+          output: outputs\20260506_094940\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260506_094940\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260506_094940\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260506_094940\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-06T09:57:40.358650'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail.txt
+          vocab: outputs\20260506_094940\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260506_094940\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260506_094940\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260506_094940\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260506_094940\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260506_094940\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260506_094940\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-06T09:58:27.987667'
+        parameters:
+          matrix: outputs\20260506_094940\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260506_094940\term_context_matrix\term_context_matrix.json
+          output: outputs\20260506_094940\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260506_094940\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-05-06T09:59:12.657155'
+        parameters:
+          coordinates: outputs\20260506_094940\semantic_space\context_coordinates.json
+          metadata: outputs\20260506_094940\term_context_matrix\term_context_matrix.json
+          output: outputs\20260506_094940\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260506_094940\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-05-06T10:03:55.396915'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail.txt
+          fingerprints: outputs\20260506_094940\phrase_fingerprints
+          output: outputs\20260506_094940\doc_fingerprints
+          idf_weights: outputs\20260506_094940\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260506_094940\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T10:05:05.208031'
+        parameters:
+          query: يَـٰٓأَيُّهَا ٱلۡمُدَّثِّرُ,O you who covers himself [with a garment]
+          phrase_fp_dir: outputs\20260506_094940\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_094940\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_094940\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_094940\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_094940\query_results.json
+  '20260506_100537':
+    created_at: '2026-05-06T10:05:38.485845'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T10:05:51.969934'
+        parameters:
+          query: And your Lord glorify
+          phrase_fp_dir: outputs\20260506_094940\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_094940\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_094940\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_100537\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_100537\query_results.json
+  '20260506_100749':
+    created_at: '2026-05-06T10:07:50.726970'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T10:08:05.929144'
+        parameters:
+          query: فَإِذَا فَرَغۡتَ فَٱنصَبۡ,"So when you have finished [your duties],
+            then stand up [for worship]"
+          phrase_fp_dir: outputs\20260506_094940\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_094940\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_094940\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_100749\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_100749\query_results.json
+  '20260506_100951':
+    created_at: '2026-05-06T10:09:52.016756'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T10:10:59.192518'
+        parameters:
+          query: And from the evil of an envier when he envies
+          phrase_fp_dir: outputs\20260506_094940\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_094940\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_094940\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_100951\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_100951\query_results.json
+  '20260506_101108':
+    created_at: '2026-05-06T10:11:08.999885'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T10:11:27.270569'
+        parameters:
+          query: And from the evil of an envier when he envies
+          phrase_fp_dir: outputs\20260506_094940\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_094940\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_094940\term_context_matrix\idf_weights.json
+          top_k: '8'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_101108\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_101108\query_results.json
+  '20260506_101148':
+    created_at: '2026-05-06T10:11:49.319614'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T10:12:08.047459'
+        parameters:
+          query: And from the evil of an envier when he envies
+          phrase_fp_dir: outputs\20260506_094940\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_094940\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_094940\term_context_matrix\idf_weights.json
+          top_k: '8'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_101148\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_101148\query_results.json
+  '20260506_101225':
+    created_at: '2026-05-06T10:12:26.856698'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-06T10:12:41.933718'
+        parameters:
+          query: ٱلَّذِي يُوَسۡوِسُ فِي صُدُورِ ٱلنَّاسِ
+          phrase_fp_dir: outputs\20260506_094940\phrase_fingerprints
+          doc_fp_dir: outputs\20260506_094940\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260506_094940\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260506_101225\query_results.json
+          grid_size: '128'
+        output: outputs\20260506_101225\query_results.json
+  '20260513_104339':
+    created_at: '2026-05-13T10:43:46.448218'
+    steps: {}
+  '20260513_104400':
+    created_at: '2026-05-13T10:44:01.281795'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-13T10:45:35.010375'
+        parameters:
+          corpus: data\corpus.txt
+          output: outputs\20260513_104400\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260513_104400\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260513_104400\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260513_104400\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-13T10:45:56.861897'
+        parameters:
+          corpus: data\corpus.txt
+          vocab: outputs\20260513_104400\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260513_104400\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260513_104400\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260513_104400\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260513_104400\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260513_104400\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260513_104400\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-13T10:59:43.582124'
+        parameters:
+          matrix: outputs\20260513_104400\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260513_104400\term_context_matrix\term_context_matrix.json
+          output: outputs\20260513_104400\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260513_104400\semantic_space
+  '20260513_150004':
+    created_at: '2026-05-13T15:00:21.599879'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-13T15:09:53.163552'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail.txt
+          output: outputs\20260513_150004\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260513_150004\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260513_150004\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260513_150004\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-13T15:16:08.123021'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail.txt
+          vocab: outputs\20260513_150004\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260513_150004\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260513_150004\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260513_150004\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260513_150004\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260513_150004\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260513_150004\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-13T15:16:42.944142'
+        parameters:
+          matrix: outputs\20260513_150004\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260513_150004\term_context_matrix\term_context_matrix.json
+          output: outputs\20260513_150004\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260513_150004\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-05-13T15:18:26.386257'
+        parameters:
+          coordinates: outputs\20260513_150004\semantic_space\context_coordinates.json
+          metadata: outputs\20260513_150004\term_context_matrix\term_context_matrix.json
+          output: outputs\20260513_150004\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260513_150004\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-05-13T15:24:50.257374'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail.txt
+          fingerprints: outputs\20260513_150004\phrase_fingerprints
+          output: outputs\20260513_150004\doc_fingerprints
+          idf_weights: outputs\20260513_150004\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260513_150004\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-05-13T15:28:45.238196'
+        parameters:
+          query: And from the evil of an envier when he envies
+          phrase_fp_dir: outputs\20260513_150004\phrase_fingerprints
+          doc_fp_dir: outputs\20260513_150004\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260513_150004\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260513_150004\query_results.json
+          grid_size: '128'
+        output: outputs\20260513_150004\query_results.json
+  '20260513_153103':
+    created_at: '2026-05-13T15:31:04.960817'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-13T15:38:20.482419'
+        parameters:
+          query: فَسَبِّحۡ بِحَمۡدِ رَبِّكَ وَٱسۡتَغۡفِرۡهُۚ إِنَّهُۥ كَانَ تَوَّابَۢا
+          phrase_fp_dir: outputs\20260513_150004\phrase_fingerprints
+          doc_fp_dir: outputs\20260513_150004\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260513_150004\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260513_153103\query_results.json
+          grid_size: '128'
+        output: outputs\20260513_153103\query_results.json
+  '20260513_153922':
+    created_at: '2026-05-13T15:39:25.383738'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-13T15:40:20.025449'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          output: outputs\20260513_153922\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260513_153922\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260513_153922\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260513_153922\extracted_phrases\phrase_to_contexts.json
+  '20260513_154531':
+    created_at: '2026-05-13T15:45:36.525485'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-15T18:03:10.975151'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          output: outputs\20260513_154531\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260513_154531\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260513_154531\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260513_154531\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-15T18:04:57.839680'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          vocab: outputs\20260513_154531\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260513_154531\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260513_154531\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260513_154531\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260513_154531\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260513_154531\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260513_154531\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-15T18:06:33.769955'
+        parameters:
+          matrix: outputs\20260513_154531\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260513_154531\term_context_matrix\term_context_matrix.json
+          output: outputs\20260513_154531\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260513_154531\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-05-15T18:06:50.814221'
+        parameters:
+          coordinates: outputs\20260513_154531\semantic_space\context_coordinates.json
+          metadata: outputs\20260513_154531\term_context_matrix\term_context_matrix.json
+          output: outputs\20260513_154531\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260513_154531\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-05-15T18:07:33.803451'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          fingerprints: outputs\20260513_154531\phrase_fingerprints
+          output: outputs\20260513_154531\doc_fingerprints
+          idf_weights: outputs\20260513_154531\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260513_154531\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-05-15T18:08:35.776020'
+        parameters:
+          query: ٱلسَّمَآءُ مُنفَطِرُۢ بِهِۦۚ كَانَ وَعۡدُهُۥ مَفۡعُولًا
+          phrase_fp_dir: outputs\20260513_154531\phrase_fingerprints
+          doc_fp_dir: outputs\20260513_154531\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260513_154531\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260513_154531\query_results.json
+          grid_size: '128'
+        output: outputs\20260513_154531\query_results.json
+  '20260515_180940':
+    created_at: '2026-05-15T18:09:41.766074'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-15T18:09:59.439016'
+        parameters:
+          query: will break apart therefrom; ever is His promise fulfilled
+          phrase_fp_dir: outputs\20260513_154531\phrase_fingerprints
+          doc_fp_dir: outputs\20260513_154531\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260513_154531\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260515_180940\query_results.json
+          grid_size: '128'
+        output: outputs\20260515_180940\query_results.json
+  '20260515_181021':
+    created_at: '2026-05-15T18:10:22.412926'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-15T18:10:42.772377'
+        parameters:
+          query: لَىٰ رَبِّهِۦ سَبِيلًا,"Indeed, this
+          phrase_fp_dir: outputs\20260513_154531\phrase_fingerprints
+          doc_fp_dir: outputs\20260513_154531\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260513_154531\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260515_181021\query_results.json
+          grid_size: '128'
+        output: outputs\20260515_181021\query_results.json
+  '20260515_181054':
+    created_at: '2026-05-15T18:10:54.955864'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-15T18:11:18.730096'
+        parameters:
+          query: der, so whoever wills may take to his Lord a way
+          phrase_fp_dir: outputs\20260513_154531\phrase_fingerprints
+          doc_fp_dir: outputs\20260513_154531\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260513_154531\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260515_181054\query_results.json
+          grid_size: '128'
+        output: outputs\20260515_181054\query_results.json
+  '20260515_181814':
+    created_at: '2026-05-15T18:18:15.977874'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-15T18:26:06.491377'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail.txt
+          output: outputs\20260515_181814\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260515_181814\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260515_181814\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260515_181814\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-15T18:26:45.362759'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail.txt
+          vocab: outputs\20260515_181814\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260515_181814\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260515_181814\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260515_181814\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260515_181814\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260515_181814\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260515_181814\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-15T18:27:40.853417'
+        parameters:
+          matrix: outputs\20260515_181814\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260515_181814\term_context_matrix\term_context_matrix.json
+          output: outputs\20260515_181814\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260515_181814\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-05-15T18:28:54.672302'
+        parameters:
+          coordinates: outputs\20260515_181814\semantic_space\context_coordinates.json
+          metadata: outputs\20260515_181814\term_context_matrix\term_context_matrix.json
+          output: outputs\20260515_181814\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260515_181814\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-05-15T18:35:47.069769'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail.txt
+          fingerprints: outputs\20260515_181814\phrase_fingerprints
+          output: outputs\20260515_181814\doc_fingerprints
+          idf_weights: outputs\20260515_181814\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260515_181814\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-05-15T18:37:10.462489'
+        parameters:
+          query: قُلۡ هُوَ ٱللَّهُ أَحَدٌ
+          phrase_fp_dir: outputs\20260515_181814\phrase_fingerprints
+          doc_fp_dir: outputs\20260515_181814\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260515_181814\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260515_181814\query_results.json
+          grid_size: '128'
+        output: outputs\20260515_181814\query_results.json
+  '20260515_183843':
+    created_at: '2026-05-15T18:38:45.196031'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-15T18:39:23.309562'
+        parameters:
+          query: وَمِن شَرِّ ٱلنَّفَّـٰثَٰتِ فِي ٱلۡعُقَدِ
+          phrase_fp_dir: outputs\20260515_181814\phrase_fingerprints
+          doc_fp_dir: outputs\20260515_181814\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260515_181814\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260515_183843\query_results.json
+          grid_size: '128'
+        output: outputs\20260515_183843\query_results.json
+  '20260515_190313':
+    created_at: '2026-05-15T19:03:15.132518'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-15T19:03:57.160449'
+        parameters:
+          query: worshippers of what I worship
+          phrase_fp_dir: outputs\20260515_181814\phrase_fingerprints
+          doc_fp_dir: outputs\20260515_181814\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260515_181814\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260515_190313\query_results.json
+          grid_size: '128'
+        output: outputs\20260515_190313\query_results.json
+  '20260515_190445':
+    created_at: '2026-05-15T19:04:46.180869'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-15T19:05:21.550214'
+        parameters:
+          query: Nor will you be worshippers of what I worship
+          phrase_fp_dir: outputs\20260515_181814\phrase_fingerprints
+          doc_fp_dir: outputs\20260515_181814\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260515_181814\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260515_190445\query_results.json
+          grid_size: '128'
+        output: outputs\20260515_190445\query_results.json
+  '20260515_190536':
+    created_at: '2026-05-15T19:05:39.619739'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-15T19:06:06.725974'
+        parameters:
+          query: وَمِن شَرِّ ٱلنَّفَّـٰثَٰتِ فِي ٱلۡعُقَدِ
+          phrase_fp_dir: outputs\20260515_181814\phrase_fingerprints
+          doc_fp_dir: outputs\20260515_181814\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260515_181814\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260515_190536\query_results.json
+          grid_size: '128'
+        output: outputs\20260515_190536\query_results.json
+  '20260515_190741':
+    created_at: '2026-05-15T19:07:47.072961'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-17T10:57:36.264724'
+        parameters:
+          query: The Striking Calamity
+          phrase_fp_dir: outputs\20260515_181814\phrase_fingerprints
+          doc_fp_dir: outputs\20260515_181814\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260515_181814\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260515_190741\query_results.json
+          grid_size: '128'
+        output: outputs\20260515_190741\query_results.json
+  '20260517_105132':
+    created_at: '2026-05-17T10:51:33.724513'
+    steps: {}
+  '20260517_110407':
+    created_at: '2026-05-17T11:04:07.996365'
+    steps: {}
+  '20260517_110809':
+    created_at: '2026-05-17T11:08:11.184893'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-17T11:13:33.828777'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          output: outputs\20260517_110809\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260517_110809\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260517_110809\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260517_110809\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-17T11:18:37.604707'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          vocab: outputs\20260517_110809\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260517_110809\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260517_110809\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260517_110809\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260517_110809\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260517_110809\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260517_110809\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-17T11:20:29.396788'
+        parameters:
+          matrix: outputs\20260517_110809\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260517_110809\term_context_matrix\term_context_matrix.json
+          output: outputs\20260517_110809\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260517_110809\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-05-17T11:23:43.306925'
+        parameters:
+          coordinates: outputs\20260517_110809\semantic_space\context_coordinates.json
+          metadata: outputs\20260517_110809\term_context_matrix\term_context_matrix.json
+          output: outputs\20260517_110809\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260517_110809\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-05-17T11:24:56.115395'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          fingerprints: outputs\20260517_110809\phrase_fingerprints
+          output: outputs\20260517_110809\doc_fingerprints
+          idf_weights: outputs\20260517_110809\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260517_110809\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-05-17T11:28:09.314188'
+        parameters:
+          query: إِنَّ هَٰذِهِۦ تَذۡكِرَةٞۖ فَمَن شَآءَ ٱتَّخَذَ إِلَىٰ رَبِّهِۦ
+            سَبِيلًا
+          phrase_fp_dir: outputs\20260517_110809\phrase_fingerprints
+          doc_fp_dir: outputs\20260517_110809\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260517_110809\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260517_110809\query_results.json
+          grid_size: '128'
+        output: outputs\20260517_110809\query_results.json
+  '20260517_113557':
+    created_at: '2026-05-17T11:35:58.368564'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-17T11:36:13.783662'
+        parameters:
+          query: this is a reminder, so whoever wills may take to his Lord a way
+          phrase_fp_dir: outputs\20260517_110809\phrase_fingerprints
+          doc_fp_dir: outputs\20260517_110809\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260517_110809\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260517_113557\query_results.json
+          grid_size: '128'
+        output: outputs\20260517_113557\query_results.json
+  '20260517_135555':
+    created_at: '2026-05-17T14:02:20.061071'
+    steps:
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-17T15:03:33.599636'
+        parameters:
+          matrix: outputs\20260517_110809\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260517_110809\term_context_matrix\term_context_matrix.json
+          output: outputs\20260517_135555\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260517_135555\semantic_space
+  '20260517_151035':
+    created_at: '2026-05-17T15:10:37.224088'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-17T15:12:12.707387'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          output: outputs\20260517_151035\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260517_151035\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260517_151035\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260517_151035\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-17T15:14:23.474031'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          vocab: outputs\20260517_151035\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260517_151035\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260517_151035\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260517_151035\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260517_151035\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260517_151035\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260517_151035\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-17T15:15:14.500247'
+        parameters:
+          matrix: outputs\20260517_151035\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260517_151035\term_context_matrix\term_context_matrix.json
+          output: outputs\20260517_151035\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260517_151035\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-05-17T15:17:11.260595'
+        parameters:
+          coordinates: outputs\20260517_151035\semantic_space\context_coordinates.json
+          metadata: outputs\20260517_151035\term_context_matrix\term_context_matrix.json
+          output: outputs\20260517_151035\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260517_151035\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-05-17T15:37:48.712497'
+        parameters:
+          corpus: data\quran\quran_ayahs_tail20ta.txt
+          fingerprints: outputs\20260517_151035\phrase_fingerprints
+          output: outputs\20260517_151035\doc_fingerprints
+          idf_weights: outputs\20260517_151035\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260517_151035\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-05-17T15:39:06.285997'
+        parameters:
+          query: or will I be a worshipper of what you worship
+          phrase_fp_dir: outputs\20260517_151035\phrase_fingerprints
+          doc_fp_dir: outputs\20260517_151035\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260517_151035\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260517_151035\query_results.json
+          grid_size: '128'
+        output: outputs\20260517_151035\query_results.json
+  '20260517_154123':
+    created_at: '2026-05-17T15:41:24.855174'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-17T15:41:37.938689'
+        parameters:
+          query: worshippers
+          phrase_fp_dir: outputs\20260517_151035\phrase_fingerprints
+          doc_fp_dir: outputs\20260517_151035\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260517_151035\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260517_154123\query_results.json
+          grid_size: '128'
+        output: outputs\20260517_154123\query_results.json
+  '20260517_154517':
+    created_at: '2026-05-17T15:45:18.147519'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-17T15:45:33.119021'
+        parameters:
+          query: this is a reminder, so whoever wills may take to his Lord a way
+          phrase_fp_dir: outputs\20260517_151035\phrase_fingerprints
+          doc_fp_dir: outputs\20260517_151035\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260517_151035\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260517_154517\query_results.json
+          grid_size: '128'
+        output: outputs\20260517_154517\query_results.json
+  '20260519_130240':
+    created_at: '2026-05-19T13:04:29.179008'
+    steps: {}
+  '20260519_131648':
+    created_at: '2026-05-19T13:16:50.459799'
+    steps:
+      1:
+        name: Phrase Extraction
+        completed_at: '2026-05-19T14:41:31.816673'
+        parameters:
+          corpus: data\quran\quran_ayahs.txt
+          output: outputs\20260519_131648\extracted_phrases
+          min_freq: '1'
+          min_word_length: '3'
+          use_spacy: true
+          filter_generic: true
+          keep_verbs: true
+          stats: false
+        output: outputs\20260519_131648\extracted_phrases
+        extra_outputs:
+          vocab: outputs\20260519_131648\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260519_131648\extracted_phrases\phrase_to_contexts.json
+      2:
+        name: Term-Context Matrix
+        completed_at: '2026-05-19T14:45:26.093980'
+        parameters:
+          corpus: data\quran\quran_ayahs.txt
+          vocab: outputs\20260519_131648\extracted_phrases\vocabulary.csv
+          mapping: outputs\20260519_131648\extracted_phrases\phrase_to_contexts.json
+          output: outputs\20260519_131648\term_context_matrix
+          use_tfidf: true
+        output: outputs\20260519_131648\term_context_matrix
+        extra_outputs:
+          matrix_npz: outputs\20260519_131648\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260519_131648\term_context_matrix\term_context_matrix.json
+          idf_weights: outputs\20260519_131648\term_context_matrix\idf_weights.json
+      3:
+        name: Semantic Space
+        completed_at: '2026-05-19T14:49:53.798817'
+        parameters:
+          matrix: outputs\20260519_131648\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\20260519_131648\term_context_matrix\term_context_matrix.json
+          output: outputs\20260519_131648\semantic_space
+          method: tsne
+          grid_size: '128'
+          visualize: true
+          show_density: false
+        output: outputs\20260519_131648\semantic_space
+      4:
+        name: Phrase Fingerprints
+        completed_at: '2026-05-19T14:57:33.325676'
+        parameters:
+          coordinates: outputs\20260519_131648\semantic_space\context_coordinates.json
+          metadata: outputs\20260519_131648\term_context_matrix\term_context_matrix.json
+          output: outputs\20260519_131648\phrase_fingerprints
+          grid_size: '128'
+        output: outputs\20260519_131648\phrase_fingerprints
+      5:
+        name: Document Fingerprints
+        completed_at: '2026-05-19T15:36:23.349231'
+        parameters:
+          corpus: data\quran\quran_ayahs.txt
+          fingerprints: outputs\20260519_131648\phrase_fingerprints
+          output: outputs\20260519_131648\doc_fingerprints
+          idf_weights: outputs\20260519_131648\term_context_matrix\idf_weights.json
+          grid_size: '128'
+          top_percent: '0.1'
+          normalize: true
+          normalize_method: l2
+          use_spacy: true
+          keep_verbs: true
+          filter_generic: true
+          min_word_length: '3'
+        output: outputs\20260519_131648\doc_fingerprints
+      6:
+        name: Query Processing
+        completed_at: '2026-05-19T15:56:52.652725'
+        parameters:
+          query: '6'
+          phrase_fp_dir: outputs\20260519_131648\phrase_fingerprints
+          doc_fp_dir: outputs\20260519_131648\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260519_131648\term_context_matrix\idf_weights.json
+          top_k: '5'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260519_131648\query_results.json
+          grid_size: '128'
+        output: outputs\20260519_131648\query_results.json
+  '20260519_155710':
+    created_at: '2026-05-19T15:57:12.205274'
+    steps:
+      6:
+        name: Query Processing
+        completed_at: '2026-05-19T16:05:54.977915'
+        parameters:
+          query: Indeed, for you by day is prolonged occupation
+          phrase_fp_dir: outputs\20260519_131648\phrase_fingerprints
+          doc_fp_dir: outputs\20260519_131648\doc_fingerprints
+          weighting: idf
+          idf: outputs\20260519_131648\term_context_matrix\idf_weights.json
+          top_k: '15'
+          spreading_steps: '1'
+          keep_verbs: true
+          output: outputs\20260519_155710\query_results.json
+          grid_size: '128'
+        output: outputs\20260519_155710\query_results.json

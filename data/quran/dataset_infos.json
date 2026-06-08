@@ -1,0 +1,41 @@
+{
+  "dataset_name": "multilingual-quran",
+  "description": "A multilingual Quran dataset with original Arabic text and translations in multiple languages (Bangla, English, Spanish, French, Indonesian, Russian, Turkish, Chinese). Each verse includes verse ID, chapter number, verse number, chapter names, transliterations, verse text in Arabic, and translations.",
+  "homepage": "https://anisafifi.com",
+  "license": "CC BY 4.0",
+  "features": {
+    "text": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 0,
+      "num_examples": 0
+    }
+  },
+  "citation": "@misc{multilingual_quran_dataset, title={Multilingual Quran Dataset}, author={Anis Afifi}, year={2026}, url={https://anisafifi.com}}",
+  "languages": [
+    "ar",
+    "bn",
+    "en",
+    "es",
+    "fr",
+    "id",
+    "ru",
+    "tr",
+    "zh"
+  ],
+  "size_in_bytes": 0,
+  "dataset_size": "medium",
+  "task_categories": [
+    "text-classification",
+    "text-generation"
+  ],
+  "task_ids": [
+    "language-modeling",
+    "translation"
+  ]
+}

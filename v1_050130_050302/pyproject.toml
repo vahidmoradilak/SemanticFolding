@@ -1,0 +1,46 @@
+[project]
+name = "semantic-folding"
+version = "0.1.0"
+description = "LangGraph-based multi-agent system for building knowledge graphs from text corpora"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "nltk>=3.8.0",
+    "rich>=13.0.0",
+    "tqdm>=4.66.0",
+    "loguru>=0.7.3",
+    "pyyaml>=6.0.0",
+    "scipy>=1.16.3",
+    "numpy>=2.4.0",
+    "plotly>=6.5.2",
+    "matplotlib>=3.10.8",
+    "spacy>=3.8.11",
+    "pyarrow>=23.0.0",
+    "questionary>=2.1.1",
+    "scikit-learn>=1.8.0",
+    "umap-learn>=0.5.11",
+]
+
+[[tool.uv.index]]
+url = "https://mirror2.chabokan.net/pypi/simple"
+default = true
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+]
