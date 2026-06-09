@@ -549,8 +549,9 @@ def main():
     
     grid_size = metadata['grid_size']
     
+    text_dir = "data\\quran\\quran_ayahs.txt" 
     # text_dir = "data\\quran\\quran_ayahs_NE.txt" 
-    text_dir = "data\\quran\\quran_ayahs_tail764.txt" 
+    # text_dir = "data\\quran\\quran_ayahs_tail764.txt" 
     # text_dir = "data\\corpus.txt"
     doc_text = get_document_by_id(text_dir, args.doc_id)
             

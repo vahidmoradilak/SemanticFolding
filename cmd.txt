@@ -32,7 +32,7 @@ python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\
 
 6
 python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_fingerprints.py --corpus data\customtexts.txt --fingerprints outputs/run_20260602_090147/phrase_fingerprints --output outputs/run_20260602_090147/customtext_fingerprints --grid-size 64 --idf-weights outputs\run_20260602_090147\term_context_matrix\idf_weights.json --top-percent 0.1 --no-normalize --normalize-method l2 --min-word-length 3 --keep-verbs --min-peak-distance 2 --smoothing-sigma 1.5 --diversity-sample 100
-python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_fingerprints.py --corpus data\customtexts.txt --fingerprints outputs/run_20260606_132832/phrase_fingerprints --output outputs/run_20260606_132832/customtext_fingerprints --grid-size 64 --idf-weights outputs\run_20260606_132832\term_context_matrix\idf_weights.json --keep-verbs --smoothing-sigma 1.5
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_fingerprints.py --corpus data\customtexts.txt --fingerprints outputs/run_20260608_172547/phrase_fingerprints --output outputs/run_20260608_172547/customtext_fingerprints --grid-size 64 --idf-weights outputs\run_20260608_172547\term_context_matrix\idf_weights.json --keep-verbs --smoothing-sigma 1.5
 
 Main Menu:
   1. Start new run
@@ -45,3 +45,18 @@ Enter choice (1-5):
 
 last update at 050318_1045
 last update at 050318_1108
+
+
+--query "mercy forgiveness" --fingerprints outputs\quran_full_test\step4_phrase_fingerprints
+
+
+18:57:13 | INFO     | query_processing | Ranking: 5940/5940 docs above threshold, top score=0.0338, mean=0.0049
+QUERY: mercy forgiveness
+Top 5 Results:
+ 1. 1858                                               | Score: 0.0338
+ 2. 2116                                               | Score: 0.0322
+ 3. 3979                                               | Score: 0.0321
+ 4. 3205                                               | Score: 0.0320
+ 5. 3749                                               | Score: 0.0303
+
+
