@@ -32,7 +32,7 @@ python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\
 
 6
 python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_fingerprints.py --corpus data\customtexts.txt --fingerprints outputs/run_20260602_090147/phrase_fingerprints --output outputs/run_20260602_090147/customtext_fingerprints --grid-size 64 --idf-weights outputs\run_20260602_090147\term_context_matrix\idf_weights.json --top-percent 0.1 --no-normalize --normalize-method l2 --min-word-length 3 --keep-verbs --min-peak-distance 2 --smoothing-sigma 1.5 --diversity-sample 100
-python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_fingerprints.py --corpus data\customtexts.txt --fingerprints outputs/run_20260606_132832/phrase_fingerprints --output outputs/run_20260606_132832/customtext_fingerprints --grid-size 64 --idf-weights outputs\run_20260606_132832\term_context_matrix\idf_weights.json --keep-verbs --smoothing-sigma 1.5
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_fingerprints.py --corpus data\customtexts.txt --fingerprints outputs/run_20260608_172547/phrase_fingerprints --output outputs/run_20260608_172547/customtext_fingerprints --grid-size 64 --idf-weights outputs\run_20260608_172547\term_context_matrix\idf_weights.json --keep-verbs --smoothing-sigma 1.5
 
 Main Menu:
   1. Start new run
@@ -42,4 +42,8 @@ Main Menu:
   5. Exit
 
 Enter choice (1-5): 
+
+last update at 050318_1045
+last update at 050318_1108
+last update at 050320_2233: edit min_freq from3 to 2 and modify some error lines
 

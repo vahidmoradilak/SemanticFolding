@@ -11,3 +11,4 @@
 10,فِي جَنَّـٰتٖ يَتَسَآءَلُونَ,"[Who will be] in gardens, questioning each other"
 11,فِي جَنَّـٰتٖ يَتَسَآءَلُونَ
 12,"[Who will be] in gardens, questioning each other"
+13,إِنَّ ٱلَّذِينَ كَفَرُواْ سَوَآءٌ عَلَيۡهِمۡ ءَأَنذَرۡتَهُمۡ أَمۡ لَمۡ تُنذِرۡهُمۡ لَا يُؤۡمِنُونَ,"Indeed, those who disbelieve - it is all the same for them whether you warn them or do not warn them - they will not believe"

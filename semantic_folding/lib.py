@@ -496,77 +496,212 @@ def detect_language(text: str) -> str:
         return "ar"
     return "en"
 
+def _norm_ar(t: str) -> str:
+    """Fast character normalization to match _AR_FUNCTION_WORDS."""
+    t = t.replace("\u064b", "").replace("\u064c", "").replace("\u064d", "")
+    t = t.replace("\u064e", "").replace("\u064f", "").replace("\u0650", "")
+    t = t.replace("\u0651", "").replace("\u0652", "").replace("\u0670", "")
+    t = t.replace("\u0623", "\u0627").replace("\u0625", "\u0627").replace("\u0622", "\u0627")
+    t = t.replace("\u0649", "\u064a")  # alif-maqsura → ya
+    t = t.replace("\u0629", "\u0647")  # ta-marbuta → ha
+    t = t.replace("\u06cc", "\u064a")  # farsi yeh → ya
+    t = t.replace("\u06a9", "\u0643")  # keheh → kaf
+    t = t.replace("\u06af", "\u0643")  # gaf → kaf
+    t = t.replace("\u06c0", "\u0647")  # heh yeh → ha
+    t = t.replace("\u0671", "\u0627")  # alif-wasla → alif
+    t = t.replace("\u0626", "\u064a")  # yeh-with-hamza → ya (so اولئك→اوليك matches اوليك)
+    return t
+
+
 def extract_raw_phrases_ar_fa(text: str) -> Set[str]:
-
     phrases = set()
-
     text = normalizer.normalize(text)
-
     tokens = word_tokenize(text)
+    if not tokens:
+        return phrases
 
-    # unigram
-    for tok in tokens:
-        if len(tok) >= 2:
-            phrases.add(tok)
+    # Pre-normalize each token to match _AR_FUNCTION_WORDS codepoints
+    normed = [_norm_ar(t) for t in tokens]
 
-    # bigram
-    for i in range(len(tokens)-1):
-        phrase = f"{tokens[i]} {tokens[i+1]}"
-        phrases.add(phrase)
+    # unigram — only keep tokens ≥ 3 chars that are NOT in the function-word list
+    for i, tok in enumerate(tokens):
+        nt = normed[i]
+        if len(nt) >= 3 and nt not in _AR_FUNCTION_WORDS:
+            phrases.add(nt)
 
-    # trigram
-    for i in range(len(tokens)-2):
-        phrase = f"{tokens[i]} {tokens[i+1]} {tokens[i+2]}"
-        phrases.add(phrase)
+    # bigram — skip if first token is a conjunction clitic or both are function words
+    for i in range(len(tokens) - 1):
+        n1, n2 = normed[i], normed[i + 1]
+        if n1 in _AR_CLITICS:
+            continue
+        if n1 in _AR_FUNCTION_WORDS and n2 in _AR_FUNCTION_WORDS:
+            continue
+        phrases.add(f"{n1} {n2}")
+
+    # trigram — same logic
+    for i in range(len(tokens) - 2):
+        n1, n2, n3 = normed[i], normed[i + 1], normed[i + 2]
+        if n1 in _AR_CLITICS:
+            continue
+        if n1 in _AR_FUNCTION_WORDS and n2 in _AR_FUNCTION_WORDS and n3 in _AR_FUNCTION_WORDS:
+            continue
+        phrases.add(f"{n1} {n2} {n3}")
 
     return phrases
 
+
+# ---------------------------------------------------------
+# Comprehensive Quranic Arabic function-word list
+# Forms are in normalized script (أإآ → ا, ة → ه, ى → ي)
+# ---------------------------------------------------------
+_AR_FUNCTION_WORDS = {
+    # single-letter clitics (will only match when hazm isolates them)
+    "و", "ف", "ب", "ل", "ك", "س",
+    # pronouns (personal)
+    "هو", "هي", "هم", "هن", "هما", "انا", "نحن", "انت", "انتم",
+    "انتن", "انتو", "انتما", "انتي", "اياي", 'اياك', 'اياه',
+    # demonstratives
+    "هذا", "هذه", "هذان", "هاتان", "هولاء", "ذلك", "تلك",
+    "اوليك", "هنا", "هناك", "هكذا", "كذلك",
+    # relative pronouns
+    "الذي", "التي", "الذين", "الذان", "اللتان", "اللاتي",
+    # clitic + relative pronoun compounds (hazm does NOT split these)
+    "والذي", "والتي", "والذين", "والذان", "فالذي", "فالتي", "فالذين",
+    "بالذي", "بالتي", "بالذين", "للذين",
+    # prepositions
+    "من", "في", "الي", "الى", "على", "علي", "عن", "مع",
+    "حتى", "منذ", "دون", "بين", "فوق", "تحت", "خلف", "وراء",
+    "قدام", "امام", "عند", "لدى", "لدي", "حيال",
+    # conjunctions
+    "ثم", "او", "ام", "بل", "لكن", "لکن", "لعل", "كي",
+    "کي", "لاجل", "کی", "لکی",
+    # clitic + conjunction compounds
+    "ولكن", "ولکن", "فلكن", "فيلك", "وبل", "واما", "فاما",
+    # negation
+    "لا", "لم", "لن", "لما", "ليس", "غير", "الا", "سوى",
+    "عدا", "خلا", "حاشا", "لست", "لستم", "ليسا", "ليسوا",
+    # particles
+    "قد", "هل", "س", "سوف", "إن", "ان", "کأن", "كان",
+    "کان", "لقد", "انما", "انّ", "ان", "فان", "وان",
+    # vocative / address particles
+    "ايها", "ايتها", "ايها", "یاایها", "ياايها", "يايها",
+    "یایها", "يایها",
+    # interrogatives
+    "ماذا", "كيف", "اين", "متى", "ايان", "كم", "اي", "اى",
+    "لماذا", "اينما", "حيثما", "كيفما",
+    # conditionals
+    "اذا", "لو", "لولا", "لئن", "کلما", "كلما", "مهما",
+    "اذ", "إذا", "لما", "حيث",
+    # time / place adverbs (function-adjacent)
+    "حين", "حیث", "عندما", "بعد", "قبل", "قط", "ذات",
+    "حینما", "بينما", "بعدما", "قبلما",
+    # reporting verbs (extremely high frequency, low semantic value in n-grams)
+    "قال", "قل", "قالوا", "قالت", "قيل", "يقول", "يقولون",
+    "قلنا", "قلتم", "يقال", "فقال", "وقال",
+    # common clitic+stopword compounds seen in Quran vocab
+    "فما", "فلا", "فمن", "فهل", "فلن", "فلم", "فلما", "فان",
+    "وما", "ولا", "ومن", "وله", "ولم", "ولن", "وهو", "وهي",
+    "وهم", "وله", "ولها", "ولهم", "ولكم", "ولنا", "ولي",
+    "واذا", "فاذا", "ولقد", "ولئن", "ولما",
+    "بما", "لمن", "ممن", "مما", "فيم", "فیم", "فبما", "وبما",
+    "ومما", "وفیما", "وفيما", "ففی", "ففي",
+    "واذ", "فاذ",
+    "وانتم", "وأنتم", "فانتم", "فأنتم",
+    "لعلکم", "لذلك", "ولذلك",
+    # "to be" verb conjugations (function-level)
+    "كانوا", "کانوا", "كنتم", "كنت", "كن", "كنا", "كن", "كون",
+    "يكون", "تكون", "اكون", "اكن", "نكون",
+    "تكاد", "يكاد", "تظل", "يظل", "تزال", "يزال",
+    # preposition+pronoun compounds
+    "به", "له", "لها", "لهم", "لكم", "لك", "لنا", "لي",
+    "بك", "بكم", "بنا", "بي", "بهم", "بها", "بكن",
+    "فيه", "فيها", "فيهم", "فينا", "فيكم",
+    "منه", "منها", "منهم", "منكم", "منك", "منا", "مهن",
+    "عنه", "عنها", "عنهم", "عنكم", "عنك",
+    "اليه", "اليها", "اليهم", "اليكم", "اليك",
+    "عليه", "عليها", "عليهم", "عليكم", "عليك", "علينا",
+    "عنده", "عندها", "عندهم", "عندكم", "عندنا",
+    "دونه", "دونها", "دونهم", "دونكم",
+    "بينهم", "بينكم", "بيننا", "بينهما",
+    "معه", "معها", "معهم", "معكم", "معنا",
+    # conjunction+pronoun compounds
+    "وبه", "وله", "ولهم", "ولها", "ولكم", "ولنا", "ولي",
+    "وفيه", "وفيها", "وفيهم",
+    "وعليه", "وعليها", "وعليهم",
+    # pronoun+verb / particle+pronoun compounds
+    "اني", "انه", "انها", "انهم", "انكم", "انك", "انا", "اننا",
+    "کانه", "کانهم", "كانما",
+    # intensifiers / quantifiers (function level)
+    "کل", "كل", "كلا", "کلا", "جميع", "اجمع", "معا",
+}
+
+_AR_CLITICS = {"و", "ف", "ب", "ل", "ك", "س", "بال", "فل", "ول", "فب"}
+
+# Also build a set of trie-like prefixes for fast lookup of clitic-attached forms
+_AR_CLITIC_PREFIXES = tuple(sorted(_AR_CLITICS, key=len, reverse=True))
+
+
 def normalize_arabic_phrase(text: str):
-
-    ARABIC_STOPWORDS = {
-    "من", "فی", "الی", "على", "علی", "ان", "إن",
-    "کان", "قد", "ما", "هو", "هی", "هذا", "هذه",
-    "ثم", "او", "أو", "و", "ف", "في", "إلى", "عن",
-    "و", "يا", "ذلك", "الذي", "التي"
-    }
-    # 1. normalize unicode
+    ARABIC_STOPWORDS = _AR_FUNCTION_WORDS
+    # 1. normalize unicode (same as _norm_ar — no hazm double-normalization)
     text = text.strip()
-    text = normalizer.normalize(text)
-
-    # 2. حذف اعراب قرآن
+    # remove diacritics and superscript alef
     text = re.sub(r'[\u064B-\u065F\u0670]', '', text)
-    
+    # alef normalization
+    text = text.replace("\u0623", "\u0627").replace("\u0625", "\u0627").replace("\u0622", "\u0627")
+    text = text.replace("\u0649", "\u064a")  # alif-maqsura → ya
+    text = text.replace("\u0629", "\u0647")  # ta-marbuta → ha
+    text = text.replace("\u06cc", "\u064a")  # farsi yeh → ya
+    text = text.replace("\u06a9", "\u0643")  # keheh → kaf
+    text = text.replace("\u06af", "\u0643")  # gaf → kaf
+    text = text.replace("\u06c0", "\u0647")  # heh-yeh → ha
+    text = text.replace("\u0671", "\u0627")  # alif-wasla → alif
+    text = text.replace("\u0626", "\u064a")  # yeh-with-hamza → ya
 
-
-    # 3. یکسان‌سازی حروف
-    text = text.replace("أ", "ا")
-    text = text.replace("إ", "ا")
-    text = text.replace("آ", "ا")
-
-    text = text.replace("ى", "ي")
-    text = text.replace("ة", "ه")
-
-    # 4. tokenize
+    # 2. tokenize
     tokens = word_tokenize(text)
 
-    # 5. حذف stopwords
+    # 3. stopword removal
     tokens = [
         t for t in tokens
         if t not in ARABIC_STOPWORDS
     ]
 
-    # 6. حذف token خیلی کوتاه
+    # 4. remove very short tokens
     tokens = [
         t for t in tokens
         if len(t) >= 2
     ]
 
-    # 7. reject empty
+    # 5. reject empty
     if not tokens:
         return None
-    
+
+    # 6. reject too long
     if len(tokens) > 5:
         return None
+
+    # 7. structural validation:
+    #    multi-word phrases must contain at least one content word
+    #    (≥ 3 chars AND not in function-word list)
+    if len(tokens) > 1:
+        has_content = any(
+            len(t) >= 3 and t not in ARABIC_STOPWORDS
+            for t in tokens
+        )
+        if not has_content:
+            return None
+
+    # 8. single-token phrases: ensure it's not a known compound stopword
+    if len(tokens) == 1:
+        t = tokens[0]
+        if t in ARABIC_STOPWORDS:
+            return None
+        # reject clitic+single-char combinations (pure function words:
+        # "به" = بـ + ه, "له" = لـ + ه, "لك" = لـ + ك, etc.)
+        for cl in _AR_CLITICS:
+            if t.startswith(cl) and len(t) - len(cl) <= 1:
+                return None
 
     return " ".join(tokens)
 
