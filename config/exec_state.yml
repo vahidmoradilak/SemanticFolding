@@ -1,4 +1,4 @@
-last_run_id: run_20260608_172547
+last_run_id: run_20260610_091500
 last_step: 7
 runs:
   run_20260519_214612:
@@ -2574,6 +2574,96 @@ runs:
           idf_weights: outputs\run_20260608_172547\term_context_matrix\idf_weights.json
           output: outputs/run_20260608_172547/query_results
           query: earth
+          spreading_steps: '1'
+          top_k: '5'
+          weighting: idf
+  run_20260610_091500:
+    corpus: data\quran\quran_ayahs.txt
+    created_at: '2026-06-10T09:15:00.539414'
+    steps:
+      1:
+        completed_at: '2026-06-10T09:17:04.443203'
+        mapping: outputs\run_20260610_091500\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260610_091500/extracted_phrases
+        params:
+          corpus: data\quran\quran_ayahs.txt
+          keep_verbs: 'true'
+          min_freq: '3'
+          no_filter_generic: 'false'
+          no_spacy: 'false'
+          output: outputs/run_20260610_091500/extracted_phrases
+          stats: 'false'
+        vocab: outputs\run_20260610_091500\extracted_phrases\vocabulary.csv
+      2:
+        completed_at: '2026-06-10T09:17:35.972222'
+        idf_weights: outputs\run_20260610_091500\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260610_091500\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260610_091500\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260610_091500/term_context_matrix
+        params:
+          corpus: data\quran\quran_ayahs.txt
+          mapping: outputs\run_20260610_091500\extracted_phrases\phrase_to_contexts.json
+          no_tfidf: 'false'
+          output: outputs/run_20260610_091500/term_context_matrix
+          vocab: outputs\run_20260610_091500\extracted_phrases\vocabulary.csv
+      3:
+        completed_at: '2026-06-10T09:20:15.176527'
+        coordinates: outputs\run_20260610_091500\semantic_space\context_coordinates.json
+        output: outputs/run_20260610_091500/semantic_space
+        params:
+          grid_size: '64'
+          matrix_npz: outputs\run_20260610_091500\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260610_091500\term_context_matrix\term_context_matrix.json
+          method: tsne
+          output: outputs/run_20260610_091500/semantic_space
+          show_density: 'false'
+          visualize: 'true'
+      4:
+        completed_at: '2026-06-10T09:25:11.674350'
+        output: outputs/run_20260610_091500/phrase_fingerprints
+        params:
+          coordinates: outputs\run_20260610_091500\semantic_space\context_coordinates.json
+          grid_size: '64'
+          metadata: outputs\run_20260610_091500\term_context_matrix\term_context_matrix.json
+          morton: 'true'
+          no_smooth: 'false'
+          output: outputs/run_20260610_091500/phrase_fingerprints
+          smoothing_sigma: '1.5'
+      5:
+        completed_at: '2026-06-10T09:28:44.155258'
+        output: outputs/run_20260610_091500/doc_fingerprints
+        params:
+          corpus: data\quran\quran_ayahs.txt
+          fingerprints: outputs/run_20260610_091500/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260610_091500\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          morton: 'true'
+          output: outputs/run_20260610_091500/doc_fingerprints
+          smoothing_sigma: '1.5'
+      6:
+        completed_at: '2026-06-10T09:44:02.209302'
+        output: outputs/run_20260610_091500/customtext_fingerprints
+        params:
+          corpus: data\customtexts.txt
+          fingerprints: outputs/run_20260610_091500/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260610_091500\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          morton: 'true'
+          output: outputs/run_20260610_091500/customtext_fingerprints
+          smoothing_sigma: '1.5'
+      7:
+        completed_at: '2026-06-10T10:24:18.613131'
+        output: outputs/run_20260610_091500/query_results
+        params:
+          doc_fingerprints: outputs/run_20260610_091500/doc_fingerprints
+          fingerprints: outputs/run_20260610_091500/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260610_091500\term_context_matrix\idf_weights.json
+          output: outputs/run_20260610_091500/query_results
+          query: مِن شَرِّ ٱلۡوَسۡوَاسِ ٱلۡخَنَّاسِ,From the evil of the retreating
+            whisperer
           spreading_steps: '1'
           top_k: '5'
           weighting: idf

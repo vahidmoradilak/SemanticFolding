@@ -186,8 +186,7 @@ def extract_phrases_from_doc(
         
         logger.debug(f"for {arabic_text} | {len(ar_row)} Ar raw phrases extracted")
         if not ar_row:
-            logger.debug(f"for {arabic_text} | no Ar raw phrases — skipping expansion")
-            return []
+            logger.debug(f"for {arabic_text} | no Ar raw phrases — checking English only")
 
         for p in ar_row:
             norm = normalize_arabic_phrase(p)
@@ -222,8 +221,8 @@ def extract_phrases_from_doc(
         logger.debug(f"for {english_clean} | {len(en_raw)} En raw phrases extracted")
 
         if not en_raw:
-            logger.debug(f"[CORPUS] Line {english_clean} | no En raw phrases — skipping expansion")
-            return []
+            logger.debug(f"[CORPUS] Line {english_clean} | no En raw phrases — checking Arabic only")
+            en_raw = set()
         
         # candidates: Set[str] = set()
         # for phrase in en_raw:

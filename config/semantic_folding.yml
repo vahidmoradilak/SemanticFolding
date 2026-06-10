@@ -10,7 +10,7 @@
 grid_size: 64                  # Shared across semantic_space and phrase_fingerprints
                                  # Sweep results: 64×64 beats 128×128 for 20-doc corpus
                                  # (MRR 1.000 vs 0.900, AP 0.869 vs 0.836)
-min_freq: 3                    # Minimum phrase frequency to keep (3+ for Quran; 2+ for smaller corpora)
+min_freq: 2                    # Minimum phrase frequency to keep (2+ for Quran rare words; 3+ for larger corpora)
 keep_verbs : true              # Include verbal elements in phrases
 smoothing_sigma: 1.5           # Gaussian smoothing sigma before peak detection
 

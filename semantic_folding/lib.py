@@ -584,7 +584,7 @@ _AR_FUNCTION_WORDS = {
     "قد", "هل", "س", "سوف", "إن", "ان", "کأن", "كان",
     "کان", "لقد", "انما", "انّ", "ان", "فان", "وان",
     # vocative / address particles
-    "ايها", "ايتها", "ايها", "یاایها", "ياايها",
+    "ايها", "ايتها", "ايها", "یاایها", "ياايها", "يايها",
     "یایها", "يایها",
     # interrogatives
     "ماذا", "كيف", "اين", "متى", "ايان", "كم", "اي", "اى",
@@ -643,51 +643,45 @@ _AR_CLITIC_PREFIXES = tuple(sorted(_AR_CLITICS, key=len, reverse=True))
 
 def normalize_arabic_phrase(text: str):
     ARABIC_STOPWORDS = _AR_FUNCTION_WORDS
-    # 1. normalize unicode
+    # 1. normalize unicode (same as _norm_ar — no hazm double-normalization)
     text = text.strip()
-    text = normalizer.normalize(text)
-
-    # 2. حذف اعراب قرآن
+    # remove diacritics and superscript alef
     text = re.sub(r'[\u064B-\u065F\u0670]', '', text)
-    
-
-
-    # 3. یکسان‌سازی حروف
-    text = text.replace("أ", "ا")
-    text = text.replace("إ", "ا")
-    text = text.replace("آ", "ا")
-
-    text = text.replace("ى", "ي")
-    text = text.replace("ة", "ه")
-
-    text = text.replace("ک", "ك")
+    # alef normalization
+    text = text.replace("\u0623", "\u0627").replace("\u0625", "\u0627").replace("\u0622", "\u0627")
+    text = text.replace("\u0649", "\u064a")  # alif-maqsura → ya
+    text = text.replace("\u0629", "\u0647")  # ta-marbuta → ha
+    text = text.replace("\u06cc", "\u064a")  # farsi yeh → ya
     text = text.replace("\u06a9", "\u0643")  # keheh → kaf
     text = text.replace("\u06af", "\u0643")  # gaf → kaf
+    text = text.replace("\u06c0", "\u0647")  # heh-yeh → ha
+    text = text.replace("\u0671", "\u0627")  # alif-wasla → alif
+    text = text.replace("\u0626", "\u064a")  # yeh-with-hamza → ya
 
-    # 4. tokenize
+    # 2. tokenize
     tokens = word_tokenize(text)
 
-    # 5. حذف stopwords
+    # 3. stopword removal
     tokens = [
         t for t in tokens
         if t not in ARABIC_STOPWORDS
     ]
 
-    # 6. حذف token خیلی کوتاه
+    # 4. remove very short tokens
     tokens = [
         t for t in tokens
         if len(t) >= 2
     ]
 
-    # 7. reject empty
+    # 5. reject empty
     if not tokens:
         return None
 
-    # 8. reject too long
+    # 6. reject too long
     if len(tokens) > 5:
         return None
 
-    # 9. structural validation:
+    # 7. structural validation:
     #    multi-word phrases must contain at least one content word
     #    (≥ 3 chars AND not in function-word list)
     if len(tokens) > 1:
@@ -698,7 +692,7 @@ def normalize_arabic_phrase(text: str):
         if not has_content:
             return None
 
-    # 10. single-token phrases: ensure it's not a known compound stopword
+    # 8. single-token phrases: ensure it's not a known compound stopword
     if len(tokens) == 1:
         t = tokens[0]
         if t in ARABIC_STOPWORDS:
