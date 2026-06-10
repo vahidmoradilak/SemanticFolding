@@ -45,18 +45,5 @@ Enter choice (1-5):
 
 last update at 050318_1045
 last update at 050318_1108
-
-
---query "mercy forgiveness" --fingerprints outputs\quran_full_test\step4_phrase_fingerprints
-
-
-18:57:13 | INFO     | query_processing | Ranking: 5940/5940 docs above threshold, top score=0.0338, mean=0.0049
-QUERY: mercy forgiveness
-Top 5 Results:
- 1. 1858                                               | Score: 0.0338
- 2. 2116                                               | Score: 0.0322
- 3. 3979                                               | Score: 0.0321
- 4. 3205                                               | Score: 0.0320
- 5. 3749                                               | Score: 0.0303
-
+last update at 050320_2233: edit min_freq from3 to 2 and modify some error lines
 
