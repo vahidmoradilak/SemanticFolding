@@ -223,6 +223,38 @@ def is_generic_word(word: str, min_length: int = 3) -> bool:
         return True
     return False
 
+def split_arabic_english(text: str):
+    ar_positions = [m.start() for m in _ARABIC_SCRIPT.finditer(text)]
+    if not ar_positions:
+        return "", text.strip()
+
+    last_ar = max(ar_positions)
+    ar_raw = text[:last_ar + 1]
+    en_raw = text[last_ar + 1:]
+
+    arabic_text = ar_raw.rstrip(',').strip().strip('"').strip()
+    english_text = en_raw.strip().strip('"').strip()
+
+    return arabic_text, english_text
+
+def split_id_arabic_english(line: str):
+    comma1 = line.index(',')
+    ctx_id = line[:comma1].strip()
+    rest = line[comma1 + 1:]
+
+    ar_positions = [m.start() for m in _ARABIC_SCRIPT.finditer(rest)]
+    if not ar_positions:
+        return ctx_id, "", rest.strip()
+
+    last_ar = max(ar_positions)
+    ar_raw = rest[:last_ar + 1]
+    en_raw = rest[last_ar + 1:]
+
+    arabic_text = ar_raw.rstrip(',').strip().strip('"').strip()
+    english_text = en_raw.strip().strip('"').strip()
+
+    return ctx_id, arabic_text, english_text
+
 def is_valid_phrase_structure(tagged_tokens: List[Tuple[str, str]]) -> bool:
     if not tagged_tokens:
         return False

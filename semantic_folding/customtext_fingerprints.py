@@ -86,6 +86,7 @@ from lib import (
     sparsify_fingerprint,
     normalize_hyphens,
     extract_raw_phrases_ar_fa,
+    split_arabic_english,
     normalize_arabic_phrase,
 )
 
@@ -146,20 +147,6 @@ def write_outputs(
 
 import re
 _ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
-
-def split_arabic_english(text: str):
-    ar_positions = [m.start() for m in _ARABIC_SCRIPT.finditer(text)]
-    if not ar_positions:
-        return "", text.strip()
-
-    last_ar = max(ar_positions)
-    ar_raw = text[:last_ar + 1]
-    en_raw = text[last_ar + 1:]
-
-    arabic_text = ar_raw.rstrip(',').strip().strip('"').strip()
-    english_text = en_raw.strip().strip('"').strip()
-
-    return arabic_text, english_text
 
 def extract_phrases_from_doc(
     text            : str,
@@ -224,31 +211,24 @@ def extract_phrases_from_doc(
             logger.debug(f"[CORPUS] Line {english_clean} | no En raw phrases — checking Arabic only")
             en_raw = set()
         
-        # candidates: Set[str] = set()
-        # for phrase in en_raw:
-        #     norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
-        #     if norm:
-        #         candidates.add(norm)
-
-        # if not candidates:
-        #     logger.debug(f"No phrases extracted from english text snippet: {english_clean[:80]!r}...")
-        #     return []
-
-        # # ── Stage 2: sub-phrase expansion ────────────────────────────────────────
-        # expanded: List[str] = expand_phrases(
-        #     list(candidates),
-        #     context_text    = english_clean,             
-        #     filter_generic  = filter_generic,
-        #     min_word_length = min_word_length,
-        # )
-        
         # ── Stage 2 & 3: expansion + normalization ────────────────────────
         # expand_phrases receives raw (un-normalized) phrases and handles
         # surface validation before normalizing internally.
         # text_clean is passed so that context validation (substring match)
         # works against the same hyphen-free surface form that the extractor saw.
+        
+        candidates: Set[str] = set()
+        for phrase in en_raw:
+            norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
+            if norm:
+                candidates.add(norm)
+
+        if not candidates:
+            logger.debug(f"No phrases extracted from english text snippet: {english_clean[:80]!r}...")
+            candidates = set()
+        
         en_valid = expand_phrases(
-            list(en_raw),
+            list(candidates),
             context_text=english_clean,       # must match what extractor saw
             filter_generic=filter_generic,
             min_word_length=min_word_length,
@@ -271,6 +251,19 @@ def extract_phrases_from_doc(
     # matched: List[str] = [p for p in expanded if p in phrase_vocab]
     # matched: List[str] = [p for p in candidates if p in phrase_vocab]
     matched: List[str] = [p for p in valid_sub_phrases if p in phrase_vocab]
+    oov:     List[str] = [p for p in valid_sub_phrases if p not in phrase_vocab]
+
+    if oov:
+        logger.debug(f"  [OOV] {len(oov)} phrases not in vocab: {oov}")
+    if matched:
+        logger.debug(f"  [MATCHED] {matched}")
+    
+    logger.info(
+        f"Query phrase extraction: {len(ar_valid)} arabic raw + {len(en_valid)} english raw → "
+        f"{len(candidates)} normalised → "
+        f"{len(valid_sub_phrases)} expanded → "
+        f"{len(matched)} vocab hits"
+    )
 
     if not matched:
         logger.debug(f"No vocabulary matches in text snippet: {text[:80]!r}...")

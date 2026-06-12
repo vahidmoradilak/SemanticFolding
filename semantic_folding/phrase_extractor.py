@@ -27,7 +27,7 @@ logger = get_logger("phrase_extractor")
 
 
 # ── Library imports ────────────────────────────────────────────────────────────
-from lib import expand_phrases, normalize_hyphens, normalize_arabic_phrase, _QURANIC_KEEP
+from lib import expand_phrases, normalize_hyphens, normalize_arabic_phrase, split_id_arabic_english, _QURANIC_KEEP
 
 # ── spaCy bootstrap ───────────────────────────────────────────────────────────
 try:
@@ -57,24 +57,6 @@ from lib import detect_language, extract_raw_phrases_ar_fa
 
 import re
 _ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
-
-def split_id_arabic_english(line: str):
-    comma1 = line.index(',')
-    ctx_id = line[:comma1].strip()
-    rest = line[comma1 + 1:]
-
-    ar_positions = [m.start() for m in _ARABIC_SCRIPT.finditer(rest)]
-    if not ar_positions:
-        return ctx_id, "", rest.strip()
-
-    last_ar = max(ar_positions)
-    ar_raw = rest[:last_ar + 1]
-    en_raw = rest[last_ar + 1:]
-
-    arabic_text = ar_raw.rstrip(',').strip().strip('"').strip()
-    english_text = en_raw.strip().strip('"').strip()
-
-    return ctx_id, arabic_text, english_text
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Fallback extractor (NLTK)
@@ -486,6 +468,17 @@ def process_corpus_with_expansion(
                 # surface validation before normalizing internally.
                 # text_clean is passed so that context validation (substring match)
                 # works against the same hyphen-free surface form that the extractor saw.
+
+                # candidates: Set[str] = set()
+                # for phrase in en_raw:
+                #     norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
+                #     if norm:
+                #         candidates.add(norm)
+
+                # if not candidates:
+                #     logger.debug(f"No phrases extracted from english text snippet: {english_clean[:80]!r}...")
+                #     candidates = set()
+
                 en_valid = expand_phrases(
                     list(en_raw),
                     context_text=english_clean,       # must match what extractor saw

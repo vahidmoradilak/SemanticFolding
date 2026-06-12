@@ -71,6 +71,10 @@ from lib import (
     load_phrase_fingerprints_sparse,
     normalize_fingerprint,
     normalize_phrase,
+    normalize_hyphens,
+    extract_raw_phrases_ar_fa,
+    split_arabic_english,
+    normalize_arabic_phrase,
 )
 SPARCITY_GAURD=0.005
 # ─────────────────────────────────────────────────────────────────────────────
@@ -975,57 +979,106 @@ def extract_query_phrases(
     )
 
     # ── Stage 1: extraction + normalisation ──────────────────────────────────
-    if use_spacy and SPACY_AVAILABLE:
-        logger.debug("Stage 1: using spaCy extractor")
-        doc = nlp(query)
-        raw_phrases = extract_raw_phrases_spacy(doc)
-    else:
-        if use_spacy and not SPACY_AVAILABLE:
-            logger.warning(
-                "spaCy requested but unavailable — using NLTK fallback. "
-                "Verify this matches the setting used in Step 1."
+    arabic_text, english_text = split_arabic_english(query)
+    ar_valid = set()
+    if arabic_text:
+        ar_row = extract_raw_phrases_ar_fa(arabic_text)
+        
+        logger.debug(f"for {arabic_text} | {len(ar_row)} Ar raw phrases extracted")
+        if not ar_row:
+            logger.debug(f"for {arabic_text} | no Ar raw phrases — checking English only")
+
+        for p in ar_row:
+            norm = normalize_arabic_phrase(p)
+            if norm:
+                ar_valid.add(norm)
+                logger.debug(f"[AR][KEEP] '{p}' → '{norm}'")
+
+    en_valid = set()
+    if english_text:
+        # ── Hyphen normalization ──────────────────────────────────────────
+        # Replace intra-word hyphens (e.g. 'rule-based') with spaces so
+        # that compound terms are tokenized as multi-word phrases rather
+        # than being split into three tokens: word, '-', word.
+        # text_clean is used for ALL downstream processing; text_original
+        # is kept only for logging/diagnostics.
+        english_clean = normalize_hyphens(english_text)
+        english_clean_lower = normalize_hyphens(english_text.lower())
+
+        if english_clean != english_text:
+            logger.debug(
+                f"for {english_clean} | hyphen normalization applied: "
+                f"'{english_text[:60]}' → '{english_clean[:60]}'"
             )
+
+        if use_spacy and SPACY_AVAILABLE:
+            logger.debug("Stage 1: using spaCy extractor")
+            doc = nlp(english_clean) # spaCy sees hyphen-free text
+            en_raw = extract_raw_phrases_spacy(doc)
         else:
-            logger.debug("Stage 1: using NLTK fallback extractor")
-        raw_phrases = extract_raw_phrases_fallback(query, max_ngram=4)
+            if use_spacy and not SPACY_AVAILABLE:
+                logger.warning(
+                    "spaCy requested but unavailable — using NLTK fallback. "
+                    "Verify this matches the setting used in Step 1."
+                )
+            else:
+                logger.debug("Stage 1: using NLTK fallback extractor")
+            
+            en_raw = extract_raw_phrases_fallback(english_clean_lower, max_ngram=4)
+            
 
-    logger.debug(f"  [EXTRACT] {len(raw_phrases)} raw phrases: {raw_phrases}")
+        logger.debug(f"for {english_clean} | {len(en_raw)} En raw phrases extracted")
 
-    candidates: List[str] = []
-    for phrase in raw_phrases:
-        norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
-        if norm:
-            candidates.append(norm)
-            logger.debug(f"  [NORM OK] '{phrase}' → '{norm}'")
+        if not en_raw:
+            logger.debug(f"[CORPUS] Line {english_clean} | no En raw phrases — checking Arabic only")
+            en_raw = set()
+        
+        candidates: List[str] = []
+        for phrase in en_raw:
+            norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
+            if norm:
+                candidates.append(norm)
+                logger.debug(f"  [NORM OK] '{phrase}' → '{norm}'")
+            else:
+                logger.debug(f"  [NORM DROP] '{phrase}' → empty after normalisation")
+
+        if not candidates:
+            logger.debug(f"No phrases extracted from query english text snippet: {english_clean[:80]!r}...")
+            candidates = set()
         else:
-            logger.debug(f"  [NORM DROP] '{phrase}' → empty after normalisation")
+            logger.debug(f"  Stage 1 complete: {len(candidates)} normalised candidates")
+        
+        logger.debug("Stage 2: expanding candidates into sub-phrases")
+        en_valid = expand_phrases(
+            list(candidates),
+            # context_text=english_clean,       # must match what extractor saw
+            context_text    = None,
+            filter_generic  = filter_generic,
+            min_word_length = min_word_length,
+        )
+        logger.debug(
+            f"  Stage 2 complete: {len(candidates)} candidates → "
+            f"{len(en_valid)} expanded phrases"
+        )
+        if en_valid:
+            logger.debug(f"  [EXPANDED] {en_valid}")
+    
+    valid_sub_phrases = list(ar_valid | set(en_valid))
 
-    if not candidates:
-        logger.debug(f"No candidates after normalisation for query: {query!r}")
+    if not valid_sub_phrases:
+        logger.debug(f"for {query} | no valid sub phrases — skipping expansion")
         return []
 
-    logger.debug(f"  Stage 1 complete: {len(candidates)} normalised candidates")
-
-    # ── Stage 2: sub-phrase expansion ────────────────────────────────────────
-    logger.debug("Stage 2: expanding candidates into sub-phrases")
-    expanded: List[str] = expand_phrases(
-        candidates,
-        context_text    = None,   
-        filter_generic  = filter_generic,
-        min_word_length = min_word_length,
-    )
     logger.debug(
-        f"  Stage 2 complete: {len(candidates)} candidates → "
-        f"{len(expanded)} expanded phrases"
+        f"for {query} | {len(valid_sub_phrases)} phrases: {valid_sub_phrases} "
+        f"survived expansion/normalization"
     )
-    if expanded:
-        logger.debug(f"  [EXPANDED] {expanded}")
 
     # ── Stage 3: vocabulary filter ────────────────────────────────────────────
     logger.debug("Stage 3: filtering against phrase vocabulary")
     matched: List[str] = []
     oov:     List[str] = []
-    for p in expanded:
+    for p in valid_sub_phrases:
         if p in phrase_vocab:
             matched.append(p)
         else:
@@ -1037,11 +1090,14 @@ def extract_query_phrases(
         logger.debug(f"  [MATCHED] {matched}")
 
     logger.info(
-        f"Query phrase extraction: {len(raw_phrases)} raw → "
+        f"Query phrase extraction: {len(ar_valid)} arabic raw + {len(en_valid)} english raw → "
         f"{len(candidates)} normalised → "
-        f"{len(expanded)} expanded → "
+        f"{len(valid_sub_phrases)} expanded → "
         f"{len(matched)} vocab hits"
     )
+
+    if not matched:
+        logger.debug(f"No vocabulary matches in text snippet: {query[:80]!r}...")
 
     return matched
 
