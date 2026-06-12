@@ -11,6 +11,7 @@ uv add --trusted-host mirror-pypi.runflare.com -i https://mirror-pypi.runflare.c
 pip install -i https://mirror-pypi.runflare.com/simple spacy
 
 data\quran\quran_ayahs.txt
+data\quran\quran_ayahs_clean.txt
 data\quran\quran_ayahs_tail764.txt
 data\quran\quran_ayahs_tail20ta.txt
 
