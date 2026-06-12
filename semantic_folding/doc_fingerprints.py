@@ -8,11 +8,11 @@ then sparsifies via topology-preserving peak detection on 2D semantic grids.
 
 Pipeline position
 -----------------
-Step 1  phrase_extractor.py   → vocabulary.csv
-Step 2  term_context.py       → term_context_matrix.*, idf_weights.json
-Step 3  semantic_space.py     → context_coordinates.json
-Step 4  phrase_fingerprints.py→ phrase_fingerprints/
-Step 5  doc_fingerprints.py   → doc_fingerprints/          ← THIS FILE
+Step 1  phrase_extractor.py        → vocabulary.csv
+Step 2  term_context.py            → term_context_matrix.*, idf_weights.json
+Step 3  semantic_space.py          → context_coordinates.json
+Step 4  phrase_fingerprints.py     → phrase_fingerprints/
+Step 5  doc_fingerprints.py        → doc_fingerprints/          ← THIS FILE
 Step 6  customtext_fingerprints.py → customtext_fingerprints/
 Step 7  query_processing.py        → query results
 
@@ -86,6 +86,7 @@ from lib import (
     sparsify_fingerprint,
     normalize_hyphens,
     extract_raw_phrases_ar_fa,
+    split_arabic_english,
     normalize_arabic_phrase,
 )
 
@@ -146,20 +147,6 @@ def write_outputs(
 
 import re
 _ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
-
-def split_arabic_english(text: str):
-    ar_positions = [m.start() for m in _ARABIC_SCRIPT.finditer(text)]
-    if not ar_positions:
-        return "", text.strip()
-
-    last_ar = max(ar_positions)
-    ar_raw = text[:last_ar + 1]
-    en_raw = text[last_ar + 1:]
-
-    arabic_text = ar_raw.rstrip(',').strip().strip('"').strip()
-    english_text = en_raw.strip().strip('"').strip()
-
-    return arabic_text, english_text
 
 def extract_phrases_from_doc(
     text            : str,
@@ -224,31 +211,24 @@ def extract_phrases_from_doc(
             logger.debug(f"[CORPUS] Line {english_clean} | no En raw phrases — checking Arabic only")
             en_raw = set()
         
-        # candidates: Set[str] = set()
-        # for phrase in en_raw:
-        #     norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
-        #     if norm:
-        #         candidates.add(norm)
-
-        # if not candidates:
-        #     logger.debug(f"No phrases extracted from english text snippet: {english_clean[:80]!r}...")
-        #     return []
-
-        # # ── Stage 2: sub-phrase expansion ────────────────────────────────────────
-        # expanded: List[str] = expand_phrases(
-        #     list(candidates),
-        #     context_text    = english_clean,             
-        #     filter_generic  = filter_generic,
-        #     min_word_length = min_word_length,
-        # )
-        
         # ── Stage 2 & 3: expansion + normalization ────────────────────────
         # expand_phrases receives raw (un-normalized) phrases and handles
         # surface validation before normalizing internally.
         # text_clean is passed so that context validation (substring match)
         # works against the same hyphen-free surface form that the extractor saw.
+
+        candidates: Set[str] = set()
+        for phrase in en_raw:
+            norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
+            if norm:
+                candidates.add(norm)
+
+        if not candidates:
+            logger.debug(f"No phrases extracted from english text snippet: {english_clean[:80]!r}...")
+            candidates = set()
+        
         en_valid = expand_phrases(
-            list(en_raw),
+            list(candidates),
             context_text=english_clean,       # must match what extractor saw
             filter_generic=filter_generic,
             min_word_length=min_word_length,
@@ -271,7 +251,20 @@ def extract_phrases_from_doc(
     # matched: List[str] = [p for p in expanded if p in phrase_vocab]
     # matched: List[str] = [p for p in candidates if p in phrase_vocab]
     matched: List[str] = [p for p in valid_sub_phrases if p in phrase_vocab]
+    oov:     List[str] = [p for p in valid_sub_phrases if p not in phrase_vocab]
 
+    if oov:
+        logger.debug(f"  [OOV] {len(oov)} phrases not in vocab: {oov}")
+    if matched:
+        logger.debug(f"  [MATCHED] {matched}")
+    
+    logger.info(
+        f"Query phrase extraction: {len(ar_valid)} arabic raw + {len(en_valid)} english raw → "
+        f"{len(candidates)} normalised → "
+        f"{len(valid_sub_phrases)} expanded → "
+        f"{len(matched)} vocab hits"
+    )
+    
     if not matched:
         logger.debug(f"No vocabulary matches in text snippet: {text[:80]!r}...")
 
@@ -821,7 +814,7 @@ def build_doc_fingerprints(
     logger.info(f"  → Final use_morton: {use_morton}")
 
     logger.info(f"  → Phrase fingerprints use Morton encoding: {use_morton}")
-
+    
     # Build the index‑to‑coordinate lookup table ONCE for all documents.
     # This table is now essential for correct 2D back‑projection.
     index_to_xy_table = build_index_to_xy_table(grid_size, use_morton)
@@ -851,7 +844,7 @@ def build_doc_fingerprints(
 
     skipped = 0
     processed = 0
-
+    
     for idx, (doc_id, doc_text) in tqdm(enumerate(corpus.items())):
         if (idx + 1) % 10 == 0 or idx == 0:
             progress_pct = 100.0 * (idx + 1) / n_docs
@@ -982,17 +975,17 @@ def main():
     )
     
     parser.add_argument(
-        "--idf-weights",
-        type=Path,
-        default=None,
-        help="Path to idf_weights.json (optional, from Step 2)",
-    )
-    
-    parser.add_argument(
         "--output",
         type=Path,
         required=True,
         help="Output directory for document fingerprints",
+    )
+    
+    parser.add_argument(
+        "--idf-weights",
+        type=Path,
+        default=None,
+        help="Path to idf_weights.json (optional, from Step 2)",
     )
     
     parser.add_argument(

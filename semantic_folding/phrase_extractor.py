@@ -27,7 +27,7 @@ logger = get_logger("phrase_extractor")
 
 
 # ── Library imports ────────────────────────────────────────────────────────────
-from lib import expand_phrases, normalize_hyphens, normalize_arabic_phrase
+from lib import expand_phrases, normalize_hyphens, normalize_arabic_phrase, split_id_arabic_english, _QURANIC_KEEP
 
 # ── spaCy bootstrap ───────────────────────────────────────────────────────────
 try:
@@ -57,24 +57,6 @@ from lib import detect_language, extract_raw_phrases_ar_fa
 
 import re
 _ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
-
-def split_id_arabic_english(line: str):
-    comma1 = line.index(',')
-    ctx_id = line[:comma1].strip()
-    rest = line[comma1 + 1:]
-
-    ar_positions = [m.start() for m in _ARABIC_SCRIPT.finditer(rest)]
-    if not ar_positions:
-        return ctx_id, "", rest.strip()
-
-    last_ar = max(ar_positions)
-    ar_raw = rest[:last_ar + 1]
-    en_raw = rest[last_ar + 1:]
-
-    arabic_text = ar_raw.rstrip(',').strip().strip('"').strip()
-    english_text = en_raw.strip().strip('"').strip()
-
-    return ctx_id, arabic_text, english_text
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Fallback extractor (NLTK)
@@ -486,6 +468,17 @@ def process_corpus_with_expansion(
                 # surface validation before normalizing internally.
                 # text_clean is passed so that context validation (substring match)
                 # works against the same hyphen-free surface form that the extractor saw.
+
+                # candidates: Set[str] = set()
+                # for phrase in en_raw:
+                #     norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
+                #     if norm:
+                #         candidates.add(norm)
+
+                # if not candidates:
+                #     logger.debug(f"No phrases extracted from english text snippet: {english_clean[:80]!r}...")
+                #     candidates = set()
+
                 en_valid = expand_phrases(
                     list(en_raw),
                     context_text=english_clean,       # must match what extractor saw
@@ -520,18 +513,24 @@ def process_corpus_with_expansion(
     final_mapping: Dict[str, List[str]] = {}
 
     dropped = 0
+    quranic_keep = 0
     for phrase, ctx_set in raw_phrase_contexts.items():
         doc_freq = len(ctx_set)
-        if doc_freq >= min_freq:
+        if doc_freq >= min_freq or phrase in _QURANIC_KEEP:
             final_vocabulary[phrase] = doc_freq
             final_mapping[phrase] = sorted(list(ctx_set))
-            logger.debug(f"[FREQ][KEEP] '{phrase}'  freq={doc_freq}")
+            if phrase in _QURANIC_KEEP and doc_freq < min_freq:
+                quranic_keep += 1
+                logger.debug(f"[FREQ][QURANIC_KEEP] '{phrase}'  freq={doc_freq} (whitelisted)")
+            else:
+                logger.debug(f"[FREQ][KEEP] '{phrase}'  freq={doc_freq}")
         else:
             dropped += 1
             logger.debug(f"[FREQ][DROP] '{phrase}'  freq={doc_freq} < min={min_freq}")
 
     logger.info(
-        f"[FREQ] Kept {len(final_vocabulary)} phrases, "
+        f"[FREQ] Kept {len(final_vocabulary)} phrases "
+        f"({quranic_keep} whitelisted), "
         f"dropped {dropped} below min_freq={min_freq}"
     )
 
@@ -865,7 +864,9 @@ def extract_raw_phrases_spacy(doc) -> list[str]:
         """True if tok is a finite verb that should disqualify the chunk."""
         if tok.pos_ not in ('VERB', 'AUX'):
             return False
-        if tok.tag_ == 'VBG' and tok == chunk.root and tok.dep_ in NOMINAL_DEPS:
+        if tok != chunk.root:
+            return False
+        if tok.tag_ == 'VBG' and tok.dep_ in NOMINAL_DEPS:
             return False
         return True
 

@@ -223,6 +223,38 @@ def is_generic_word(word: str, min_length: int = 3) -> bool:
         return True
     return False
 
+def split_arabic_english(text: str):
+    ar_positions = [m.start() for m in _ARABIC_SCRIPT.finditer(text)]
+    if not ar_positions:
+        return "", text.strip()
+
+    last_ar = max(ar_positions)
+    ar_raw = text[:last_ar + 1]
+    en_raw = text[last_ar + 1:]
+
+    arabic_text = ar_raw.rstrip(',').strip().strip('"').strip()
+    english_text = en_raw.strip().strip('"').strip()
+
+    return arabic_text, english_text
+
+def split_id_arabic_english(line: str):
+    comma1 = line.index(',')
+    ctx_id = line[:comma1].strip()
+    rest = line[comma1 + 1:]
+
+    ar_positions = [m.start() for m in _ARABIC_SCRIPT.finditer(rest)]
+    if not ar_positions:
+        return ctx_id, "", rest.strip()
+
+    last_ar = max(ar_positions)
+    ar_raw = rest[:last_ar + 1]
+    en_raw = rest[last_ar + 1:]
+
+    arabic_text = ar_raw.rstrip(',').strip().strip('"').strip()
+    english_text = en_raw.strip().strip('"').strip()
+
+    return ctx_id, arabic_text, english_text
+
 def is_valid_phrase_structure(tagged_tokens: List[Tuple[str, str]]) -> bool:
     if not tagged_tokens:
         return False
@@ -636,6 +668,48 @@ _AR_FUNCTION_WORDS = {
 }
 
 _AR_CLITICS = {"و", "ف", "ب", "ل", "ك", "س", "بال", "فل", "ول", "فب"}
+
+# ---------------------------------------------------------
+# Quranic important-term whitelist
+# Phrases in this set bypass the min_freq filter in Step 1
+# so that rare but semantically/theologically important
+# Quranic vocabulary is always preserved.
+# Forms must be pre-normalized with normalize_arabic_phrase.
+# ---------------------------------------------------------
+_QURANIC_KEEP: Set[str] = {
+    # Verse 5774
+    "كرام", "برره", "كرام برره",
+    # Verse 5799
+    "ترهقها", "قتره", "ترهقها قتره",
+    # Verse 5826
+    "تذهبون", "فاين", "فاين تذهبون",
+    # Verse 5845
+    "بغايبين",
+    # Verse 5915
+    "قعود",
+    # Verse 5931
+    "لوح", "محفوظ", "لوح محفوظ",
+    # Verse 5934
+    "النجم", "الثاقب", "النجم الثاقب",
+    # Verse 6055
+    "انبعث", "اشقيها", "انبعث اشقيها",
+    # Verse 6147
+    "ضبحا", "والعديت", "والعديت ضبحا",
+    # Verse 6224
+    "يلد", "يولد", "يلد يولد",
+
+    # English equivalents (normalized by expand_phrases → normalize_phrase)
+    # Verse 5799
+    "blackness",
+    # Verse 5931
+    "preserved", "preserved slate", "slate",
+    # Verse 5934
+    "piercing", "piercing star", "star",
+    # Verse 6147
+    "panting", "racer",
+    # Verse 6224
+    "begets",
+}
 
 # Also build a set of trie-like prefixes for fast lookup of clitic-attached forms
 _AR_CLITIC_PREFIXES = tuple(sorted(_AR_CLITICS, key=len, reverse=True))

@@ -549,7 +549,7 @@ def main():
     
     grid_size = metadata['grid_size']
     
-    text_dir = "data\\quran\\quran_ayahs.txt" 
+    text_dir = "data\\quran\\quran_ayahs_clean.txt" 
     # text_dir = "data\\quran\\quran_ayahs_NE.txt" 
     # text_dir = "data\\quran\\quran_ayahs_tail764.txt" 
     # text_dir = "data\\corpus.txt"
