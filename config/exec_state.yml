@@ -1,5 +1,5 @@
-last_run_id: run_20260610_091500
-last_step: 7
+last_run_id: run_20260612_082037
+last_step: 6
 runs:
   run_20260519_214612:
     corpus: data\corpus.txt
@@ -2486,6 +2486,96 @@ runs:
           grid_size: '64'
           idf_weights: outputs\run_20260610_091500\term_context_matrix\idf_weights.json
           output: outputs/run_20260610_091500/query_results
+          query: مِن شَرِّ ٱلۡوَسۡوَاسِ ٱلۡخَنَّاسِ,From the evil of the retreating
+            whisperer
+          spreading_steps: '1'
+          top_k: '5'
+          weighting: idf
+  run_20260612_082037:
+    corpus: data\quran\quran_ayahs_clean.txt
+    created_at: '2026-06-12T08:20:37.556210'
+    steps:
+      1:
+        completed_at: '2026-06-12T08:25:43.467901'
+        mapping: outputs\run_20260612_082037\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260612_082037/extracted_phrases
+        params:
+          corpus: data\quran\quran_ayahs_clean.txt
+          keep_verbs: 'true'
+          min_freq: '2'
+          no_filter_generic: 'false'
+          no_spacy: 'false'
+          output: outputs/run_20260612_082037/extracted_phrases
+          stats: 'false'
+        vocab: outputs\run_20260612_082037\extracted_phrases\vocabulary.csv
+      2:
+        completed_at: '2026-06-12T08:30:53.254658'
+        idf_weights: outputs\run_20260612_082037\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260612_082037\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260612_082037\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260612_082037/term_context_matrix
+        params:
+          corpus: data\quran\quran_ayahs_clean.txt
+          mapping: outputs\run_20260612_082037\extracted_phrases\phrase_to_contexts.json
+          no_tfidf: 'false'
+          output: outputs/run_20260612_082037/term_context_matrix
+          vocab: outputs\run_20260612_082037\extracted_phrases\vocabulary.csv
+      3:
+        completed_at: '2026-06-12T08:33:17.650259'
+        coordinates: outputs\run_20260612_082037\semantic_space\context_coordinates.json
+        output: outputs/run_20260612_082037/semantic_space
+        params:
+          grid_size: '64'
+          matrix_npz: outputs\run_20260612_082037\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260612_082037\term_context_matrix\term_context_matrix.json
+          method: tsne
+          output: outputs/run_20260612_082037/semantic_space
+          show_density: 'false'
+          visualize: 'true'
+      4:
+        completed_at: '2026-06-12T08:34:57.784546'
+        output: outputs/run_20260612_082037/phrase_fingerprints
+        params:
+          coordinates: outputs\run_20260612_082037\semantic_space\context_coordinates.json
+          grid_size: '64'
+          metadata: outputs\run_20260612_082037\term_context_matrix\term_context_matrix.json
+          morton: 'true'
+          no_smooth: 'false'
+          output: outputs/run_20260612_082037/phrase_fingerprints
+          smoothing_sigma: '1.5'
+      5:
+        completed_at: '2026-06-12T13:51:43.261604'
+        output: outputs/run_20260612_082037/doc_fingerprints
+        params:
+          corpus: data\quran\quran_ayahs_clean.txt
+          fingerprints: outputs/run_20260612_082037/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260612_082037\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          morton: 'true'
+          output: outputs/run_20260612_082037/doc_fingerprints
+          smoothing_sigma: '1.5'
+      6:
+        completed_at: '2026-06-12T13:53:35.227864'
+        output: outputs/run_20260612_082037/customtext_fingerprints
+        params:
+          corpus: data\customtexts.txt
+          fingerprints: outputs/run_20260612_082037/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260612_082037\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          morton: 'true'
+          output: outputs/run_20260612_082037/customtext_fingerprints
+          smoothing_sigma: '1.5'
+      7:
+        completed_at: '2026-06-12T11:03:20.748650'
+        output: outputs/run_20260612_082037/query_results
+        params:
+          doc_fingerprints: outputs/run_20260612_082037/doc_fingerprints
+          fingerprints: outputs/run_20260612_082037/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260612_082037\term_context_matrix\idf_weights.json
+          output: outputs/run_20260612_082037/query_results
           query: مِن شَرِّ ٱلۡوَسۡوَاسِ ٱلۡخَنَّاسِ,From the evil of the retreating
             whisperer
           spreading_steps: '1'

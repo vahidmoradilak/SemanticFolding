@@ -900,7 +900,7 @@ def build_customtext_fingerprints(
 
     if processed == 0:
         logger.error("No documents were successfully fingerprinted")
-        sys.exit(1) ###
+        sys.exit(1)
 
     # ── Stack into dense matrix ───────────────────────────────────────────────
     logger.info("Stacking fingerprints into dense matrix...")

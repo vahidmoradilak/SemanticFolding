@@ -27,7 +27,7 @@ logger = get_logger("phrase_extractor")
 
 
 # ── Library imports ────────────────────────────────────────────────────────────
-from lib import expand_phrases, normalize_hyphens, normalize_arabic_phrase
+from lib import expand_phrases, normalize_hyphens, normalize_arabic_phrase, _QURANIC_KEEP
 
 # ── spaCy bootstrap ───────────────────────────────────────────────────────────
 try:
@@ -520,18 +520,24 @@ def process_corpus_with_expansion(
     final_mapping: Dict[str, List[str]] = {}
 
     dropped = 0
+    quranic_keep = 0
     for phrase, ctx_set in raw_phrase_contexts.items():
         doc_freq = len(ctx_set)
-        if doc_freq >= min_freq:
+        if doc_freq >= min_freq or phrase in _QURANIC_KEEP:
             final_vocabulary[phrase] = doc_freq
             final_mapping[phrase] = sorted(list(ctx_set))
-            logger.debug(f"[FREQ][KEEP] '{phrase}'  freq={doc_freq}")
+            if phrase in _QURANIC_KEEP and doc_freq < min_freq:
+                quranic_keep += 1
+                logger.debug(f"[FREQ][QURANIC_KEEP] '{phrase}'  freq={doc_freq} (whitelisted)")
+            else:
+                logger.debug(f"[FREQ][KEEP] '{phrase}'  freq={doc_freq}")
         else:
             dropped += 1
             logger.debug(f"[FREQ][DROP] '{phrase}'  freq={doc_freq} < min={min_freq}")
 
     logger.info(
-        f"[FREQ] Kept {len(final_vocabulary)} phrases, "
+        f"[FREQ] Kept {len(final_vocabulary)} phrases "
+        f"({quranic_keep} whitelisted), "
         f"dropped {dropped} below min_freq={min_freq}"
     )
 
@@ -865,7 +871,9 @@ def extract_raw_phrases_spacy(doc) -> list[str]:
         """True if tok is a finite verb that should disqualify the chunk."""
         if tok.pos_ not in ('VERB', 'AUX'):
             return False
-        if tok.tag_ == 'VBG' and tok == chunk.root and tok.dep_ in NOMINAL_DEPS:
+        if tok != chunk.root:
+            return False
+        if tok.tag_ == 'VBG' and tok.dep_ in NOMINAL_DEPS:
             return False
         return True
 

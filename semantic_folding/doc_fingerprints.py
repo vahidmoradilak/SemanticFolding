@@ -8,11 +8,11 @@ then sparsifies via topology-preserving peak detection on 2D semantic grids.
 
 Pipeline position
 -----------------
-Step 1  phrase_extractor.py   → vocabulary.csv
-Step 2  term_context.py       → term_context_matrix.*, idf_weights.json
-Step 3  semantic_space.py     → context_coordinates.json
-Step 4  phrase_fingerprints.py→ phrase_fingerprints/
-Step 5  doc_fingerprints.py   → doc_fingerprints/          ← THIS FILE
+Step 1  phrase_extractor.py        → vocabulary.csv
+Step 2  term_context.py            → term_context_matrix.*, idf_weights.json
+Step 3  semantic_space.py          → context_coordinates.json
+Step 4  phrase_fingerprints.py     → phrase_fingerprints/
+Step 5  doc_fingerprints.py        → doc_fingerprints/          ← THIS FILE
 Step 6  customtext_fingerprints.py → customtext_fingerprints/
 Step 7  query_processing.py        → query results
 
@@ -821,7 +821,7 @@ def build_doc_fingerprints(
     logger.info(f"  → Final use_morton: {use_morton}")
 
     logger.info(f"  → Phrase fingerprints use Morton encoding: {use_morton}")
-
+    
     # Build the index‑to‑coordinate lookup table ONCE for all documents.
     # This table is now essential for correct 2D back‑projection.
     index_to_xy_table = build_index_to_xy_table(grid_size, use_morton)
@@ -982,17 +982,17 @@ def main():
     )
     
     parser.add_argument(
-        "--idf-weights",
-        type=Path,
-        default=None,
-        help="Path to idf_weights.json (optional, from Step 2)",
-    )
-    
-    parser.add_argument(
         "--output",
         type=Path,
         required=True,
         help="Output directory for document fingerprints",
+    )
+    
+    parser.add_argument(
+        "--idf-weights",
+        type=Path,
+        default=None,
+        help="Path to idf_weights.json (optional, from Step 2)",
     )
     
     parser.add_argument(
