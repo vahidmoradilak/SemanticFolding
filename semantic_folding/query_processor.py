@@ -1050,9 +1050,10 @@ def extract_query_phrases(
         
         logger.debug("Stage 2: expanding candidates into sub-phrases")
         en_valid = expand_phrases(
-            list(candidates),
-            # context_text=english_clean,       # must match what extractor saw
-            context_text    = None,
+            list(en_raw),
+            context_text=english_clean,       # must match what extractor saw
+            # list(candidates),
+            # context_text    = None,
             filter_generic  = filter_generic,
             min_word_length = min_word_length,
         )
@@ -1091,8 +1092,7 @@ def extract_query_phrases(
 
     logger.info(
         f"Query phrase extraction: {len(ar_valid)} arabic raw + {len(en_valid)} english raw → "
-        f"{len(candidates)} normalised → "
-        f"{len(valid_sub_phrases)} expanded → "
+        f"{len(valid_sub_phrases)} normalization and expanded → "
         f"{len(matched)} vocab hits"
     )
 
@@ -1945,14 +1945,16 @@ def process_query(
 
     # Normalise and expand every raw candidate into a flat list
     all_expanded = []
-    for p in raw:
-        norm_p = normalize_phrase(p, remove_verbs=remove_verbs)
-        if norm_p:
-            all_expanded.append(norm_p)
+    # for p in raw:
+    #     norm_p = normalize_phrase(p, remove_verbs=remove_verbs)
+    #     if norm_p:
+    #         all_expanded.append(norm_p)
 
     all_expanded = expand_phrases(
-        all_expanded,
+        raw,
+        # all_expanded,
         context_text=None,
+        # context_text=query,
         filter_generic=filter_generic,
         min_word_length=min_word_length,
     )
