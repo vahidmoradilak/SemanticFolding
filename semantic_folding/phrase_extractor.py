@@ -55,9 +55,6 @@ if not SPACY_AVAILABLE:
 
 from lib import detect_language, extract_raw_phrases_ar_fa
 
-import re
-_ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
-
 # ─────────────────────────────────────────────────────────────────────────────
 # Fallback extractor (NLTK)
 # ─────────────────────────────────────────────────────────────────────────────

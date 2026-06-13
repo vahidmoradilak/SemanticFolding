@@ -32,7 +32,6 @@ from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 from nltk import pos_tag
 from sklearn.feature_extraction.text import TfidfVectorizer
-import re
 from collections import Counter
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
@@ -49,6 +48,7 @@ nltk.data.path.insert(0, "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_dat
 os.environ['NLTK_DATA'] = r'D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_data'
 
 import re
+_ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
 from hazm import Normalizer, word_tokenize
 normalizer = Normalizer()
 from typing import List, Set, Tuple, Optional
@@ -782,6 +782,7 @@ def normalize_arabic_phrase(text: str):
 def expand_phrases(
     phrases: List[str],
     context_text: Optional[str],
+    # remove_verbs  : bool = False,
     filter_generic: bool = True,
     min_word_length: int = 3,
 ) -> List[str]:
@@ -1029,7 +1030,6 @@ def find_phrase_occurrences(text: str, phrase: str,
         Always use word boundaries (use_word_boundaries=True) for accurate
         phrase matching in semantic contexts.
     """
-    import re
     
     if use_word_boundaries:
         # Escape special regex characters in phrase

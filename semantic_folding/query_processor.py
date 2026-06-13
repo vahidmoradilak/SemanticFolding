@@ -995,6 +995,7 @@ def extract_query_phrases(
                 logger.debug(f"[AR][KEEP] '{p}' → '{norm}'")
 
     en_valid = set()
+    candidates: List[str] = []
     if english_text:
         # ── Hyphen normalization ──────────────────────────────────────────
         # Replace intra-word hyphens (e.g. 'rule-based') with spaces so
@@ -1033,7 +1034,6 @@ def extract_query_phrases(
             logger.debug(f"[CORPUS] Line {english_clean} | no En raw phrases — checking Arabic only")
             en_raw = set()
         
-        candidates: List[str] = []
         for phrase in en_raw:
             norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
             if norm:
