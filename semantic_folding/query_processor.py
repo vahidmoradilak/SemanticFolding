@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-query_processing.py — Step 6 of the Semantic Folding Pipeline
+query_processing.py — Step 7 of the Semantic Folding Pipeline
 
 Processes user queries by extracting phrases, constructing a sparse
 query fingerprint, optionally applying Z-order spreading, and ranking
@@ -8,12 +8,13 @@ documents by cosine similarity against Step-5 document fingerprints.
 
 Pipeline position
 -----------------
-Step 1  phrase_extractor.py    → phrases.txt
-Step 2  term_context.py        → phrase_context_matrix.*
-Step 3  semantic_space.py      → grid layout
-Step 4  phrase_fingerprints.py → phrase_fingerprints/
-Step 5  doc_fingerprints.py    → doc_fingerprints/
-Step 6  query_processing.py    → ranked results          ← THIS FILE
+Step 1  phrase_extractor.py        → phrases.txt
+Step 2  term_context.py            → phrase_context_matrix.*
+Step 3  semantic_space.py          → grid layout
+Step 4  phrase_fingerprints.py     → phrase_fingerprints/
+Step 5  doc_fingerprints.py        → doc_fingerprints/
+Step 6  customtext_fingerprints.py → doc_fingerprints/
+Step 7  query_processing.py        → ranked results          ← THIS FILE
 
 Consistency guarantee
 ---------------------
@@ -75,6 +76,7 @@ from lib import (
     extract_raw_phrases_ar_fa,
     split_arabic_english,
     normalize_arabic_phrase,
+    sparsify_fingerprint,
 )
 SPARCITY_GAURD=0.005
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1052,8 +1054,8 @@ def extract_query_phrases(
         en_valid = expand_phrases(
             list(en_raw),
             context_text=english_clean,       # must match what extractor saw
-            # list(candidates),
             # context_text    = None,
+            remove_verbs=remove_verbs,
             filter_generic  = filter_generic,
             min_word_length = min_word_length,
         )
@@ -1944,17 +1946,11 @@ def process_query(
     logger.debug(f"  [STAGE 1] raw candidates={raw}")
 
     # Normalise and expand every raw candidate into a flat list
-    all_expanded = []
-    # for p in raw:
-    #     norm_p = normalize_phrase(p, remove_verbs=remove_verbs)
-    #     if norm_p:
-    #         all_expanded.append(norm_p)
-
     all_expanded = expand_phrases(
         raw,
-        # all_expanded,
         context_text=None,
         # context_text=query,
+        remove_verbs=remove_verbs,
         filter_generic=filter_generic,
         min_word_length=min_word_length,
     )
@@ -2101,8 +2097,24 @@ def process_query(
                 )
 
         from scipy.sparse import csr_matrix as _csr
-        from lib import normalize_fingerprint
+        from lib import normalize_fingerprint, sparsify_fingerprint
         query_fp = _csr(acc.reshape(1, -1))
+
+        # Sparsify: keep only top X% bits to match document fingerprint density
+        sparsify_pct = getattr(args, "top_percent", 1.0)
+        if sparsify_pct < 1.0:
+            grid_size_fp = int(np.sqrt(query_fp.shape[1]))
+            top_k = max(1, int(round(sparsify_pct * grid_size_fp * grid_size_fp)))
+            pre_nnz = query_fp.nnz
+            query_fp = sparsify_fingerprint(query_fp, top_k=top_k, use_zorder=False)
+            logger.debug(
+                f"  [STAGE 2 SPARSIFY] top_percent={sparsify_pct:.3f}, "
+                f"top_k={top_k}, nnz: {pre_nnz} → {query_fp.nnz}"
+            )
+            # Update metadata
+            query_metadata["active_bits_pre_norm"] = pre_nnz
+            query_metadata["active_bits"] = query_fp.nnz
+            query_metadata["sparsity"] = query_fp.nnz / query_fp.shape[1]
 
         logger.debug(
             f"  [STAGE 2] pre-norm nnz={query_fp.nnz}, "
@@ -2208,7 +2220,7 @@ def parse_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
         description=(
-            "Step 6 — Process queries against document fingerprints "
+            "Step 7 — Process queries against document fingerprints "
             "using the Semantic Folding pipeline."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -2290,6 +2302,13 @@ def parse_args() -> argparse.Namespace:
         help="L2-normalise fingerprint after spreading.",
     )
 
+    # ── Fingerprint sparsification ────────────────────────────────────────────
+    parser.add_argument(
+        "--top-percent", dest="top_percent", type=float, default=1.0,
+        help="Fraction of highest-activation bits to keep in query fingerprint "
+             "(must match doc_fingerprints --top-percent). 1.0 = disable sparsification.",
+    )
+
     # ── Ranking ───────────────────────────────────────────────────────────────
     parser.add_argument(
         "--top-k", dest="top_k", type=int, default=10,
@@ -2327,7 +2346,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     """
-    CLI entry point for Step 6 of the Semantic Folding pipeline.
+    CLI entry point for Step 7 of the Semantic Folding pipeline.
 
     Loads phrase and document fingerprints, optionally loads IDF weights,
     collects queries from ``--query`` and/or ``--query-file``, processes

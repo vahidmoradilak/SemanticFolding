@@ -355,13 +355,13 @@ def expand_conjunctions(doc) -> list[str]:
 def process_corpus_with_expansion(
     corpus_path: Path,
     use_spacy: bool = True,
-    min_freq: int = 2,
+    min_freq: int = 1,
     filter_generic: bool = True,
     min_word_length: int = 3,
     keep_verbs: bool = True,
 ) -> Tuple[CounterType[str], Dict[str, List[str]]]:
     """
-    Full pipeline: raw extraction → expansion → normalization → frequency filter.
+    Full pipeline: raw extraction → expansion → normalization.
 
     Pipeline stages
     ---------------
@@ -371,8 +371,11 @@ def process_corpus_with_expansion(
     3. Normalization   — handled inside ``expand_phrases`` before returning.
     4. Context mapping — each surviving phrase is mapped to its source
                          context ID (one entry per corpus line).
-    5. Frequency filter — phrases appearing in fewer than ``min_freq``
-                          distinct contexts are discarded.
+
+    Note: No frequency filtering is applied — rare (hapax) phrases are
+    kept because they carry the most distinctive semantic signal. Stop
+    words are removed upstream by ``is_generic_word`` inside
+    ``expand_phrases``.
 
     Parameters
     ----------
@@ -381,8 +384,7 @@ def process_corpus_with_expansion(
     use_spacy : bool
         Prefer spaCy extraction when available.
     min_freq : int
-        Minimum number of distinct context IDs a phrase must appear in
-        to be retained in the final vocabulary.
+        Ignored (kept for backward compatibility).
     filter_generic : bool
         Passed through to ``expand_phrases`` to drop stopword-heavy phrases.
     min_word_length : int
@@ -479,6 +481,7 @@ def process_corpus_with_expansion(
                 en_valid = expand_phrases(
                     list(en_raw),
                     context_text=english_clean,       # must match what extractor saw
+                    remove_verbs=not keep_verbs,
                     filter_generic=filter_generic,
                     min_word_length=min_word_length,
                 )
@@ -502,10 +505,9 @@ def process_corpus_with_expansion(
 
     logger.info(
         f"[CORPUS] Extraction complete — "
-        f"{len(raw_phrase_contexts)} unique phrases before frequency filter"
+        f"{len(raw_phrase_contexts)} unique phrases (all kept)"
     )
 
-    # ── Stage 5: frequency filtering ─────────────────────────────────────────
     final_vocabulary: CounterType[str] = CounterType()
     final_mapping: Dict[str, List[str]] = {}
 
@@ -526,7 +528,7 @@ def process_corpus_with_expansion(
             logger.debug(f"[FREQ][DROP] '{phrase}'  freq={doc_freq} < min={min_freq}")
 
     logger.info(
-        f"[FREQ] Kept {len(final_vocabulary)} phrases "
+        f"[FREQ] Kept {len(final_vocabulary)} phrases  (no frequency filter)"
         f"({quranic_keep} whitelisted), "
         f"dropped {dropped} below min_freq={min_freq}"
     )
@@ -692,7 +694,7 @@ def main() -> None:
         help='Minimum character length $L_{min}$ for single words (default: 3)',
     )
     parser.add_argument(
-        '--min-freq', type=int, default=2,
+        '--min-freq', type=int, default=1,
         help='Sparsity filter threshold $min\\_freq$ (default: 2)',
     )
     parser.add_argument(

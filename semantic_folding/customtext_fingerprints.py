@@ -230,7 +230,7 @@ def extract_phrases_from_doc(
         en_valid = expand_phrases(
             list(en_raw),
             context_text=english_clean,       # must match what extractor saw
-            # remove_verbs=remove_verbs,
+            remove_verbs=remove_verbs,
             filter_generic=filter_generic,
             min_word_length=min_word_length,
         )

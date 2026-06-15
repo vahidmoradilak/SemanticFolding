@@ -152,7 +152,14 @@ uv run python semantic_folding/doc_fingerprints.py \
   --output outputs/doc_fingerprints \
   --grid-size 32
 
-# Step 6: Query Processing
+# Step 6: customtext Fingerprints
+uv run python semantic_folding/customtext_fingerprints.py \
+  --corpus data/customtexts.txt\
+  --fingerprints outputs/fingerprints \
+  --output outputs/customtext_fingerprints \
+  --grid-size 32
+
+# Step 7: Query Processing
 uv run python semantic_folding/query_processor.py \
   --query "your search query" \
   --fingerprints outputs/fingerprints \
@@ -333,7 +340,30 @@ uv run python semantic_folding/doc_fingerprints.py \
   --top-percent 0.05
 ```
 
-### Phase 6: Query Processing
+### Phase 6: Customtext Fingerprints
+**Script:** `semantic_folding/customtext_fingerprints.py`
+
+Aggregates phrase-level fingerprints into document-level SDRs with TF-IDF weighted union and topology-preserving sparsification.
+
+Key arguments:
+- `--corpus PATH` — corpus file (doc_id → text)
+- `--fingerprints DIR` — phrase fingerprint directory from Phase 4
+- `--output DIR` — output directory for customtext fingerprints
+- `--grid-size INT` — grid side length (must match Phases 3-4)
+- `--top-percent FLOAT` — fraction of bits to keep (default: 0.05)
+- `--normalize-method {l1,l2,max}` — normalization method (default: l2)
+- `--compute-diversity` — compute pairwise fingerprint diversity
+
+```bash
+uv run python semantic_folding/cutomtext_fingerprints.py \
+  --corpus data/customtexts.txt \
+  --fingerprints outputs/fingerprints \
+  --output outputs/customtext_fingerprints \
+  --grid-size 32 \
+  --top-percent 0.05
+```
+
+### Phase 7: Query Processing
 **Script:** `semantic_folding/query_processor.py`
 
 Processes natural language queries against document fingerprints using semantic folding similarity.

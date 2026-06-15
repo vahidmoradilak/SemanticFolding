@@ -10,7 +10,7 @@
 grid_size: 64                  # Shared across semantic_space and phrase_fingerprints
                                  # Sweep results: 64×64 beats 128×128 for 20-doc corpus
                                  # (MRR 1.000 vs 0.900, AP 0.869 vs 0.836)
-min_freq: 2                    # Minimum phrase frequency to keep (2+ for Quran rare words; 3+ for larger corpora)
+min_freq: 1                    # Keep all phrases (hapax are meaningful; generic words filtered by is_generic_word)
 keep_verbs : true              # Include verbal elements in phrases
 smoothing_sigma: 1.5           # Gaussian smoothing sigma before peak detection
 
@@ -19,7 +19,8 @@ smoothing_sigma: 1.5           # Gaussian smoothing sigma before peak detection
 # ============================================================
 paths:
   # Input data files
-  corpus_path: "data\\corpus.txt"
+  # corpus_path: "data\\corpus.txt"
+  corpus_path: "data\\quran\\quran_ayahs_clean.txt"
   queries_path: null             # Optional: path to queries file
 
   # Output directory structure
@@ -124,7 +125,22 @@ document_fingerprints:
   compute_diversity: false      # if you want it off by default
   diversity_sample: 100
 # ============================================================
-# PHASE 6: QUERY PROCESSING
+# PHASE 6: CUSTOMTEXT FINGERPRINTS
+# ============================================================
+customtext_fingerprints:
+  top_percent: 0.05
+  no_normalize: true
+  normalize_method: "l2"
+  min_word_length: 3
+  remove_verbs: false           # you already have this, good
+  filter_generic: true
+  min_peak_distance: 2          # added
+  smoothing_sigma: 1.0          # added
+  use_morton: true
+  compute_diversity: false      # if you want it off by default
+  diversity_sample: 100
+# ============================================================
+# PHASE 7: QUERY PROCESSING
 # ============================================================
 # Maps to new query_processing.py CLI:
 #   top_k            → --top-k
@@ -294,7 +310,7 @@ experimental:
 #   32  → Balanced quality, medium corpora (1K–10K docs)
 #   64  → High precision, large corpora    (> 10K docs)
 #
-# spreading_steps Guidelines (Phase 6):
+# spreading_steps Guidelines (Phase 7):
 #   0   → Exact cell matching (high precision, low recall)
 #   1   → Moderate context expansion (balanced) ← default
 #   2–3 → Aggressive expansion (high recall, lower precision)
@@ -309,7 +325,7 @@ experimental:
 #   Grid 32 → ~1024 cells, moderate memory
 #   Grid 64 → ~4096 cells, high memory usage
 #
-# Removed from Phase 6 (handled internally or not used by new CLI):
+# Removed from Phase 7 (handled internally or not used by new CLI):
 #   weighting, normalization, spreading.radius, spreading.decay,
 #   spreading.normalize_after, min_similarity, use_batch,
 #   verbose, output_json, max_ngram, min_word_length

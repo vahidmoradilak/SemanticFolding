@@ -1,5 +1,5 @@
-last_run_id: run_20260602_113052
-last_step: 4
+last_run_id: run_20260615_150803
+last_step: 7
 runs:
   run_20260519_214612:
     corpus: data\corpus.txt
@@ -259,6 +259,20 @@ runs:
           output: outputs/run_20260523_131608/query_results
           query: How do adaptive changes in the human brain facilitate the recovery
             of mental functions and enhancement of cognitive skills?
+          spreading_steps: '1'
+          top_k: '5'
+          weighting: idf
+      7:
+        completed_at: '2026-06-15T17:09:16.193263'
+        output: outputs/run_20260523_131608/query_results
+        params:
+          doc_fingerprints: outputs/run_20260523_131608/doc_fingerprints
+          fingerprints: outputs/run_20260523_131608/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260523_131608\term_context_matrix\idf_weights.json
+          output: outputs/run_20260523_131608/query_results
+          query: has been revealed to you, O Muhammad, and what was revealed before
+            you, and of the Hereafter they are certain in faith
           spreading_steps: '1'
           top_k: '5'
           weighting: idf
@@ -2763,4 +2777,111 @@ runs:
           query: From the evil of the retreating whisperer
           spreading_steps: '1'
           top_k: '5'
+          weighting: idf
+  run_20260615_150803:
+    corpus: data\quran\quran_ayahs_clean.txt
+    created_at: '2026-06-15T15:08:03.177093'
+    steps:
+      1:
+        completed_at: '2026-06-15T15:09:55.471508'
+        mapping: outputs\run_20260615_150803\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260615_150803/extracted_phrases
+        params:
+          corpus: data\quran\quran_ayahs_clean.txt
+          keep_verbs: 'true'
+          min_freq: '1'
+          min_word_length: '3'
+          no_filter_generic: 'false'
+          no_spacy: 'false'
+          output: outputs/run_20260615_150803/extracted_phrases
+          stats: 'false'
+        vocab: outputs\run_20260615_150803\extracted_phrases\vocabulary.csv
+      2:
+        completed_at: '2026-06-15T15:23:21.041179'
+        idf_weights: outputs\run_20260615_150803\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260615_150803\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260615_150803\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260615_150803/term_context_matrix
+        params:
+          corpus: data\quran\quran_ayahs_clean.txt
+          mapping: outputs\run_20260615_150803\extracted_phrases\phrase_to_contexts.json
+          no_tfidf: 'false'
+          output: outputs/run_20260615_150803/term_context_matrix
+          vocab: outputs\run_20260615_150803\extracted_phrases\vocabulary.csv
+      3:
+        completed_at: '2026-06-15T15:32:16.487075'
+        coordinates: outputs\run_20260615_150803\semantic_space\context_coordinates.json
+        output: outputs/run_20260615_150803/semantic_space
+        params:
+          grid_size: '64'
+          matrix_npz: outputs\run_20260615_150803\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260615_150803\term_context_matrix\term_context_matrix.json
+          method: tsne
+          output: outputs/run_20260615_150803/semantic_space
+          show_density: 'false'
+          visualize: 'true'
+      4:
+        completed_at: '2026-06-15T15:37:03.628281'
+        output: outputs/run_20260615_150803/phrase_fingerprints
+        params:
+          coordinates: outputs\run_20260615_150803\semantic_space\context_coordinates.json
+          grid_size: '64'
+          metadata: outputs\run_20260615_150803\term_context_matrix\term_context_matrix.json
+          morton: 'true'
+          no_smooth: 'false'
+          output: outputs/run_20260615_150803/phrase_fingerprints
+          smoothing_sigma: '1.5'
+      5:
+        completed_at: '2026-06-15T15:49:49.712396'
+        output: outputs/run_20260615_150803/doc_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: data\quran\quran_ayahs_clean.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs/run_20260615_150803/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260615_150803\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '3'
+          morton: 'true'
+          no_normalize: 'true'
+          normalize_method: l2
+          output: outputs/run_20260615_150803/doc_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.1'
+      6:
+        completed_at: '2026-06-15T16:51:49.084596'
+        output: outputs/run_20260615_150803/customtext_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: data\customtexts.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs/run_20260615_150803/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260615_150803\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '3'
+          morton: 'true'
+          no_normalize: 'true'
+          normalize_method: l2
+          output: outputs/run_20260615_150803/customtext_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.04'
+      7:
+        completed_at: '2026-06-15T17:24:45.266048'
+        output: outputs/run_20260615_150803/query_results
+        params:
+          doc_fingerprints: outputs/run_20260615_150803/doc_fingerprints
+          fingerprints: outputs/run_20260615_150803/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260615_150803\term_context_matrix\idf_weights.json
+          output: outputs/run_20260615_150803/query_results
+          query: ٱلَّذِينَ يُؤۡمِنُونَ بِٱلۡغَيۡبِ وَيُقِيمُونَ ٱلصَّلَوٰةَ وَمِمَّا
+            رَزَقۡنَٰهُمۡ يُنفِقُونَ
+          spreading_steps: '1'
+          top_k: '50'
           weighting: idf

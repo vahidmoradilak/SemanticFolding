@@ -10,7 +10,8 @@
   - `semantic_folding/semantic_space.py` (Step 3)
   - `semantic_folding/phrase_fingerprints.py` (Step 4)
   - `semantic_folding/doc_fingerprints.py` (Step 5)
-  - `semantic_folding/query_processor.py` (Step 6)
+  - `semantic_folding/customtext_fingerprints.py` (Step 6)
+  - `semantic_folding/query_processor.py` (Step 7)
 - Utilities: `semantic_folding/lib.py`
 - Parameter tuning study: `semantic_folding/parameters_tuning.md`
 - Visualizers: `semantic_folding/phrase_visualizer.py`, `semantic_folding/doc_visualizer.py`
@@ -42,14 +43,14 @@
 - top_percent: 0.10 (0.05 loses C00 in Q5, 0.15 dilutes signal)
 - Query weighting: IDF (best; uniform drops C17 ranking and loses C00)
 - Normalization: L2 for query, `sqrt(nnz)` for document fingerprints
-- Geometric scoring: optional `--geometric` flag (Step 6) applies a 3×3 spatial adjacency kernel before scoring, rewarding nearby (not just exact) cell overlap on the 2D grid. See `semantic_folding/parameters_tuning.md` for evaluation.
+- Geometric scoring: optional `--geometric` flag (Step 7) applies a 3×3 spatial adjacency kernel before scoring, rewarding nearby (not just exact) cell overlap on the 2D grid. See `semantic_folding/parameters_tuning.md` for evaluation.
 
 ## Benchmarking (MuSiQue)
 
 - **Script**: `semantic_folding/dataset_benchmark/musique/run_benchmark.py`
 - **Three-phase design**:
   - Phase 1 (index): Collect unique paragraphs across query range, run Steps 1-5 once
-  - Phase 2 (benchmark): Run Step 6 per query against pre-built fingerprints, post-filter to 20 candidates
+  - Phase 2 (benchmark): Run Step 7 per query against pre-built fingerprints, post-filter to 20 candidates
   - Phase 3 (report): Auto-generate `benchmark_report.md`
 - **Interactive TUI** (default, no args): Colorama-colored menu with parameter auto-generation & user override
 - **CLI mode** (`--mode index|benchmark|report`): Non-interactive for automation; flags same as before
