@@ -1,5 +1,5 @@
 last_run_id: run_20260616_110007
-last_step: 7
+last_step: 6
 runs:
   run_20260519_214612:
     corpus: data\corpus.txt
@@ -2685,7 +2685,7 @@ runs:
           smoothing_sigma: '1.5'
           top_percent: '0.05'
       6:
-        completed_at: '2026-06-16T11:42:46.641117'
+        completed_at: '2026-06-16T15:45:17.016704'
         output: outputs/run_20260616_110007/customtext_fingerprints
         params:
           compute_diversity: 'false'
@@ -2705,7 +2705,7 @@ runs:
           smoothing_sigma: '1.5'
           top_percent: '0.05'
       7:
-        completed_at: '2026-06-16T11:47:11.239748'
+        completed_at: '2026-06-16T15:35:01.844441'
         output: outputs/run_20260616_110007/query_results
         params:
           doc_fingerprints: outputs/run_20260616_110007/doc_fingerprints
@@ -2713,8 +2713,7 @@ runs:
           grid_size: '64'
           idf_weights: outputs\run_20260616_110007\term_context_matrix\idf_weights.json
           output: outputs/run_20260616_110007/query_results
-          query: مِن شَرِّ ٱلۡوَسۡوَاسِ ٱلۡخَنَّاسِ,From the evil of the retreating
-            whisperer
-          spreading_steps: '0'
-          top_k: '20'
+          query: شَدِيدُ ٱلۡعِقَابِ
+          spreading_steps: '1'
+          top_k: '10'
           weighting: idf

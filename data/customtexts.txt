@@ -21,3 +21,8 @@
 20, يسٓ
 21, یس
 22, یسٓ
+23, the Entirely Merciful, the Especially Merciful
+24, الرحمن و الرحیم
+25, شَدِيدُ ٱلۡعِقَابِ
+724,إِنَّمَا وَلِيُّكُمُ ٱللَّهُ وَرَسُولُهُۥ وَٱلَّذِينَ ءَامَنُواْ ٱلَّذِينَ يُقِيمُونَ ٱلصَّلَوٰةَ وَيُؤۡتُونَ ٱلزَّكَوٰةَ وَهُمۡ رَٰكِعُونَ,"Your ally is none but Allah and therefore His Messenger and those who have believed - those who establish prayer and give zakah, and they bow in worship"
+725, انما ولیکم الله والذین ءامنوا و یوتون الزکاه و هم الرکعون
