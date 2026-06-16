@@ -5,7 +5,7 @@ I'll now perform a complete integration pass, weaving in all detailed formulae, 
 # Phrase Extraction Module — Technical Documentation
 
 **Module:** `phrase_extractor.py` + `lib.py`  
-**Stage:** 1 of 6 — Semantic Folding Pipeline  
+**Stage:** 1 of 7 — Semantic Folding Pipeline  
 **Version:** 3.1 (Complete Integration)  
 **Date:** 1405/01/29 | 2026/04/18  
 

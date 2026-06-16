@@ -1,6 +1,6 @@
 # Retrieval Metrics & Evaluation Framework for Semantic Folding
 
-**Module:** `query_processor.py` (Step 6) · `tools/compute_ir_metrics.py`  
+**Module:** `query_processor.py` (Step 7) · `tools/compute_ir_metrics.py`  
 **Version:** 3.1
 
 ---
@@ -14,9 +14,10 @@ The Semantic Folding framework represents words, phrases, and documents as **Spa
 3. **Semantic Space** — contexts are embedded onto a $g \times g$ integer grid via dimensionality reduction (t-SNE, UMAP, or PCA), producing 2-D coordinates for every context.
 4. **Phrase Fingerprints** — each phrase is assigned a centroid on the grid (from its co-occurring contexts), convolved with a 2-D Gaussian kernel ($\sigma$), and linearised into a 1-D vector of length $g^2$ via Morton (Z-order) encoding.
 5. **Document Fingerprints** — phrase fingerprints of matched terms are accumulated onto a reconstructed 2-D grid using the inverse Morton mapping, then sparsified via topology-preserving peak selection to a target density $\rho$.
-6. **Query Processing** — a query is decomposed into phrases, weighted, converted to an SDR, optionally spread (topological dilation), and compared against all document SDRs via an asymmetric similarity score.
+6. **Customtext Fingerprints** — phrase fingerprints of matched terms are accumulated onto a reconstructed 2-D grid using the inverse Morton mapping, then sparsified via topology-preserving peak selection to a target density $\rho$.
+7. **Query Processing** — a query is decomposed into phrases, weighted, converted to an SDR, optionally spread (topological dilation), and compared against all document SDRs via an asymmetric similarity score.
 
-The output of Step 6 is a ranked list of documents for each query, with associated scores. Evaluating the quality of this ranking **requires a suite of metrics** that capture different facets of retrieval performance. This document defines each metric, explains its mathematical formulation, and guides interpretation in the context of SDR-based semantic retrieval.
+The output of Step 7 is a ranked list of documents for each query, with associated scores. Evaluating the quality of this ranking **requires a suite of metrics** that capture different facets of retrieval performance. This document defines each metric, explains its mathematical formulation, and guides interpretation in the context of SDR-based semantic retrieval.
 
 ---
 

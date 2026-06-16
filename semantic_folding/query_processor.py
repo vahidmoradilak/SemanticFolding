@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-query_processing.py — Step 6 of the Semantic Folding Pipeline
+query_processing.py — Step 7 of the Semantic Folding Pipeline
 
 Processes user queries by extracting phrases, constructing a sparse
 query fingerprint, optionally applying Z-order spreading, and ranking
@@ -8,12 +8,13 @@ documents by cosine similarity against Step-5 document fingerprints.
 
 Pipeline position
 -----------------
-Step 1  phrase_extractor.py    → phrases.txt
-Step 2  term_context.py        → phrase_context_matrix.*
-Step 3  semantic_space.py      → grid layout
-Step 4  phrase_fingerprints.py → phrase_fingerprints/
-Step 5  doc_fingerprints.py    → doc_fingerprints/
-Step 6  query_processing.py    → ranked results          ← THIS FILE
+Step 1  phrase_extractor.py        → phrases.txt
+Step 2  term_context.py            → phrase_context_matrix.*
+Step 3  semantic_space.py          → grid layout
+Step 4  phrase_fingerprints.py     → phrase_fingerprints/
+Step 5  doc_fingerprints.py        → doc_fingerprints/
+Step 6  customtext_fingerprints.py → doc_fingerprints/
+Step 7  query_processing.py        → ranked results          ← THIS FILE
 
 Consistency guarantee
 ---------------------
@@ -75,6 +76,12 @@ from lib import (
     extract_raw_phrases_ar_fa,
     split_arabic_english,
     normalize_arabic_phrase,
+    sparsify_fingerprint,
+)
+from doc_fingerprints import (
+    build_document_fingerprint_2d,
+    sparsify_to_sdr_topological,
+    build_index_to_xy_table,
 )
 SPARCITY_GAURD=0.005
 # ─────────────────────────────────────────────────────────────────────────────
@@ -995,6 +1002,7 @@ def extract_query_phrases(
                 logger.debug(f"[AR][KEEP] '{p}' → '{norm}'")
 
     en_valid = set()
+    candidates: List[str] = []
     if english_text:
         # ── Hyphen normalization ──────────────────────────────────────────
         # Replace intra-word hyphens (e.g. 'rule-based') with spaces so
@@ -1033,7 +1041,6 @@ def extract_query_phrases(
             logger.debug(f"[CORPUS] Line {english_clean} | no En raw phrases — checking Arabic only")
             en_raw = set()
         
-        candidates: List[str] = []
         for phrase in en_raw:
             norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
             if norm:
@@ -1050,9 +1057,10 @@ def extract_query_phrases(
         
         logger.debug("Stage 2: expanding candidates into sub-phrases")
         en_valid = expand_phrases(
-            list(candidates),
-            # context_text=english_clean,       # must match what extractor saw
-            context_text    = None,
+            list(en_raw),
+            context_text=english_clean,       # must match what extractor saw
+            # context_text    = None,
+            remove_verbs=remove_verbs,
             filter_generic  = filter_generic,
             min_word_length = min_word_length,
         )
@@ -1091,8 +1099,7 @@ def extract_query_phrases(
 
     logger.info(
         f"Query phrase extraction: {len(ar_valid)} arabic raw + {len(en_valid)} english raw → "
-        f"{len(candidates)} normalised → "
-        f"{len(valid_sub_phrases)} expanded → "
+        f"{len(valid_sub_phrases)} normalization and expanded → "
         f"{len(matched)} vocab hits"
     )
 
@@ -1649,13 +1656,14 @@ def rank_documents(
             continue
 
         raw_dot = float(query_fp.dot(doc_fp.T).toarray()[0, 0])
-        # Asymmetric cosine: full query norm, sqrt(nnz) for doc length penalty
-        score   = raw_dot / (query_norm * np.sqrt(doc_fp.nnz))
+        # Proper cosine: actual L2 norm for both query and document
+        doc_norm = np.sqrt(doc_fp.power(2).sum())
+        score    = raw_dot / (query_norm * doc_norm) if doc_norm > 1e-9 else 0.0
 
         logger.debug(
             f"  [RANK SCORE] '{doc_id}' raw_dot={raw_dot:.4f}, "
-            f"doc_nnz={doc_fp.nnz}, query_norm={query_norm:.4f}, "
-            f"score={score:.4f}"
+            f"doc_nnz={doc_fp.nnz}, doc_norm={doc_norm:.4f}, "
+            f"query_norm={query_norm:.4f}, score={score:.4f}"
         )
         all_scores.append((doc_id, score))
 
@@ -1791,7 +1799,9 @@ def process_query(
     doc_fingerprints    : Dict[str, csr_matrix],
     args                : argparse.Namespace,
     idf_weights         : Optional[Dict[str, float]] = None,
-     use_morton      : bool  = True
+    use_morton          : bool  = True,
+    phrase_fp_matrix    : Optional[np.ndarray] = None,
+    phrase_to_row       : Optional[Dict[str, int]] = None,
 ) -> Tuple[List[Tuple[str, float]], Dict]:
     r"""
     Process a single query through the full retrieval pipeline.
@@ -1876,6 +1886,12 @@ def process_query(
         matched phrases are weighted by their IDF score; OOV expansions
         receive ``expansion_weight × IDF``.  When ``None``, all matched
         phrases receive weight 1.0.
+    phrase_fp_matrix : np.ndarray, optional
+        Dense phrase fingerprint matrix from Step 4, shape (n_phrases, grid_size²).
+        Required for 2D query fingerprinting (matches document fingerprint pipeline).
+    phrase_to_row : Dict[str, int], optional
+        Mapping from phrase string to row index in phrase_fp_matrix.
+        Required for 2D query fingerprinting.
 
     Returns
     -------
@@ -1903,11 +1919,13 @@ def process_query(
       but are not returned by that function are recovered via
       ``vocab_hits_from_raw`` — the intersection of ``all_expanded``
       (raw spaCy/n-gram candidates) and ``phrase_vocab``.
-    * :func:`construct_query_fingerprint` is called with
-      ``weighting="uniform"`` and its output fingerprint is immediately
-      overridden by the manual re-accumulation loop.  The call is used
-      only to obtain ``query_metadata``; the weighted accumulation is the
-      authoritative fingerprint.
+    * When ``phrase_fp_matrix`` and ``phrase_to_row`` are provided,
+      the query fingerprint is built using the **same 2D pipeline as
+      document indexing** (Step 5): phrases are accumulated onto a 2D grid
+      with TF-IDF weights, then sparsified via topology-preserving peak
+      detection (:func:`sparsify_to_sdr_topological`). This ensures
+      query and document fingerprints share the same spatial topology.
+      Without these parameters, the legacy 1D flat accumulation is used.
     """
     logger.debug(
         f"process_query: query={query!r}, "
@@ -1944,15 +1962,11 @@ def process_query(
     logger.debug(f"  [STAGE 1] raw candidates={raw}")
 
     # Normalise and expand every raw candidate into a flat list
-    all_expanded = []
-    for p in raw:
-        norm_p = normalize_phrase(p, remove_verbs=remove_verbs)
-        if norm_p:
-            all_expanded.append(norm_p)
-
+    # Note: context_text=query provides surface-form validation same as Step 5
     all_expanded = expand_phrases(
-        all_expanded,
-        context_text=None,
+        raw,
+        context_text=query,
+        remove_verbs=remove_verbs,
         filter_generic=filter_generic,
         min_word_length=min_word_length,
     )
@@ -2064,60 +2078,129 @@ def process_query(
 
     norm = None if args.normalization == "none" else args.normalization
 
-    # construct_query_fingerprint is called for its metadata side-effect only.
-    # The returned fingerprint uses uniform weights and is immediately replaced
-    # by the manual weighted accumulation below.
-    _effective_weighting = getattr(args, "weighting", "uniform")
-    query_fp, query_metadata = construct_query_fingerprint(
-        query_phrases=list(phrase_weights.keys()),
-        phrase_fingerprints=phrase_fingerprints,
-        weighting=_effective_weighting,          # ← respects --weighting
-        idf_weights=idf_weights,                 # ← respects --idf
-        normalization=getattr(args, "normalization", "l2"),
-    )
+    # Get grid_size from args (default 64)
+    grid_size = getattr(args, "grid_size", 64)
 
-    # Manual re-accumulation: apply per-phrase weights (IDF + expansion discounts)
-    # so the final vector correctly reflects the importance of each phrase.
-    if query_fp is not None:
-        grid_size_sq = query_fp.shape[1]
-        acc = np.zeros(grid_size_sq, dtype=np.float32)
+    # Initialize query_fp and query_metadata
+    query_fp = None
+    query_metadata: Dict = {}
 
-        for phrase, weight in phrase_weights.items():
-            if phrase in phrase_fingerprints:
-                fp     = phrase_fingerprints[phrase]
-                fp_arr = (fp.toarray().ravel() if hasattr(fp, "toarray")
-                          else np.asarray(fp).ravel())
-                pre_nnz = int(np.count_nonzero(acc))
-                acc    += weight * fp_arr
-                logger.debug(
-                    f"  [STAGE 2 ACCUM] '{phrase}' weight={weight:.4f}, "
-                    f"acc nnz: {pre_nnz} → {int(np.count_nonzero(acc))}"
-                )
-            else:
-                logger.debug(
-                    f"  [STAGE 2 ACCUM SKIP] '{phrase}' not in phrase_fingerprints"
-                )
+    # Prefer 2D pipeline (same as Step 5) when matrix and index are available
+    if phrase_fp_matrix is not None and phrase_to_row is not None:
+        logger.debug("  [STAGE 2] using 2D pipeline (matches Step 5 document fingerprinting)")
 
-        from scipy.sparse import csr_matrix as _csr
-        from lib import normalize_fingerprint
-        query_fp = _csr(acc.reshape(1, -1))
+        # Build Morton index-to-xy lookup table
+        index_to_xy = build_index_to_xy_table(grid_size, use_morton)
 
-        logger.debug(
-            f"  [STAGE 2] pre-norm nnz={query_fp.nnz}, "
-            f"norm='{norm}'"
+        # Build 2D grid from query phrases (same as Step 5)
+        # Note: we pass the raw query text; build_document_fingerprint_2d does its own phrase extraction
+        # But we also want to use our extracted phrase_weights for TF-IDF weighting consistency
+        # So we'll use build_document_fingerprint_2d with the query text
+        grid_2d = build_document_fingerprint_2d(
+            doc_text=query,
+            phrase_fingerprints=phrase_fp_matrix,
+            phrase_to_row=phrase_to_row,
+            idf_weights=idf_weights or {},
+            grid_size=grid_size,
+            use_morton=use_morton,
+            index_to_xy=index_to_xy,
+            remove_verbs=remove_verbs,
+            filter_generic=filter_generic,
+            min_word_length=min_word_length,
         )
 
-        if norm:
-            query_fp = normalize_fingerprint(query_fp, method=norm)
-            logger.debug(f"  [STAGE 2] post-norm nnz={query_fp.nnz}")
+        if grid_2d is not None:
+            # Sparsify using topology-preserving peak detection (same as Step 5)
+            top_percent = getattr(args, "top_percent", 0.10)
+            query_fp = sparsify_to_sdr_topological(
+                grid_2d=grid_2d,
+                top_percent=top_percent,
+                grid_size=grid_size,
+                min_peak_distance=2,
+                smoothing_sigma=1.5,
+            )
+            logger.debug(
+                f"  [STAGE 2] 2D pipeline: top_percent={top_percent:.3f}, "
+                f"nnz={query_fp.nnz}"
+            )
+        else:
+            logger.debug("  [STAGE 2] 2D pipeline returned None, falling back to 1D")
+            query_fp = None
+
+    # Fallback: legacy 1D pipeline (used when 2D inputs not available or 2D failed)
+    if query_fp is None:
+        logger.debug("  [STAGE 2] using legacy 1D pipeline")
+
+        # construct_query_fingerprint is called for its metadata side-effect only.
+        # The returned fingerprint uses uniform weights and is immediately replaced
+        # by the manual weighted accumulation below.
+        _effective_weighting = getattr(args, "weighting", "uniform")
+        query_fp, query_metadata = construct_query_fingerprint(
+            query_phrases=list(phrase_weights.keys()),
+            phrase_fingerprints=phrase_fingerprints,
+            weighting=_effective_weighting,          # ← respects --weighting
+            idf_weights=idf_weights,                 # ← respects --idf
+            normalization=getattr(args, "normalization", "l2"),
+        )
+
+        # Manual re-accumulation: apply per-phrase weights (IDF + expansion discounts)
+        # so the final vector correctly reflects the importance of each phrase.
+        if query_fp is not None:
+            grid_size_sq = query_fp.shape[1]
+            acc = np.zeros(grid_size_sq, dtype=np.float32)
+
+            for phrase, weight in phrase_weights.items():
+                if phrase in phrase_fingerprints:
+                    fp     = phrase_fingerprints[phrase]
+                    fp_arr = (fp.toarray().ravel() if hasattr(fp, "toarray")
+                              else np.asarray(fp).ravel())
+                    pre_nnz = int(np.count_nonzero(acc))
+                    acc    += weight * fp_arr
+                    logger.debug(
+                        f"  [STAGE 2 ACCUM] '{phrase}' weight={weight:.4f}, "
+                        f"acc nnz: {pre_nnz} → {int(np.count_nonzero(acc))}"
+                    )
+                else:
+                    logger.debug(
+                        f"  [STAGE 2 ACCUM SKIP] '{phrase}' not in phrase_fingerprints"
+                    )
+
+            from scipy.sparse import csr_matrix as _csr
+            from lib import normalize_fingerprint, sparsify_fingerprint
+            query_fp = _csr(acc.reshape(1, -1))
+
+            # Sparsify: keep only top X% bits to match document fingerprint density
+            sparsify_pct = getattr(args, "top_percent", 1.0)
+            if sparsify_pct < 1.0:
+                grid_size_fp = int(np.sqrt(query_fp.shape[1]))
+                top_k = max(1, int(round(sparsify_pct * grid_size_fp * grid_size_fp)))
+                pre_nnz = query_fp.nnz
+                query_fp = sparsify_fingerprint(query_fp, top_k=top_k, use_zorder=False)
+                logger.debug(
+                    f"  [STAGE 2 SPARSIFY] top_percent={sparsify_pct:.3f}, "
+                    f"top_k={top_k}, nnz: {pre_nnz} → {query_fp.nnz}"
+                )
+                # Update metadata
+                query_metadata["active_bits_pre_norm"] = pre_nnz
+                query_metadata["active_bits"] = query_fp.nnz
+                query_metadata["sparsity"] = query_fp.nnz / query_fp.shape[1]
+
+            logger.debug(
+                f"  [STAGE 2] pre-norm nnz={query_fp.nnz}, "
+                f"norm='{norm}'"
+            )
+
+            if norm:
+                query_fp = normalize_fingerprint(query_fp, method=norm)
+                logger.debug(f"  [STAGE 2] post-norm nnz={query_fp.nnz}")
 
     if query_fp is None:
-        error_type = query_metadata.get("error", "unknown")
+        error_type = query_metadata.get("error", "unknown") if 'query_metadata' in locals() else "unknown"
         logger.error(f"Failed to construct query fingerprint: {error_type}")
         return [], {
             "query"             : query,
             "error"             : error_type,
-            "query_construction": query_metadata,
+            "query_construction": query_metadata if 'query_metadata' in locals() else {},
             "spreading"         : {},
             "ranking"           : {
                 "total_documents"          : 0,
@@ -2206,7 +2289,7 @@ def parse_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
         description=(
-            "Step 6 — Process queries against document fingerprints "
+            "Step 7 — Process queries against document fingerprints "
             "using the Semantic Folding pipeline."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -2288,6 +2371,13 @@ def parse_args() -> argparse.Namespace:
         help="L2-normalise fingerprint after spreading.",
     )
 
+    # ── Fingerprint sparsification ────────────────────────────────────────────
+    parser.add_argument(
+        "--top-percent", dest="top_percent", type=float, default=0.10,
+        help="Fraction of highest-activation bits to keep in query fingerprint "
+             "(must match doc_fingerprints --top-percent). Typical: 0.10.",
+    )
+
     # ── Ranking ───────────────────────────────────────────────────────────────
     parser.add_argument(
         "--top-k", dest="top_k", type=int, default=10,
@@ -2325,7 +2415,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     """
-    CLI entry point for Step 6 of the Semantic Folding pipeline.
+    CLI entry point for Step 7 of the Semantic Folding pipeline.
 
     Loads phrase and document fingerprints, optionally loads IDF weights,
     collects queries from ``--query`` and/or ``--query-file``, processes
@@ -2372,10 +2462,47 @@ def main() -> None:
         f"  [MAIN LOAD] loading phrase fingerprints from {args.phrase_fp_dir}"
     )
     try:
-        phrase_fingerprints = load_phrase_fingerprints_sparse(
-            args.phrase_fp_dir, args.grid_size
+        # Load the dense matrix from npz
+        npz_path = args.phrase_fp_dir / "phrase_fingerprints.npz"
+        meta_path = args.phrase_fp_dir / "phrase_fingerprints_meta.json"
+        logger.info(f"Loading phrase fingerprint matrix from: {npz_path}")
+        archive = np.load(str(npz_path))
+        phrase_fp_matrix = archive["fingerprints"].astype(np.float32)
+        n_phrases, vector_size = phrase_fp_matrix.shape
+        logger.info(
+            f"Phrase matrix shape: {phrase_fp_matrix.shape} "
+            f"(n={n_phrases}, vec={vector_size})"
         )
-    except (FileNotFoundError, ValueError) as exc:
+
+        # Load meta and extract phrase_to_row sub-dict
+        with open(meta_path, "r", encoding="utf-8") as fh:
+            phrase_meta = json.load(fh)
+        phrase_to_row: Dict[str, int] = phrase_meta.get("phrase_to_row", {})
+        use_morton = phrase_meta.get("use_morton", True)
+        meta_grid_size = phrase_meta.get("grid_size", args.grid_size)
+
+        if meta_grid_size != args.grid_size:
+            logger.warning(
+                f"Meta grid_size={meta_grid_size} differs from --grid-size={args.grid_size}. "
+                f"Using meta value."
+            )
+            args.grid_size = meta_grid_size
+
+        if not phrase_to_row:
+            logger.error("phrase_to_row not found in phrase metadata.")
+            sys.exit(1)
+
+        logger.info(
+            f"Loaded phrase_to_row with {len(phrase_to_row)} entries "
+            f"(use_morton={use_morton}, grid_size={meta_grid_size})"
+        )
+
+        # Build dict for backward compatibility
+        phrase_fingerprints = {
+            phrase: phrase_fp_matrix[idx]
+            for phrase, idx in phrase_to_row.items()
+        }
+    except (FileNotFoundError, ValueError, KeyError) as exc:
         logger.error(f"Failed to load phrase fingerprints: {exc}")
         sys.exit(1)
 
@@ -2480,7 +2607,9 @@ def main() -> None:
             doc_fingerprints,
             args,
             idf_weights,
-            use_morton=use_morton
+            use_morton=use_morton,
+            phrase_fp_matrix=phrase_fp_matrix,
+            phrase_to_row=phrase_to_row,
         )
 
         if "error" in metadata:

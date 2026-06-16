@@ -4,7 +4,7 @@ MuSiQue Benchmark for Semantic Folding — Interactive TUI
 
 Three-Phase Design:
   Phase 1 (index)   — Build combined corpus from unique paragraphs, run Steps 1-5 once
-  Phase 2 (benchmark) — Run Step 6 per query against pre-built fingerprints
+  Phase 2 (benchmark) — Run Step 7 per query against pre-built fingerprints
   Phase 3 (report)   — Generate markdown report from benchmark results
 
 Usage:
@@ -459,7 +459,7 @@ def phase2_benchmark(run_dir: Path, entries: List[dict], query_start: int,
             "--spreading-steps", str(params["spreading_steps"]),
             "--output", str(result_json),
             "--keep-verbs", "--min-word-length", str(params["min_word_length"]),
-        ], PROJECT_ROOT, "Step 6 query_processor", timeout=120)
+        ], PROJECT_ROOT, "Step 7 query_processor", timeout=120)
         elapsed = time.time() - t0
 
         if not ok:
@@ -964,7 +964,7 @@ class BenchmarkRunner:
 
         options = [
             "Phase 1: Index Corpus (Steps 1-5)",
-            "Phase 2: Benchmark (Step 6 per query)",
+            "Phase 2: Benchmark (Step 7 per query)",
             "Phase 3: Generate Report",
             "Analyze Last Benchmark Results",
             "Resume / Re-run",

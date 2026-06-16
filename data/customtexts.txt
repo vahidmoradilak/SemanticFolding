@@ -1,4 +1,4 @@
-0, lord god الله اله الرحمن الرحیم فرعون بسم
+0, الله اله الرحمن الرحیم فرعون بسم lord god 
 2, Emotional intelligence is the capacity to recognize, understand.
 3, that focuses on identifying and changing negative thought patterns and behaviors.
 1, enhances cognitive abilities, such as memory and problem
@@ -16,3 +16,13 @@
 15, Allah
 16, ALLAH
 17, الله
+18, طه
+19, يس
+20, يسٓ
+21, یس
+22, یسٓ
+23, the Entirely Merciful, the Especially Merciful
+24, الرحمن و الرحیم
+25, شَدِيدُ ٱلۡعِقَابِ
+724,إِنَّمَا وَلِيُّكُمُ ٱللَّهُ وَرَسُولُهُۥ وَٱلَّذِينَ ءَامَنُواْ ٱلَّذِينَ يُقِيمُونَ ٱلصَّلَوٰةَ وَيُؤۡتُونَ ٱلزَّكَوٰةَ وَهُمۡ رَٰكِعُونَ,"Your ally is none but Allah and therefore His Messenger and those who have believed - those who establish prayer and give zakah, and they bow in worship"
+725, انما ولیکم الله والذین ءامنوا و یوتون الزکاه و هم الرکعون

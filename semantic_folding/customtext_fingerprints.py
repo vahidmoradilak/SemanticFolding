@@ -182,6 +182,7 @@ def extract_phrases_from_doc(
                 logger.debug(f"[AR][KEEP] '{p}' → '{norm}'")
 
     en_valid = set()
+    candidates: Set[str] = set()
     if english_text:
         # ── Hyphen normalization ──────────────────────────────────────────
         # Replace intra-word hyphens (e.g. 'rule-based') with spaces so
@@ -216,20 +217,20 @@ def extract_phrases_from_doc(
         # surface validation before normalizing internally.
         # text_clean is passed so that context validation (substring match)
         # works against the same hyphen-free surface form that the extractor saw.
-        
-        candidates: Set[str] = set()
-        for phrase in en_raw:
-            norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
-            if norm:
-                candidates.add(norm)
 
-        if not candidates:
-            logger.debug(f"No phrases extracted from english text snippet: {english_clean[:80]!r}...")
-            candidates = set()
+        # for phrase in en_raw:
+        #     norm = normalize_phrase(phrase, remove_verbs=remove_verbs)
+        #     if norm:
+        #         candidates.add(norm)
+
+        # if not candidates:
+        #     logger.debug(f"No phrases extracted from english text snippet: {english_clean[:80]!r}...")
+        #     candidates = set()
         
         en_valid = expand_phrases(
-            list(candidates),
+            list(en_raw),
             context_text=english_clean,       # must match what extractor saw
+            remove_verbs=remove_verbs,
             filter_generic=filter_generic,
             min_word_length=min_word_length,
         )
@@ -260,8 +261,7 @@ def extract_phrases_from_doc(
     
     logger.info(
         f"Query phrase extraction: {len(ar_valid)} arabic raw + {len(en_valid)} english raw → "
-        f"{len(candidates)} normalised → "
-        f"{len(valid_sub_phrases)} expanded → "
+        f"{len(valid_sub_phrases)} normalization and expanded → "
         f"{len(matched)} vocab hits"
     )
 
@@ -750,7 +750,7 @@ def build_customtext_fingerprints(
     """
     total_bits = grid_size * grid_size
     target_active = int(total_bits * top_percent)
-
+    
     logger.info("=" * 70)
     logger.info("Step 6: Building Document Fingerprints (Topology-Preserving)")
     logger.info("=" * 70)

@@ -87,7 +87,7 @@ Run the script **without arguments** to enter the interactive TUI:
 The TUI presents a colored menu with these options:
 
 1. **Phase 1: Index Corpus** — Guides you through parameter entry with auto-generated defaults. Prompts for split, query count, grid size, spreading steps, etc. You can accept defaults or override any value.
-2. **Phase 2: Benchmark** — Lets you select a pre-built index run from the registry, then runs Step 6 per query. Parameters are auto-loaded from the run's config.yml.
+2. **Phase 2: Benchmark** — Lets you select a pre-built index run from the registry, then runs Step 7 per query. Parameters are auto-loaded from the run's config.yml.
 3. **Phase 3: Generate Report** — Select a completed benchmark and regenerate the Markdown report.
 4. **Analyze Last Results** — Runs `benchmark_analyzer.py` on the most recent benchmark for deep-dive metrics.
 5. **Resume / Re-run** — Shows interrupted runs (failed at a specific step) and completed benchmarks for re-report generation.
@@ -173,7 +173,7 @@ query.
 ### Phase 2: Benchmark (`--mode benchmark`)
 
 Loads a pre-built run (fingerprints, IDF weights) and for each query runs
-**only Step 6** (query_processing.py). The query processor scores all
+**only Step 7** (query_processing.py). The query processor scores all
 documents in the combined corpus; we then post-filter to each query's 20
 candidate passages before computing retrieval metrics.
 
@@ -190,7 +190,7 @@ saved to benchmarks/benchmark_<timestamp>/per_query/<query_idx>/
 
 This reduces total computation from $O(N \times T)$ to $O(T + N \times s)$,
 where $N$ is the number of queries, $T$ is the cost of Steps 1–5, and $s$ is
-the cost of a single Step 6 run ($s \ll T$).
+the cost of a single Step 7 run ($s \ll T$).
 
 ### Phase 3: Report (`--mode report`)
 
@@ -330,7 +330,7 @@ If you want to index a different subset, use `--query-start` and `--query-end`:
 
 ### Phase 2: Benchmark Queries
 
-Run Step 6 only for queries 0–49 against a pre-built run:
+Run Step 7 only for queries 0–49 against a pre-built run:
 
 ```powershell
 .venv\scripts\python semantic_folding\dataset_benchmark\musique\run_benchmark.py `
@@ -531,7 +531,7 @@ outputs/musique_benchmark/
         └── per_query/
             ├── 0000/                    # Per-query folder (query index)
             │   ├── candidate_docs.json  # This query's 20 candidate doc IDs
-            │   ├── query_results.json   # Raw Step 6 output (all combined corpus docs)
+            │   ├── query_results.json   # Raw Step 7 output (all combined corpus docs)
             │   └── filtered_results.json# Filtered to 20 candidates + metrics
             ├── 0001/
             ├── 0002/
@@ -561,7 +561,7 @@ The three-phase design drastically reduces runtime vs per-query pipeline executi
 - Phase 1 (Steps 1-5) scales with **document count**: ~2,000 unique docs for
   100 queries vs ~10,000 for 500 queries. t-SNE is the bottleneck (~O(n²) in
   document count).
-- Phase 2 (Step 6 per query) is **embarrassingly parallel** — each query is
+- Phase 2 (Step 7 per query) is **embarrassingly parallel** — each query is
   independent. A parallel launcher can be added by partitioning queries.
 - GPU is not used; all computation is CPU-based (t-SNE via scikit-learn, no
   neural models).

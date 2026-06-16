@@ -150,7 +150,7 @@ fingerprints → document fingerprints) **once** on this combined corpus.
 The result is a timestamped run directory with pre-built fingerprints.
 
 **Phase 2 — Benchmark (`--mode benchmark`):** Load the pre-built run and for
-each query run **only Step 6** (query processing) against the pre-built
+each query run **only Step 7** (query processing) against the pre-built
 fingerprints. The query processor scores all documents in the combined corpus;
 we then post-filter to each query's 20 candidate passages before computing
 retrieval metrics.
@@ -164,7 +164,7 @@ generation) scale with the published vocabulary, not with the number of
 queries. By building a unified semantic space from all paragraphs across all
 queries, total cost reduces from $O(N \times T)$ to $O(T + N \times s)$,
 where $N$ is the number of queries, $T$ is the cost of Steps 1–5, and $s$ is
-the cost of a single Step 6 call ($s \ll T$).
+the cost of a single Step 7 call ($s \ll T$).
 
 ### 3.2 Evaluation Metrics
 
@@ -208,7 +208,7 @@ outputs/musique_benchmark/
         └── per_query/
             ├── 0000/                  # Per-query results (index = query idx)
             │   ├── candidate_docs.json
-            │   ├── query_results.json # Raw Step 6 output
+            │   ├── query_results.json # Raw Step 7 output
             │   └── filtered_results.json
             ├── 0001/
             └── ...
@@ -334,7 +334,7 @@ To add a new dataset to the benchmark framework:
 1. **Computational cost**: The original per-query design ran Steps 1–6 for
    every query (~1–3 min per query). The optimised three-phase design reduces
    this to a single index pass (Steps 1–5, ~2–5 min) plus ~20–30 s per query
-   for Step 6 only. For 100 queries this is ~35–55 min instead of ~3–5 hours.
+   for Step 7 only. For 100 queries this is ~35–55 min instead of ~3–5 hours.
 
 2. **Combined corpus**: The index phase collects unique paragraphs across all
    benchmark queries into a single corpus. For 100 dev queries this produces

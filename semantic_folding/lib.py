@@ -32,7 +32,6 @@ from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 from nltk import pos_tag
 from sklearn.feature_extraction.text import TfidfVectorizer
-import re
 from collections import Counter
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
@@ -49,6 +48,7 @@ nltk.data.path.insert(0, "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_dat
 os.environ['NLTK_DATA'] = r'D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_data'
 
 import re
+_ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
 from hazm import Normalizer, word_tokenize
 normalizer = Normalizer()
 from typing import List, Set, Tuple, Optional
@@ -667,7 +667,14 @@ _AR_FUNCTION_WORDS = {
     "کل", "كل", "كلا", "کلا", "جميع", "اجمع", "معا",
 }
 
-_AR_CLITICS = {"و", "ف", "ب", "ل", "ك", "س", "بال", "فل", "ول", "فب"}
+# Auto-add normalized variants so that normalizer output always matches
+_AR_FUNCTION_WORDS = _AR_FUNCTION_WORDS | {
+    w.replace('\u0622','\u0627').replace('\u0625','\u0627').replace('\u0623','\u0627')
+     .replace('\u0629','\u0647').replace('\u0649','\u064A')
+    for w in _AR_FUNCTION_WORDS
+}
+
+_AR_CLITICS = {"و", "ف", "ب", "ل", "ك", "ک", "س", "بال", "فل", "ول", "فب"}
 
 # ---------------------------------------------------------
 # Quranic important-term whitelist
@@ -677,38 +684,41 @@ _AR_CLITICS = {"و", "ف", "ب", "ل", "ك", "س", "بال", "فل", "ول", "ف
 # Forms must be pre-normalized with normalize_arabic_phrase.
 # ---------------------------------------------------------
 _QURANIC_KEEP: Set[str] = {
-    # Verse 5774
-    "كرام", "برره", "كرام برره",
-    # Verse 5799
-    "ترهقها", "قتره", "ترهقها قتره",
-    # Verse 5826
-    "تذهبون", "فاين", "فاين تذهبون",
-    # Verse 5845
-    "بغايبين",
-    # Verse 5915
-    "قعود",
-    # Verse 5931
-    "لوح", "محفوظ", "لوح محفوظ",
-    # Verse 5934
-    "النجم", "الثاقب", "النجم الثاقب",
-    # Verse 6055
-    "انبعث", "اشقيها", "انبعث اشقيها",
-    # Verse 6147
-    "ضبحا", "والعديت", "والعديت ضبحا",
-    # Verse 6224
-    "يلد", "يولد", "يلد يولد",
+    # 2349 and 3706
+    "طه", "يس",
+    "يسٓ",
+    # # Verse 5774
+    # "كرام", "برره", "كرام برره",
+    # # Verse 5799
+    # "ترهقها", "قتره", "ترهقها قتره",
+    # # Verse 5826
+    # "تذهبون", "فاين", "فاين تذهبون",
+    # # Verse 5845
+    # "بغايبين",
+    # # Verse 5915
+    # "قعود",
+    # # Verse 5931
+    # "لوح", "محفوظ", "لوح محفوظ",
+    # # Verse 5934
+    # "النجم", "الثاقب", "النجم الثاقب",
+    # # Verse 6055
+    # "انبعث", "اشقيها", "انبعث اشقيها",
+    # # Verse 6147
+    # "ضبحا", "والعديت", "والعديت ضبحا",
+    # # Verse 6224
+    # "يلد", "يولد", "يلد يولد",
 
-    # English equivalents (normalized by expand_phrases → normalize_phrase)
-    # Verse 5799
-    "blackness",
-    # Verse 5931
-    "preserved", "preserved slate", "slate",
-    # Verse 5934
-    "piercing", "piercing star", "star",
-    # Verse 6147
-    "panting", "racer",
-    # Verse 6224
-    "begets",
+    # # English equivalents (normalized by expand_phrases → normalize_phrase)
+    # # Verse 5799
+    # "blackness",
+    # # Verse 5931
+    # "preserved", "preserved slate", "slate",
+    # # Verse 5934
+    # "piercing", "piercing star", "star",
+    # # Verse 6147
+    # "panting", "racer",
+    # # Verse 6224
+    # "begets",
 }
 
 # Also build a set of trie-like prefixes for fast lookup of clitic-attached forms
@@ -782,6 +792,7 @@ def normalize_arabic_phrase(text: str):
 def expand_phrases(
     phrases: List[str],
     context_text: Optional[str],
+    remove_verbs  : bool = False,
     filter_generic: bool = True,
     min_word_length: int = 3,
 ) -> List[str]:
@@ -906,7 +917,7 @@ def expand_phrases(
             # normalize_phrase handles POS filtering, lemmatization, and
             # structural validation. None means the candidate is not a valid
             # noun phrase (e.g. bare verb, failed structure check).
-            norm = normalize_phrase(candidate, remove_verbs=False)
+            norm = normalize_phrase(candidate, remove_verbs=remove_verbs)
             
             if not norm:
                 logger.debug(
@@ -1029,7 +1040,6 @@ def find_phrase_occurrences(text: str, phrase: str,
         Always use word boundaries (use_word_boundaries=True) for accurate
         phrase matching in semantic contexts.
     """
-    import re
     
     if use_word_boundaries:
         # Escape special regex characters in phrase
@@ -1124,7 +1134,7 @@ def load_contexts_dict(corpus_path: Path) -> Dict[str, str]:
 # ============================================================================
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #  Fingerprint Loaders
-#  Used by: query_processing.py (Step 6)
+#  Used by: query_processing.py (Step 7)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def _load_doc_fingerprint_matrix(
     npz_path  : Path,

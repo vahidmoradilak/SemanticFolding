@@ -45,7 +45,7 @@ filter stopwords → filter verbs? → lemmatize → validate → join
 
 | Function | Parameters | Returns |
 |---|---|---|
-| `expand_phrases` | `phrases: List[str], filter_generic: bool = True, min_word_length: int = 3` | `List[str]` — sorted deduplicated sub-phrases |
+| `expand_phrases` | `phrases: List[str], remove_verbs: bool = True`, filter_generic: bool = True, min_word_length: int = 3` | `List[str]` — sorted deduplicated sub-phrases |
 
 **Expansion rules:**
 
