@@ -53,3 +53,7 @@ young boy
 
 سُلَيۡمَٰنَ
 Solomon
+
+for ii in range(100000):
+  if ii % 10000 == 0:
+    print("#######")
