@@ -101,8 +101,8 @@ def get_top_active_cells(fingerprint_2d: np.ndarray, top_n: int = 10) -> List[Di
     for i, (r, c) in enumerate(zip(rows, cols)):
         cells.append({
             'rank': i + 1,
-            'row': int(r),
             'col': int(c),
+            'row': int(r),
             'value': float(fingerprint_2d[r, c])
         })
     
@@ -110,6 +110,32 @@ def get_top_active_cells(fingerprint_2d: np.ndarray, top_n: int = 10) -> List[Di
                 f"highest value: {cells[0]['value']:.6f}" if cells else "No active cells")
     
     return cells
+
+
+def get_top_overlapped_cells(grid1: np.ndarray, grid2: np.ndarray, top_n: int = 20) -> List[Dict]:
+    """Extract top-N overlapped cells (minimum of both grids)."""
+    overlap = np.minimum(grid1, grid2)
+    nonzero_coords = np.argwhere(overlap > 0)
+
+    if len(nonzero_coords) == 0:
+        return []
+
+    values = overlap[nonzero_coords[:, 0], nonzero_coords[:, 1]]
+    sorted_indices = np.argsort(values)[::-1][:top_n]
+
+    top_cells = []
+    for idx in sorted_indices:
+        y, x = nonzero_coords[idx]
+        overlap_val = values[idx]
+        top_cells.append({
+            "x": int(x),
+            "y": int(y),
+            "overlap_activation": float(overlap_val),
+            "doc1_activation": float(grid1[y, x]),
+            "doc2_activation": float(grid2[y, x])
+        })
+
+    return top_cells
 
 
 def create_document_visualizer(
@@ -536,6 +562,564 @@ def get_document_by_id(file_path, target_id):
                 return parts[1].strip()
     return None
 
+
+def save_visualization_metadata(
+    output_path: Path,
+    mode: str,
+    doc_ids: Dict[str, str],
+    doc_texts: Dict[str, str],
+    grid_stats: Dict,
+    config: Dict,
+    top_cells: Dict,
+) -> None:
+    """Save visualization metadata and statistics to JSON."""
+    metadata = {
+        "mode": mode,
+        "doc_ids": doc_ids,
+        "doc_texts": doc_texts,
+        "grid_stats": grid_stats,
+        "config": config,
+        "top_cells": top_cells,
+        "generated_at": __import__('datetime').datetime.now().isoformat(),
+    }
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as fh:
+        json.dump(metadata, fh, indent=2)
+
+    logger.info(f"Saved metadata: {output_path}")
+
+
+# ============================================================================
+# Comparative Two-Customtext Visualization (Plotly)
+# ============================================================================
+
+def visualize_document_pair(
+    doc_id1: str,
+    doc_id2: str,
+    doc_text1: str,
+    doc_text2: str,
+    doc_fingerprints: Dict,
+    output_dir: Path,
+    grid_size: int,
+    use_morton: bool,
+    threshold: float = 0.0,
+    grid_borders: bool = True,
+    border_color: str = "lightgray",
+    border_width: float = 1.0,
+    max_shapes: int = 5000,
+    figure_width: int = 1800,
+    figure_height: int = 1500,
+    colorscale: str = "Blues",
+    generate_html: bool = True,
+    generate_png: bool = True,
+    save_metadata: bool = True,
+) -> None:
+    """
+    Generate interactive 9-panel comparative dashboard with Plotly.
+
+    Creates a comprehensive three-row visualization comparing two document fingerprints:
+
+    Row 1 (Matrix Views):
+    - Panel 1: Matrix view of document 1 with 4x4 block borders
+    - Panel 2: Matrix view of document 2 with 4x4 block borders
+    - Panel 3: Matrix view of semantic overlap with 4x4 block borders
+
+    Row 2 (Spatial Heatmaps):
+    - Panel 4: Continuous heatmap of document 1
+    - Panel 5: Continuous heatmap of document 2
+    - Panel 6: Semantic overlap heatmap
+
+    Row 3 (Analysis):
+    - Panel 7: Difference map (doc1 - doc2)
+    - Panel 8: Similarity metrics (cosine similarity, distance, overlap)
+    - Panel 9: Activation distribution histograms
+    """
+    logger.info(f"Comparing fingerprints: '{doc_id1}' vs '{doc_id2}'")
+
+    # Verify both documents exist
+    missing = [d for d in [doc_id1, doc_id2] if d not in doc_fingerprints]
+    if missing:
+        logger.error(f"Document IDs not found: {missing}")
+        available = list(doc_fingerprints.keys())[:10]
+        logger.info(f"Available docs (first 10): {available}")
+        raise ValueError(f"Document IDs not found in fingerprints: {missing}")
+
+    # Extract both fingerprints (sparse to dense)
+    fp1 = doc_fingerprints[doc_id1].toarray().flatten().astype(np.float32)
+    fp2 = doc_fingerprints[doc_id2].toarray().flatten().astype(np.float32)
+
+    logger.debug(f"Doc 1 '{doc_id1}': nnz={np.count_nonzero(fp1)}, "
+                 f"max={fp1.max():.4f}")
+    logger.debug(f"Doc 2 '{doc_id2}': nnz={np.count_nonzero(fp2)}, "
+                 f"max={fp2.max():.4f}")
+
+    # Reconstruct 2D grids from flattened fingerprints
+    logger.info(f"Reconstructing 2D grids (size={grid_size}, morton={use_morton})")
+    grid1 = inverse_flatten(fp1, grid_size, use_morton)
+    grid2 = inverse_flatten(fp2, grid_size, use_morton)
+
+    # Extract top active cells
+    logger.debug("Extracting top active cells...")
+    top_cells_1 = get_top_active_cells(grid1, top_n=20)
+    top_cells_2 = get_top_active_cells(grid2, top_n=20)
+    top_overlapped = get_top_overlapped_cells(grid1, grid2, top_n=20)
+
+    # Identify activated cells for matrix views
+    logger.debug(f"Identifying activated cells with threshold={threshold}...")
+    activated_coords_1 = np.argwhere(grid1 > threshold)
+    activated_coords_2 = np.argwhere(grid2 > threshold)
+
+    # Compute overlap and difference grids
+    logger.debug("Computing overlap and difference grids...")
+    overlap = np.minimum(grid1, grid2)
+    activated_coords_overlap = np.argwhere(overlap > threshold)
+    diff = grid1 - grid2
+
+    logger.info(f"Doc 1: {len(activated_coords_1)} activated cells (threshold={threshold})")
+    logger.info(f"Doc 2: {len(activated_coords_2)} activated cells (threshold={threshold})")
+    logger.info(f"Overlap: {len(activated_coords_overlap)} activated cells (threshold={threshold})")
+
+    # Compute comprehensive statistics
+    logger.debug("Computing statistics...")
+    active1 = fp1[fp1 > 0]
+    active2 = fp2[fp2 > 0]
+
+    # Similarity metrics
+    norm1, norm2 = np.linalg.norm(fp1), np.linalg.norm(fp2)
+    cos_sim = np.dot(fp1, fp2) / (norm1 * norm2) if norm1 > 0 and norm2 > 0 else 0.0
+
+    grid_stats = {
+        "doc1": {
+            "doc_id": doc_id1,
+            "active_cells": int(len(active1)),
+            "activated_cells_threshold": int(len(activated_coords_1)),
+            "max_activation": float(fp1.max()),
+            "mean_activation": float(active1.mean()) if len(active1) > 0 else 0.0,
+            "grid_nonzero": int(np.count_nonzero(grid1))
+        },
+        "doc2": {
+            "doc_id": doc_id2,
+            "active_cells": int(len(active2)),
+            "activated_cells_threshold": int(len(activated_coords_2)),
+            "max_activation": float(fp2.max()),
+            "mean_activation": float(active2.mean()) if len(active2) > 0 else 0.0,
+            "grid_nonzero": int(np.count_nonzero(grid2))
+        },
+        "comparison": {
+            "cosine_similarity": float(cos_sim),
+            "cosine_similarity_pct": float(cos_sim * 100),
+            "overlap_cells": int(np.count_nonzero(overlap)),
+            "overlap_activated_threshold": int(len(activated_coords_overlap)),
+            "overlap_max": float(overlap.max()),
+            "difference_range": [float(diff.min()), float(diff.max())],
+            "euclidean_distance": float(np.linalg.norm(fp1 - fp2)),
+            "threshold": float(threshold)
+        }
+    }
+
+    logger.debug(f"Comparison statistics: {grid_stats['comparison']}")
+    logger.info(f"Cosine similarity: {cos_sim:.4f} ({cos_sim * 100:.2f}%)")
+
+    # ========================================================================
+    # Create 9-panel interactive figure (3 rows x 3 columns)
+    # ========================================================================
+    logger.debug("Creating subplot structure...")
+    fig = make_subplots(
+        rows=3, cols=3,
+        subplot_titles=(
+            f'Matrix: "{doc_id1}"',
+            f'Matrix: "{doc_id2}"',
+            'Matrix: Overlap',
+            f'Spatial: "{doc_id1}"',
+            f'Spatial: "{doc_id2}"',
+            'Spatial: Overlap',
+            'Difference Map',
+            'Similarity Metrics',
+            'Activation Distribution'
+        ),
+        specs=[
+            [{"type": "heatmap"}, {"type": "heatmap"}, {"type": "heatmap"}],
+            [{"type": "heatmap"}, {"type": "heatmap"}, {"type": "heatmap"}],
+            [{"type": "heatmap"}, {"type": "xy"}, {"type": "xy"}]
+        ],
+        vertical_spacing=0.06,
+        horizontal_spacing=0.05,
+        row_heights=[0.33, 0.33, 0.34],
+        column_widths=[0.33, 0.33, 0.34]
+    )
+
+    shape_count = 0
+
+    # ========================================================================
+    # ROW 1: Matrix Views with 4x4 Block Borders
+    # ========================================================================
+
+    # Panel 1 (Row 1, Col 1): Matrix view of doc 1
+    logger.debug("Adding Panel 1: Matrix view of doc 1...")
+    fig.add_trace(
+        go.Heatmap(
+            z=grid1,
+            colorscale=[
+                [0, 'white'],
+                [0.001, 'lightblue'],
+                [0.2, 'blue'],
+                [0.5, 'darkblue'],
+                [0.8, 'navy'],
+                [1, 'midnightblue']
+            ],
+            zmin=0, zmax=1,
+            colorbar=dict(title="Activation", x=0.29, len=0.28, y=0.83),
+            hovertemplate='Cell: (%{x}, %{y})<br>Activation: %{z:.4f}<extra></extra>',
+            xgap=1, ygap=1
+        ),
+        row=1, col=1
+    )
+
+    # Draw 4x4 block borders for doc 1
+    if grid_borders:
+        logger.debug("Drawing block borders for doc 1...")
+        block_size = 4
+        num_blocks = grid_size // block_size
+
+        for i in range(num_blocks + 1):
+            if shape_count >= max_shapes:
+                break
+            x_pos = i * block_size - 0.5
+            fig.add_shape(
+                type="line",
+                x0=x_pos, y0=-0.5, x1=x_pos, y1=grid_size - 0.5,
+                line=dict(color=border_color, width=border_width),
+                layer="above", xref="x", yref="y"
+            )
+            shape_count += 1
+
+        for i in range(num_blocks + 1):
+            if shape_count >= max_shapes:
+                break
+            y_pos = i * block_size - 0.5
+            fig.add_shape(
+                type="line",
+                x0=-0.5, y0=y_pos, x1=grid_size - 0.5, y1=y_pos,
+                line=dict(color=border_color, width=border_width),
+                layer="above", xref="x", yref="y"
+            )
+            shape_count += 1
+
+    # Panel 2 (Row 1, Col 2): Matrix view of doc 2
+    logger.debug("Adding Panel 2: Matrix view of doc 2...")
+    fig.add_trace(
+        go.Heatmap(
+            z=grid2,
+            colorscale=[
+                [0, 'white'],
+                [0.001, 'lightyellow'],
+                [0.2, 'orange'],
+                [0.5, 'darkorange'],
+                [0.8, 'orangered'],
+                [1, 'darkred']
+            ],
+            zmin=0, zmax=1,
+            colorbar=dict(title="Activation", x=0.63, len=0.28, y=0.83),
+            hovertemplate='Cell: (%{x}, %{y})<br>Activation: %{z:.4f}<extra></extra>',
+            xgap=1, ygap=1
+        ),
+        row=1, col=2
+    )
+
+    # Draw 4x4 block borders for doc 2
+    if grid_borders and shape_count < max_shapes:
+        block_size = 4
+        num_blocks = grid_size // block_size
+
+        for i in range(num_blocks + 1):
+            if shape_count >= max_shapes:
+                break
+            x_pos = i * block_size - 0.5
+            fig.add_shape(
+                type="line",
+                x0=x_pos, y0=-0.5, x1=x_pos, y1=grid_size - 0.5,
+                line=dict(color=border_color, width=border_width),
+                layer="above", xref="x2", yref="y2"
+            )
+            shape_count += 1
+
+        for i in range(num_blocks + 1):
+            if shape_count >= max_shapes:
+                break
+            y_pos = i * block_size - 0.5
+            fig.add_shape(
+                type="line",
+                x0=-0.5, y0=y_pos, x1=grid_size - 0.5, y1=y_pos,
+                line=dict(color=border_color, width=border_width),
+                layer="above", xref="x2", yref="y2"
+            )
+            shape_count += 1
+
+    # Panel 3 (Row 1, Col 3): Matrix view of overlap
+    logger.debug("Adding Panel 3: Matrix view of overlap...")
+    fig.add_trace(
+        go.Heatmap(
+            z=overlap,
+            colorscale=[
+                [0, 'white'],
+                [0.001, 'lavender'],
+                [0.2, 'mediumpurple'],
+                [0.5, 'purple'],
+                [0.8, 'indigo'],
+                [1, 'darkviolet']
+            ],
+            zmin=0, zmax=1,
+            colorbar=dict(title="Overlap", x=0.97, len=0.28, y=0.83),
+            hovertemplate='Cell: (%{x}, %{y})<br>Overlap: %{z:.4f}<extra></extra>',
+            xgap=1, ygap=1
+        ),
+        row=1, col=3
+    )
+
+    # Draw 4x4 block borders for overlap
+    if grid_borders and shape_count < max_shapes:
+        block_size = 4
+        num_blocks = grid_size // block_size
+
+        for i in range(num_blocks + 1):
+            if shape_count >= max_shapes:
+                break
+            x_pos = i * block_size - 0.5
+            fig.add_shape(
+                type="line",
+                x0=x_pos, y0=-0.5, x1=x_pos, y1=grid_size - 0.5,
+                line=dict(color=border_color, width=border_width),
+                layer="above", xref="x3", yref="y3"
+            )
+            shape_count += 1
+
+        for i in range(num_blocks + 1):
+            if shape_count >= max_shapes:
+                break
+            y_pos = i * block_size - 0.5
+            fig.add_shape(
+                type="line",
+                x0=-0.5, y0=y_pos, x1=grid_size - 0.5, y1=y_pos,
+                line=dict(color=border_color, width=border_width),
+                layer="above", xref="x3", yref="y3"
+            )
+            shape_count += 1
+
+    logger.debug(f"Total shapes drawn: {shape_count}")
+
+    # ========================================================================
+    # ROW 2: Continuous Spatial Heatmaps
+    # ========================================================================
+
+    # Panel 4 (Row 2, Col 1): Continuous heatmap of doc 1
+    logger.debug("Adding Panel 4: Continuous heatmap of doc 1...")
+    fig.add_trace(
+        go.Heatmap(
+            z=grid1, colorscale='Blues',
+            zmin=0, zmax=1,
+            colorbar=dict(title="Activation", x=0.29, len=0.28, y=0.5),
+            hovertemplate='X: %{x}<br>Y: %{y}<br>Activation: %{z:.4f}<extra></extra>',
+            xgap=0, ygap=0
+        ),
+        row=2, col=1
+    )
+
+    # Panel 5 (Row 2, Col 2): Continuous heatmap of doc 2
+    logger.debug("Adding Panel 5: Continuous heatmap of doc 2...")
+    fig.add_trace(
+        go.Heatmap(
+            z=grid2, colorscale='Oranges',
+            zmin=0, zmax=1,
+            colorbar=dict(title="Activation", x=0.63, len=0.28, y=0.5),
+            hovertemplate='X: %{x}<br>Y: %{y}<br>Activation: %{z:.4f}<extra></extra>',
+            xgap=0, ygap=0
+        ),
+        row=2, col=2
+    )
+
+    # Panel 6 (Row 2, Col 3): Continuous heatmap of overlap
+    logger.debug("Adding Panel 6: Continuous heatmap of overlap...")
+    fig.add_trace(
+        go.Heatmap(
+            z=overlap, colorscale='Purples',
+            zmin=0, zmax=1,
+            colorbar=dict(title="Overlap", x=0.97, len=0.28, y=0.5),
+            hovertemplate='X: %{x}<br>Y: %{y}<br>Overlap: %{z:.4f}<extra></extra>',
+            xgap=0, ygap=0
+        ),
+        row=2, col=3
+    )
+
+    # ========================================================================
+    # ROW 3: Analysis Panels
+    # ========================================================================
+
+    # Panel 7 (Row 3, Col 1): Difference map
+    logger.debug("Adding Panel 7: Difference map...")
+    # Auto-scale z range around 0 so small differences are visible
+    max_abs_diff = max(abs(diff.min()), abs(diff.max()))
+    if max_abs_diff == 0:
+        z_min, z_max = -1, 1
+    else:
+        z_min, z_max = -max_abs_diff, max_abs_diff
+    fig.add_trace(
+        go.Heatmap(
+            z=diff, colorscale='RdBu',
+            # z=diff, colorscale='RdBu_r',
+            zmid=0, zmin=z_min, zmax=z_max,
+            colorbar=dict(title="Difference", x=0.29, len=0.28, y=0.17),
+            hovertemplate='X: %{x}<br>Y: %{y}<br>Difference: %{z:.4f}<extra></extra>',
+            xgap=0, ygap=0
+        ),
+        row=3, col=1
+    )
+
+    # Panel 8 (Row 3, Col 2): Similarity metrics
+    logger.debug("Adding Panel 8: Similarity metrics...")
+    metrics_text = (
+        f"<b>Cosine Similarity</b><br><br>"
+        f"<span style='font-size:32px'>{cos_sim * 100:.2f}%</span><br><br>"
+        f"<b>Euclidean Distance</b><br>"
+        f"{grid_stats['comparison']['euclidean_distance']:.4f}<br><br>"
+        f"<b>Overlap Cells (>{threshold})</b><br>"
+        f"{grid_stats['comparison']['overlap_activated_threshold']}<br><br>"
+        f"<b>Total Overlap Cells</b><br>"
+        f"{grid_stats['comparison']['overlap_cells']}"
+    )
+
+    fig.add_annotation(
+        text=metrics_text,
+        xref="x8", yref="y8",
+        x=0.5, y=0.5,
+        xanchor='center', yanchor='middle',
+        showarrow=False,
+        font=dict(size=14),
+        align='center'
+    )
+
+    # Panel 9 (Row 3, Col 3): Histograms
+    logger.debug("Adding Panel 9: Activation histograms...")
+    if len(active1) > 0:
+        fig.add_trace(
+            go.Histogram(
+                x=active1, nbinsx=30, name=f"Doc {doc_id1}",
+                marker=dict(color='blue', opacity=0.6, line=dict(color='black', width=1)),
+                hovertemplate='Activation: %{x:.4f}<br>Count: %{y}<extra></extra>'
+            ),
+            row=3, col=3
+        )
+
+    if len(active2) > 0:
+        fig.add_trace(
+            go.Histogram(
+                x=active2, nbinsx=30, name=f"Doc {doc_id2}",
+                marker=dict(color='darkorange', opacity=0.6, line=dict(color='black', width=1)),
+                hovertemplate='Activation: %{x:.4f}<br>Count: %{y}<extra></extra>'
+            ),
+            row=3, col=3
+        )
+
+    # ========================================================================
+    # Update axes
+    # ========================================================================
+    logger.debug("Updating axes...")
+
+    for row_num in [1, 2]:
+        for col_num in [1, 2, 3]:
+            subplot_num = (row_num - 1) * 3 + col_num
+            xref = f"x{subplot_num}" if subplot_num > 1 else "x"
+            yref = f"y{subplot_num}" if subplot_num > 1 else "y"
+            fig.update_xaxes(title_text="X", row=row_num, col=col_num,
+                             constrain="domain", showgrid=False)
+            fig.update_yaxes(title_text="Y", row=row_num, col=col_num,
+                             scaleanchor=xref, scaleratio=1,
+                             constrain="domain", showgrid=False)
+
+    fig.update_xaxes(title_text="X", row=3, col=1, constrain="domain", showgrid=False)
+    fig.update_yaxes(title_text="Y", row=3, col=1, scaleanchor="x7", scaleratio=1,
+                     constrain="domain", showgrid=False)
+
+    fig.update_xaxes(visible=False, row=3, col=2)
+    fig.update_yaxes(visible=False, row=3, col=2)
+
+    fig.update_xaxes(title_text="Activation", row=3, col=3, showgrid=True, gridcolor='lightgray')
+    fig.update_yaxes(title_text="Count", row=3, col=3, showgrid=True, gridcolor='lightgray')
+
+    # ========================================================================
+    # Layout
+    # ========================================================================
+    logger.debug("Updating layout...")
+    fig.update_layout(
+        title=dict(
+            text=f'<b>Comparative Analysis: Doc "{doc_id1}" vs Doc "{doc_id2}"</b>',
+            x=0.5, xanchor='center', font=dict(size=18)
+        ),
+        height=figure_height,
+        width=figure_width,
+        showlegend=True,
+        legend=dict(x=0.85, y=0.17, bgcolor='rgba(255,255,255,0.8)',
+                    bordercolor='lightgray', borderwidth=1),
+        template='plotly_white',
+        autosize=False,
+        margin=dict(l=60, r=60, t=100, b=60),
+        paper_bgcolor='white',
+        plot_bgcolor='white'
+    )
+
+    # ========================================================================
+    # Save outputs
+    # ========================================================================
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    safe_name1 = doc_id1.replace(' ', '_').replace('/', '_')
+    safe_name2 = doc_id2.replace(' ', '_').replace('/', '_')
+    output_path = output_dir / f"compare_{safe_name1}_vs_{safe_name2}"
+
+    if generate_html:
+        html_path = output_path.with_suffix('.html')
+        logger.debug(f"Saving HTML to {html_path}...")
+        fig.write_html(
+            str(html_path),
+            config={'displayModeBar': True, 'responsive': False, 'displaylogo': False}
+        )
+        logger.info(f"Saved interactive HTML: {html_path}")
+
+    if generate_png:
+        png_path = output_path.with_suffix('.png')
+        logger.debug(f"Saving PNG to {png_path}...")
+        try:
+            fig.write_image(str(png_path), width=figure_width, height=figure_height)
+            logger.info(f"Saved static PNG: {png_path}")
+        except Exception as e:
+            logger.warning(f"Could not save PNG (kaleido required): {e}")
+
+    if save_metadata:
+        meta_out_path = output_dir / f"{output_path.stem}_meta.json"
+        save_visualization_metadata(
+            output_path=meta_out_path,
+            mode="comparative",
+            doc_ids={"doc1": doc_id1, "doc2": doc_id2},
+            doc_texts={"doc1": doc_text1, "doc2": doc_text2},
+            grid_stats=grid_stats,
+            config={
+                "grid_size": grid_size,
+                "use_morton": use_morton,
+                "threshold": threshold,
+                "grid_borders": grid_borders,
+                "border_color": border_color,
+                "border_width": border_width,
+                "max_shapes": max_shapes,
+                "figure_width": figure_width,
+                "figure_height": figure_height,
+                "colorscale": colorscale
+            },
+            top_cells={"doc1": top_cells_1, "doc2": top_cells_2}
+        )
+
+    logger.info(f"Visualization complete for '{doc_id1}' vs '{doc_id2}'")
+
+
 def main():
     """
     Main entry point for customtext fingerprint visualization.
@@ -754,26 +1338,59 @@ def main():
         else:
             logger.info("Mode: Comparative two-customtext visualization")
             logger.info(f"Starting customtext visualization for {args.doc_id1} and {args.doc_id2}")
-            # visualize_customtext_pair(
-            #     phrase1=args.phrase1.lower(),
-            #     phrase2=args.phrase2.lower(),
-            #     fingerprints_dir=args.fingerprints,
-            #     output_dir=args.output,
-            #     grid_size=args.grid_size,
-            #     use_morton=args.morton,
-            #     threshold=args.threshold,
-            #     grid_borders=not args.no_grid_borders,
-            #     border_color=args.border_color,
-            #     border_width=args.border_width,
-            #     max_shapes=args.max_shapes,
-            #     figure_width=args.width,
-            #     figure_height=args.height,
-            #     colorscale=args.colorscale,
-            #     generate_html=not args.no_html,
-            #     generate_png=not args.no_png,
-            #     save_metadata=not args.no_metadata,
-            # )
-            print("!!! visualize customtext pair not ready, now")
+
+            if args.doc_id1 not in doc_fingerprints:
+                available_docs = list(doc_fingerprints.keys())[:10]
+                logger.error(f"Customtext ID '{args.doc_id1}' not found in fingerprints")
+                print(f"Error: Customtext ID '{args.doc_id1}' not found.")
+                print(f"Available customtexts: {available_docs}...")
+                return
+
+            if args.doc_id2 not in doc_fingerprints:
+                available_docs = list(doc_fingerprints.keys())[:10]
+                logger.error(f"Customtext ID '{args.doc_id2}' not found in fingerprints")
+                print(f"Error: Customtext ID '{args.doc_id2}' not found.")
+                print(f"Available customtexts: {available_docs}...")
+                return
+
+            grid_size = metadata['grid_size']
+            use_morton = metadata.get('use_morton', False)
+
+            text_dir = "data\\customtexts.txt"
+            doc_text1 = get_document_by_id(text_dir, args.doc_id1)
+            doc_text2 = get_document_by_id(text_dir, args.doc_id2)
+
+            print(f"Comparing customtext {args.doc_id1}: {doc_text1}")
+            print(f"                  vs {args.doc_id2}: {doc_text2}")
+            print(f"Grid size: {grid_size}×{grid_size}")
+            print(f"Total Customtexts: {metadata['num_docs']}")
+
+            visualize_document_pair(
+                doc_id1=args.doc_id1,
+                doc_id2=args.doc_id2,
+                doc_text1=doc_text1,
+                doc_text2=doc_text2,
+                doc_fingerprints=doc_fingerprints,
+                output_dir=args.output,
+                grid_size=grid_size,
+                use_morton=use_morton,
+                threshold=args.threshold,
+                grid_borders=not args.no_grid_borders,
+                border_color=args.border_color,
+                border_width=args.border_width,
+                max_shapes=args.max_shapes,
+                figure_width=args.width,
+                figure_height=args.height,
+                colorscale=args.colorscale,
+                generate_html=not args.no_html,
+                generate_png=not args.no_png,
+                save_metadata=not args.no_metadata,
+            )
+
+            print(f"\nComparison complete! Files saved in {args.output}")
+            logger.info("=" * 60)
+            logger.info("Comparison visualization completed successfully.")
+            logger.info("=" * 60)
     
     except Exception as e:
         logger.exception(f"Visualization failed: {e}")

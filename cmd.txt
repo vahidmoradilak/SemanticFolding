@@ -41,6 +41,9 @@ python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\
 customtext_viz:
 python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_visualizer.py --run-dir outputs\run_20260616_110007 --output outputs\run_20260616_110007\customtext_viz --border-width 1 --border-color lightgray --border-width 1 --width 1800 --height 600 --grid-size 64 --threshold 0.0 --max-shapes 300 --colorscale Blues --doc-id 724
 
+customtext_viz_pair:
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_visualizer.py --run-dir outputs\run_20260616_110007 --output outputs\run_20260616_110007\customtext_viz --border-width 1 --border-color lightgray --border-width 1 --width 1800 --height 1800 --grid-size 64 --threshold 0.0 --max-shapes 300 --colorscale Blues --doc-id1 11 --doc-id2 12
+
 Main Menu:
   1. Start new run
     Select step to run:

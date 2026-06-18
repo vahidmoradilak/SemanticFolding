@@ -1243,7 +1243,8 @@ def visualize_phrase_pair(
     fig.add_trace(
         go.Heatmap(
             z=diff,
-            colorscale='RdBu_r',
+            colorscale='RdBu',
+            # colorscale='RdBu_r',
             zmid=0,
             zmin=-1, zmax=1,
             colorbar=dict(
