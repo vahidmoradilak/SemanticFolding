@@ -365,7 +365,7 @@ def create_document_visualizer(
     if top_cells:
         top_cells_data = [
             [str(cell['rank']) for cell in top_cells],
-            [f"({cell['row']}, {cell['col']})" for cell in top_cells],
+            [f"({cell['col']}, {cell['row']})" for cell in top_cells],
             [f"{cell['value']:.4f}" for cell in top_cells]
         ]
     else:

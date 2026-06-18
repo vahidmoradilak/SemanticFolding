@@ -1,5 +1,5 @@
 last_run_id: run_20260616_110007
-last_step: 6
+last_step: 7
 runs:
   run_20260519_214612:
     corpus: data\corpus.txt
@@ -85,6 +85,19 @@ runs:
           output: outputs/run_20260519_214612/query_results
           query: What role do sentence structure and the contextual meaning of words
             play in the development of natural language processing systems?
+          spreading_steps: '1'
+          top_k: '5'
+          weighting: idf
+      7:
+        completed_at: '2026-06-18T08:33:53.241716'
+        output: outputs/run_20260519_214612/query_results
+        params:
+          doc_fingerprints: outputs/run_20260519_214612/doc_fingerprints
+          fingerprints: outputs/run_20260519_214612/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260519_214612\term_context_matrix\idf_weights.json
+          output: outputs/run_20260519_214612/query_results
+          query: d
           spreading_steps: '1'
           top_k: '5'
           weighting: idf
@@ -258,92 +271,6 @@ runs:
           idf_weights: outputs\run_20260523_163427\term_context_matrix\idf_weights.json
           output: outputs/run_20260523_163427/query_results
           query: انَ وَعۡدُهُۥ مَفۡعُولًا,The heaven will break apart therefrom;
-          spreading_steps: '1'
-          top_k: '5'
-          weighting: idf
-  run_20260523_171447:
-    corpus: data\quran\quran_ayahs_tail764.txt
-    created_at: '2026-05-23T17:14:47.930647'
-    steps:
-      1:
-        completed_at: '2026-05-23T17:15:07.394008'
-        mapping: outputs\run_20260523_171447\extracted_phrases\phrase_to_contexts.json
-        output: outputs/run_20260523_171447/extracted_phrases
-        params:
-          corpus: data\quran\quran_ayahs_tail764.txt
-          keep_verbs: 'true'
-          min_freq: '1'
-          min_word_length: '3'
-          no_filter_generic: 'false'
-          no_spacy: 'false'
-          output: outputs/run_20260523_171447/extracted_phrases
-          stats: 'false'
-        vocab: outputs\run_20260523_171447\extracted_phrases\vocabulary.csv
-      2:
-        completed_at: '2026-05-23T17:15:26.467460'
-        idf_weights: outputs\run_20260523_171447\term_context_matrix\idf_weights.json
-        matrix_npz: outputs\run_20260523_171447\term_context_matrix\term_context_matrix.npz
-        metadata: outputs\run_20260523_171447\term_context_matrix\term_context_matrix.json
-        output: outputs/run_20260523_171447/term_context_matrix
-        params:
-          corpus: data\quran\quran_ayahs_tail764.txt
-          mapping: outputs\run_20260523_171447\extracted_phrases\phrase_to_contexts.json
-          no_tfidf: 'false'
-          output: outputs/run_20260523_171447/term_context_matrix
-          vocab: outputs\run_20260523_171447\extracted_phrases\vocabulary.csv
-      3:
-        completed_at: '2026-05-23T17:15:55.113421'
-        coordinates: outputs\run_20260523_171447\semantic_space\context_coordinates.json
-        output: outputs/run_20260523_171447/semantic_space
-        params:
-          grid_size: '64'
-          matrix_npz: outputs\run_20260523_171447\term_context_matrix\term_context_matrix.npz
-          metadata: outputs\run_20260523_171447\term_context_matrix\term_context_matrix.json
-          method: tsne
-          output: outputs/run_20260523_171447/semantic_space
-          show_density: 'false'
-          visualize: 'true'
-      4:
-        completed_at: '2026-05-23T17:16:10.609272'
-        output: outputs/run_20260523_171447/phrase_fingerprints
-        params:
-          coordinates: outputs\run_20260523_171447\semantic_space\context_coordinates.json
-          grid_size: '64'
-          metadata: outputs\run_20260523_171447\term_context_matrix\term_context_matrix.json
-          morton: 'true'
-          no_smooth: 'false'
-          output: outputs/run_20260523_171447/phrase_fingerprints
-          smoothing_sigma: '1.5'
-      5:
-        completed_at: '2026-05-23T17:18:50.983188'
-        output: outputs/run_20260523_171447/doc_fingerprints
-        params:
-          compute_diversity: 'false'
-          corpus: data\quran\quran_ayahs_tail764.txt
-          diversity_sample: '100'
-          filter_generic: 'true'
-          fingerprints: outputs/run_20260523_171447/phrase_fingerprints
-          grid_size: '64'
-          idf_weights: outputs\run_20260523_171447\term_context_matrix\idf_weights.json
-          keep_verbs: 'true'
-          min_peak_distance: '2'
-          min_word_length: '3'
-          morton: 'true'
-          no_normalize: 'true'
-          normalize_method: l2
-          output: outputs/run_20260523_171447/doc_fingerprints
-          smoothing_sigma: '1.5'
-          top_percent: '0.1'
-      6:
-        completed_at: '2026-05-23T17:19:34.765000'
-        output: outputs/run_20260523_171447/query_results
-        params:
-          doc_fingerprints: outputs/run_20260523_171447/doc_fingerprints
-          fingerprints: outputs/run_20260523_171447/phrase_fingerprints
-          grid_size: '64'
-          idf_weights: outputs\run_20260523_171447\term_context_matrix\idf_weights.json
-          output: outputs/run_20260523_171447/query_results
-          query: ٱلسَّمَآءُ مُنفَطِرُۢ بِهِۦۚ كَانَ وَعۡدُهُۥ مَفۡعُولًا
           spreading_steps: '1'
           top_k: '5'
           weighting: idf
@@ -2630,7 +2557,7 @@ runs:
           stats: 'false'
         vocab: outputs\run_20260616_110007\extracted_phrases\vocabulary.csv
       2:
-        completed_at: '2026-06-16T11:09:48.074308'
+        completed_at: '2026-06-16T17:05:56.318508'
         idf_weights: outputs\run_20260616_110007\term_context_matrix\idf_weights.json
         matrix_npz: outputs\run_20260616_110007\term_context_matrix\term_context_matrix.npz
         metadata: outputs\run_20260616_110007\term_context_matrix\term_context_matrix.json
@@ -2642,7 +2569,7 @@ runs:
           output: outputs/run_20260616_110007/term_context_matrix
           vocab: outputs\run_20260616_110007\extracted_phrases\vocabulary.csv
       3:
-        completed_at: '2026-06-16T11:11:36.268320'
+        completed_at: '2026-06-18T08:47:21.884606'
         coordinates: outputs\run_20260616_110007\semantic_space\context_coordinates.json
         output: outputs/run_20260616_110007/semantic_space
         params:
@@ -2654,7 +2581,7 @@ runs:
           show_density: 'false'
           visualize: 'true'
       4:
-        completed_at: '2026-06-16T11:22:24.555707'
+        completed_at: '2026-06-18T08:51:11.494167'
         output: outputs/run_20260616_110007/phrase_fingerprints
         params:
           coordinates: outputs\run_20260616_110007\semantic_space\context_coordinates.json
@@ -2665,7 +2592,7 @@ runs:
           output: outputs/run_20260616_110007/phrase_fingerprints
           smoothing_sigma: '1.5'
       5:
-        completed_at: '2026-06-16T11:32:21.349532'
+        completed_at: '2026-06-18T08:58:12.574945'
         output: outputs/run_20260616_110007/doc_fingerprints
         params:
           compute_diversity: 'false'
@@ -2685,7 +2612,7 @@ runs:
           smoothing_sigma: '1.5'
           top_percent: '0.05'
       6:
-        completed_at: '2026-06-16T15:45:17.016704'
+        completed_at: '2026-06-18T08:59:34.527521'
         output: outputs/run_20260616_110007/customtext_fingerprints
         params:
           compute_diversity: 'false'
@@ -2705,7 +2632,7 @@ runs:
           smoothing_sigma: '1.5'
           top_percent: '0.05'
       7:
-        completed_at: '2026-06-16T15:35:01.844441'
+        completed_at: '2026-06-18T09:06:11.844349'
         output: outputs/run_20260616_110007/query_results
         params:
           doc_fingerprints: outputs/run_20260616_110007/doc_fingerprints
@@ -2713,7 +2640,7 @@ runs:
           grid_size: '64'
           idf_weights: outputs\run_20260616_110007\term_context_matrix\idf_weights.json
           output: outputs/run_20260616_110007/query_results
-          query: شَدِيدُ ٱلۡعِقَابِ
-          spreading_steps: '1'
-          top_k: '10'
+          query: ولدن
+          spreading_steps: '0'
+          top_k: '5'
           weighting: idf
