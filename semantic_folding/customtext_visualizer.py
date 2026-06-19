@@ -424,7 +424,7 @@ def create_document_visualizer(
     # ------------------------------------------------------------------------
     fig.update_layout(
         title=dict(
-            text=f'Customtext Fingerprint Analysis {doc_id}: {doc_text[:128]}',
+            text=f'Customtext Fingerprint Analysis {doc_id}: {(doc_text or "N/A")[:128]}',
             x=0.5,
             xanchor='center',
             font=dict(size=16)
@@ -1136,7 +1136,7 @@ def visualize_document_pair(
     logger.debug("Updating layout...")
     fig.update_layout(
         title=dict(
-            text=f'<b>Comparative Analysis: Doc "{doc_id1}" vs Doc "{doc_id2}"</b>',
+            text=f'<b>Comparative Analysis → Doc {doc_id1}: "{(doc_text1 or "N/A")[:128]}" vs Doc {doc_id2}: "{(doc_text2 or "N/A")[:128]}"</b>',
             x=0.5, xanchor='center', font=dict(size=18)
         ),
         height=figure_height,
