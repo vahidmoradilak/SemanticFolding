@@ -609,7 +609,7 @@ def visualize_document_pair(
     border_width: float = 1.0,
     max_shapes: int = 5000,
     figure_width: int = 1800,
-    figure_height: int = 1500,
+    figure_height: int = 1900,
     colorscale: str = "Blues",
     generate_html: bool = True,
     generate_png: bool = True,
@@ -726,7 +726,7 @@ def visualize_document_pair(
     # ========================================================================
     logger.debug("Creating subplot structure...")
     fig = make_subplots(
-        rows=3, cols=3,
+        rows=4, cols=3,
         subplot_titles=(
             f'Matrix: "{doc_id1}"',
             f'Matrix: "{doc_id2}"',
@@ -736,16 +736,20 @@ def visualize_document_pair(
             'Spatial: Overlap',
             'Difference Map',
             'Similarity Metrics',
-            'Activation Distribution'
+            'Activation Distribution',
+            f'Top 10 Cells: "{doc_id1}"',
+            f'Top 10 Cells: "{doc_id2}"',
+            'Top 10 Overlapped Cells'
         ),
         specs=[
             [{"type": "heatmap"}, {"type": "heatmap"}, {"type": "heatmap"}],
             [{"type": "heatmap"}, {"type": "heatmap"}, {"type": "heatmap"}],
-            [{"type": "heatmap"}, {"type": "xy"}, {"type": "xy"}]
+            [{"type": "heatmap"}, {"type": "xy"}, {"type": "xy"}],
+            [{"type": "table"}, {"type": "table"}, {"type": "table"}]
         ],
         vertical_spacing=0.06,
         horizontal_spacing=0.05,
-        row_heights=[0.33, 0.33, 0.34],
+        row_heights=[0.27, 0.27, 0.23, 0.23],
         column_widths=[0.33, 0.33, 0.34]
     )
 
@@ -769,7 +773,7 @@ def visualize_document_pair(
                 [1, 'midnightblue']
             ],
             zmin=0, zmax=1,
-            colorbar=dict(title="Activation", x=0.29, len=0.28, y=0.83),
+            colorbar=dict(title="Activation", x=0.29, len=0.20, y=0.89),
             hovertemplate='Cell: (%{x}, %{y})<br>Activation: %{z:.4f}<extra></extra>',
             xgap=1, ygap=1
         ),
@@ -820,7 +824,7 @@ def visualize_document_pair(
                 [1, 'darkred']
             ],
             zmin=0, zmax=1,
-            colorbar=dict(title="Activation", x=0.63, len=0.28, y=0.83),
+            colorbar=dict(title="Activation", x=0.63, len=0.20, y=0.89),
             hovertemplate='Cell: (%{x}, %{y})<br>Activation: %{z:.4f}<extra></extra>',
             xgap=1, ygap=1
         ),
@@ -870,7 +874,7 @@ def visualize_document_pair(
                 [1, 'darkviolet']
             ],
             zmin=0, zmax=1,
-            colorbar=dict(title="Overlap", x=0.97, len=0.28, y=0.83),
+            colorbar=dict(title="Overlap", x=0.97, len=0.20, y=0.89),
             hovertemplate='Cell: (%{x}, %{y})<br>Overlap: %{z:.4f}<extra></extra>',
             xgap=1, ygap=1
         ),
@@ -918,7 +922,7 @@ def visualize_document_pair(
         go.Heatmap(
             z=grid1, colorscale='Blues',
             zmin=0, zmax=1,
-            colorbar=dict(title="Activation", x=0.29, len=0.28, y=0.5),
+            colorbar=dict(title="Activation", x=0.29, len=0.20, y=0.61),
             hovertemplate='X: %{x}<br>Y: %{y}<br>Activation: %{z:.4f}<extra></extra>',
             xgap=0, ygap=0
         ),
@@ -931,7 +935,7 @@ def visualize_document_pair(
         go.Heatmap(
             z=grid2, colorscale='Oranges',
             zmin=0, zmax=1,
-            colorbar=dict(title="Activation", x=0.63, len=0.28, y=0.5),
+            colorbar=dict(title="Activation", x=0.63, len=0.20, y=0.61),
             hovertemplate='X: %{x}<br>Y: %{y}<br>Activation: %{z:.4f}<extra></extra>',
             xgap=0, ygap=0
         ),
@@ -944,7 +948,7 @@ def visualize_document_pair(
         go.Heatmap(
             z=overlap, colorscale='Purples',
             zmin=0, zmax=1,
-            colorbar=dict(title="Overlap", x=0.97, len=0.28, y=0.5),
+            colorbar=dict(title="Overlap", x=0.97, len=0.20, y=0.61),
             hovertemplate='X: %{x}<br>Y: %{y}<br>Overlap: %{z:.4f}<extra></extra>',
             xgap=0, ygap=0
         ),
@@ -968,7 +972,7 @@ def visualize_document_pair(
             z=diff, colorscale='RdBu',
             # z=diff, colorscale='RdBu_r',
             zmid=0, zmin=z_min, zmax=z_max,
-            colorbar=dict(title="Difference", x=0.29, len=0.28, y=0.17),
+            colorbar=dict(title="Difference", x=0.29, len=0.20, y=0.34),
             hovertemplate='X: %{x}<br>Y: %{y}<br>Difference: %{z:.4f}<extra></extra>',
             xgap=0, ygap=0
         ),
@@ -1005,7 +1009,8 @@ def visualize_document_pair(
             go.Histogram(
                 x=active1, nbinsx=30, name=f"Doc {doc_id1}",
                 marker=dict(color='blue', opacity=0.6, line=dict(color='black', width=1)),
-                hovertemplate='Activation: %{x:.4f}<br>Count: %{y}<extra></extra>'
+                hovertemplate='Activation: %{x:.4f}<br>Count: %{y}<extra></extra>',
+                showlegend=True
             ),
             row=3, col=3
         )
@@ -1015,10 +1020,84 @@ def visualize_document_pair(
             go.Histogram(
                 x=active2, nbinsx=30, name=f"Doc {doc_id2}",
                 marker=dict(color='darkorange', opacity=0.6, line=dict(color='black', width=1)),
-                hovertemplate='Activation: %{x:.4f}<br>Count: %{y}<extra></extra>'
+                hovertemplate='Activation: %{x:.4f}<br>Count: %{y}<extra></extra>',
+                showlegend=True
             ),
             row=3, col=3
         )
+
+    # ========================================================================
+    # ROW 4: Top Active Cells Tables
+    # ========================================================================
+
+    # Panel 10 (Row 4, Col 1): Top 10 active cells for doc 1
+    logger.debug("Adding Panel 10: Top 10 cells for doc 1...")
+    top10_1 = top_cells_1[:10]
+    if top10_1:
+        table_data_1 = [
+            [str(c['rank']) for c in top10_1],
+            [f"({c['col']}, {c['row']})" for c in top10_1],
+            [f"{c['value']:.4f}" for c in top10_1]
+        ]
+    else:
+        table_data_1 = [['N/A'], ['N/A'], ['N/A']]
+    fig.add_trace(
+        go.Table(
+            header=dict(values=['<b>Rank</b>', '<b>Position</b>', '<b>Value</b>'],
+                        fill_color='lightblue', align='left', font=dict(size=10)),
+            cells=dict(values=table_data_1, fill_color='white', align='left',
+                       font=dict(size=9), height=22)
+        ),
+        row=4, col=1
+    )
+
+    # Panel 11 (Row 4, Col 2): Top 10 active cells for doc 2
+    logger.debug("Adding Panel 11: Top 10 cells for doc 2...")
+    top10_2 = top_cells_2[:10]
+    if top10_2:
+        table_data_2 = [
+            [str(c['rank']) for c in top10_2],
+            [f"({c['col']}, {c['row']})" for c in top10_2],
+            [f"{c['value']:.4f}" for c in top10_2]
+        ]
+    else:
+        table_data_2 = [['N/A'], ['N/A'], ['N/A']]
+    fig.add_trace(
+        go.Table(
+            header=dict(values=['<b>Rank</b>', '<b>Position</b>', '<b>Value</b>'],
+                        fill_color='lightsalmon', align='left', font=dict(size=10)),
+            cells=dict(values=table_data_2, fill_color='white', align='left',
+                       font=dict(size=9), height=22)
+        ),
+        row=4, col=2
+    )
+
+    # Panel 12 (Row 4, Col 3): Top 10 overlapped cells
+    logger.debug("Adding Panel 12: Top 10 overlapped cells...")
+    top10_overlap = top_overlapped[:10]
+    if top10_overlap:
+        table_data_overlap = [
+            [str(i + 1) for i in range(len(top10_overlap))],
+            [f"({c['x']}, {c['y']})" for c in top10_overlap],
+            [f"{c['overlap_activation']:.4f}" for c in top10_overlap],
+            [f"{c['doc1_activation']:.4f}" for c in top10_overlap],
+            [f"{c['doc2_activation']:.4f}" for c in top10_overlap]
+        ]
+        overlap_headers = ['<b>Rank</b>', '<b>Position</b>', '<b>Overlap</b>',
+                           f'<b>Doc {doc_id1}</b>', f'<b>Doc {doc_id2}</b>']
+    else:
+        table_data_overlap = [['N/A'], ['N/A'], ['N/A'], ['N/A'], ['N/A']]
+        overlap_headers = ['<b>Rank</b>', '<b>Position</b>', '<b>Overlap</b>',
+                           f'<b>Doc1</b>', f'<b>Doc2</b>']
+    fig.add_trace(
+        go.Table(
+            header=dict(values=overlap_headers,
+                        fill_color='thistle', align='left', font=dict(size=10)),
+            cells=dict(values=table_data_overlap, fill_color='white', align='left',
+                       font=dict(size=9), height=22)
+        ),
+        row=4, col=3
+    )
 
     # ========================================================================
     # Update axes
@@ -1046,6 +1125,11 @@ def visualize_document_pair(
     fig.update_xaxes(title_text="Activation", row=3, col=3, showgrid=True, gridcolor='lightgray')
     fig.update_yaxes(title_text="Count", row=3, col=3, showgrid=True, gridcolor='lightgray')
 
+    # Row 4 tables: hide axes
+    for col_num in [1, 2, 3]:
+        fig.update_xaxes(visible=False, row=4, col=col_num)
+        fig.update_yaxes(visible=False, row=4, col=col_num)
+
     # ========================================================================
     # Layout
     # ========================================================================
@@ -1058,7 +1142,7 @@ def visualize_document_pair(
         height=figure_height,
         width=figure_width,
         showlegend=True,
-        legend=dict(x=0.85, y=0.17, bgcolor='rgba(255,255,255,0.8)',
+        legend=dict(x=0.85, y=0.34, bgcolor='rgba(255,255,255,0.8)',
                     bordercolor='lightgray', borderwidth=1),
         template='plotly_white',
         autosize=False,
