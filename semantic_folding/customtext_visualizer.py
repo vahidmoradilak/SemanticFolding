@@ -13,13 +13,14 @@ from plotly.subplots import make_subplots
 import json
 import sys
 from pathlib import Path
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 import argparse
 from scipy.ndimage import gaussian_filter
 from scipy.sparse import csr_matrix
 from doc_fingerprints import morton_to_xy
 # Import from your lib module
 from lib import load_document_fingerprints, load_phrase_fingerprints_sparse, get_logger
+from customtext_fingerprints import extract_phrases_from_doc
 
 # Initialize logger
 logger = get_logger("customtext_visualizer")
@@ -136,6 +137,103 @@ def get_top_overlapped_cells(grid1: np.ndarray, grid2: np.ndarray, top_n: int = 
         })
 
     return top_cells
+
+
+def get_context_phrases_info(
+    doc_text: str,
+    phrase_fingerprint_matrix: np.ndarray,
+    phrase_to_row: Dict[str, int],
+    phrase_vocab: set,
+    grid_size: int,
+    use_morton: bool,
+    top_n_phrases: int = 10,
+    top_cells_per_phrase: int = 3,
+) -> List[Dict]:
+    """
+    Extract phrases from document text and find their top activated cells.
+
+    For each matched phrase, loads its fingerprint vector from the pre-loaded
+    matrix, reconstructs the 2D grid, and returns the phrase's name alongside
+    its most strongly activated cells.
+
+    Returns
+    -------
+    List of dicts, each:
+        {"phrase": str, "top_cells": [{"rank": i, "row": r, "col": c, "value": v}, ...]}
+    """
+    if not doc_text or phrase_fingerprint_matrix is None:
+        return []
+
+    matched = extract_phrases_from_doc(
+        text=doc_text,
+        phrase_vocab=phrase_vocab,
+    )
+    if not matched:
+        return []
+
+    results = []
+    seen = set()
+    for phrase in matched:
+        if phrase in seen:
+            continue
+        seen.add(phrase)
+        row_idx = phrase_to_row.get(phrase)
+        if row_idx is None or row_idx >= phrase_fingerprint_matrix.shape[0]:
+            continue
+        vec = phrase_fingerprint_matrix[row_idx].astype(np.float32)
+        grid_2d = inverse_flatten(vec, grid_size, use_morton)
+        top_cells = get_top_active_cells(grid_2d, top_n=top_cells_per_phrase)
+        results.append({"phrase": phrase, "top_cells": top_cells})
+        if len(results) >= top_n_phrases:
+            break
+    return results
+
+
+def get_phrases_for_top_diff_cells(
+    diff_grid: np.ndarray,
+    grid_size: int,
+    matched_phrases_doc1: List[Dict],
+    matched_phrases_doc2: List[Dict],
+    top_n: int = 5,
+) -> List[Dict]:
+    """
+    For the top-N cells with largest |difference|, find which matched phrase
+    from either document has the strongest activation at that cell.
+
+    Parameters
+    ----------
+    diff_grid : 2D array of shape (grid_size, grid_size)
+    matched_phrases_doc1, matched_phrases_doc2 :
+        Output of get_context_phrases_info for each document.
+
+    Returns
+    -------
+    List of dicts:
+        {"cell": (col, row), "diff": float, "phrase1": str|None, "phrase2": str|None}
+    """
+    abs_diff = np.abs(diff_grid)
+    flat_indices = np.argsort(abs_diff.ravel())[::-1][:top_n]
+    rows, cols = np.unravel_index(flat_indices, diff_grid.shape)
+
+    def _best_phrase_at(phrase_list, row, col):
+        best, best_val = None, 0.0
+        for entry in phrase_list:
+            for tc in entry.get("top_cells", []):
+                if tc["row"] == row and tc["col"] == col:
+                    if tc["value"] > best_val:
+                        best_val = tc["value"]
+                        best = entry["phrase"]
+        return best
+
+    results = []
+    for r, c in zip(rows, cols):
+        results.append({
+            "cell": (int(c), int(r)),
+            "diff": float(diff_grid[r, c]),
+            "phrase1": _best_phrase_at(matched_phrases_doc1, r, c),
+            "phrase2": _best_phrase_at(matched_phrases_doc2, r, c),
+        })
+    return results
 
 
 def create_document_visualizer(
@@ -571,6 +669,8 @@ def save_visualization_metadata(
     grid_stats: Dict,
     config: Dict,
     top_cells: Dict,
+    context_phrases: Optional[Dict[str, List[Dict]]] = None,
+    diff_phrase_labels: Optional[List[Dict]] = None,
 ) -> None:
     """Save visualization metadata and statistics to JSON."""
     metadata = {
@@ -583,9 +683,14 @@ def save_visualization_metadata(
         "generated_at": __import__('datetime').datetime.now().isoformat(),
     }
 
+    if context_phrases:
+        metadata["context_phrases"] = context_phrases
+    if diff_phrase_labels:
+        metadata["diff_phrase_labels"] = diff_phrase_labels
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as fh:
-        json.dump(metadata, fh, indent=2)
+        json.dump(metadata, fh, indent=2, ensure_ascii=False)
 
     logger.info(f"Saved metadata: {output_path}")
 
@@ -609,11 +714,14 @@ def visualize_document_pair(
     border_width: float = 1.0,
     max_shapes: int = 5000,
     figure_width: int = 1800,
-    figure_height: int = 1900,
+    figure_height: int = 2200,
     colorscale: str = "Blues",
     generate_html: bool = True,
     generate_png: bool = True,
     save_metadata: bool = True,
+    phrase_fingerprint_matrix: Optional[np.ndarray] = None,
+    phrase_to_row: Optional[Dict[str, int]] = None,
+    phrase_vocab: Optional[set] = None,
 ) -> None:
     """
     Generate interactive 9-panel comparative dashboard with Plotly.
@@ -721,12 +829,55 @@ def visualize_document_pair(
     logger.debug(f"Comparison statistics: {grid_stats['comparison']}")
     logger.info(f"Cosine similarity: {cos_sim:.4f} ({cos_sim * 100:.2f}%)")
 
+    # ── Per-grid display normalization ───────────────────────────────────────
+    # Scale each grid independently to [0, 1] so every doc uses its full
+    # colorscale range regardless of TF-IDF weight magnitude.
+    display_grid1 = grid1 / grid1.max() if grid1.max() > 0 else grid1
+    display_grid2 = grid2 / grid2.max() if grid2.max() > 0 else grid2
+    display_overlap = overlap / overlap.max() if overlap.max() > 0 else overlap
+    # Difference map keeps raw values (auto-scaled around 0 further down)
+    logger.info(f"Display normalization: doc1 max={grid1.max():.4f} → 1.0, "
+                f"doc2 max={grid2.max():.4f} → 1.0")
+
+    # ── Context phrase analysis ──────────────────────────────────────────────
+    context_phrases = {}
+    diff_phrase_labels = None
+    if phrase_fingerprint_matrix is not None and phrase_to_row is not None and phrase_vocab is not None:
+        logger.info("Performing context phrase analysis...")
+        ctx1 = get_context_phrases_info(doc_text1, phrase_fingerprint_matrix, phrase_to_row, phrase_vocab, grid_size, use_morton)
+        ctx2 = get_context_phrases_info(doc_text2, phrase_fingerprint_matrix, phrase_to_row, phrase_vocab, grid_size, use_morton)
+        context_phrases = {doc_id1: ctx1, doc_id2: ctx2}
+        diff_phrase_labels = get_phrases_for_top_diff_cells(diff, grid_size, ctx1, ctx2)
+        logger.info(f"  Doc {doc_id1}: {len(ctx1)} phrases, Doc {doc_id2}: {len(ctx2)} phrases")
+        logger.info(f"  Difference annotations: {len(diff_phrase_labels)} cells")
+
+    # ── Build cell→phrase hover grids for panels 1-6 ─────────────────────
+    def _build_phrase_hover_grid(phrases_list, gs):
+        grid = np.full((gs, gs), "", dtype=object)
+        if not phrases_list:
+            return grid
+        for entry in phrases_list:
+            phrase = entry.get("phrase", "")
+            for tc in entry.get("top_cells", []):
+                r, c = tc["row"], tc["col"]
+                if 0 <= r < gs and 0 <= c < gs:
+                    grid[r, c] = phrase
+        return grid
+
+    phrase_hover_grid1 = _build_phrase_hover_grid(context_phrases.get(doc_id1, []), grid_size)
+    phrase_hover_grid2 = _build_phrase_hover_grid(context_phrases.get(doc_id2, []), grid_size)
+    # Overlap hover: merge both (doc1 takes priority for cleaner display)
+    phrase_hover_overlap = phrase_hover_grid1.copy()
+    mask_blank = phrase_hover_overlap == ""
+    phrase_hover_overlap[mask_blank] = phrase_hover_grid2[mask_blank]
+    logger.debug("Built phrase hover grids for panels 1-6")
+
     # ========================================================================
-    # Create 9-panel interactive figure (3 rows x 3 columns)
+    # Create 15-panel interactive figure (5 rows x 3 columns)
     # ========================================================================
     logger.debug("Creating subplot structure...")
     fig = make_subplots(
-        rows=4, cols=3,
+        rows=5, cols=3,
         subplot_titles=(
             f'Matrix: "{doc_id1}"',
             f'Matrix: "{doc_id2}"',
@@ -739,17 +890,21 @@ def visualize_document_pair(
             'Activation Distribution',
             f'Top 10 Cells: "{doc_id1}"',
             f'Top 10 Cells: "{doc_id2}"',
-            'Top 10 Overlapped Cells'
+            'Top 10 Overlapped Cells',
+            f'Context Phrases: "{doc_id1}"',
+            f'Context Phrases: "{doc_id2}"',
+            'Difference Phrase Labels'
         ),
         specs=[
             [{"type": "heatmap"}, {"type": "heatmap"}, {"type": "heatmap"}],
             [{"type": "heatmap"}, {"type": "heatmap"}, {"type": "heatmap"}],
             [{"type": "heatmap"}, {"type": "xy"}, {"type": "xy"}],
+            [{"type": "table"}, {"type": "table"}, {"type": "table"}],
             [{"type": "table"}, {"type": "table"}, {"type": "table"}]
         ],
         vertical_spacing=0.06,
         horizontal_spacing=0.05,
-        row_heights=[0.27, 0.27, 0.23, 0.23],
+        row_heights=[0.22, 0.22, 0.18, 0.18, 0.20],
         column_widths=[0.33, 0.33, 0.34]
     )
 
@@ -763,7 +918,8 @@ def visualize_document_pair(
     logger.debug("Adding Panel 1: Matrix view of doc 1...")
     fig.add_trace(
         go.Heatmap(
-            z=grid1,
+            z=display_grid1,
+            customdata=phrase_hover_grid1,
             colorscale=[
                 [0, 'white'],
                 [0.001, 'lightblue'],
@@ -774,7 +930,7 @@ def visualize_document_pair(
             ],
             zmin=0, zmax=1,
             colorbar=dict(title="Activation", x=0.29, len=0.20, y=0.89),
-            hovertemplate='Cell: (%{x}, %{y})<br>Activation: %{z:.4f}<extra></extra>',
+            hovertemplate='Cell: (%{x}, %{y})<br>Activation: %{z:.4f}<br>Phrase: %{customdata}<extra></extra>',
             xgap=1, ygap=1
         ),
         row=1, col=1
@@ -814,7 +970,8 @@ def visualize_document_pair(
     logger.debug("Adding Panel 2: Matrix view of doc 2...")
     fig.add_trace(
         go.Heatmap(
-            z=grid2,
+            z=display_grid2,
+            customdata=phrase_hover_grid2,
             colorscale=[
                 [0, 'white'],
                 [0.001, 'lightyellow'],
@@ -825,7 +982,7 @@ def visualize_document_pair(
             ],
             zmin=0, zmax=1,
             colorbar=dict(title="Activation", x=0.63, len=0.20, y=0.89),
-            hovertemplate='Cell: (%{x}, %{y})<br>Activation: %{z:.4f}<extra></extra>',
+            hovertemplate='Cell: (%{x}, %{y})<br>Activation: %{z:.4f}<br>Phrase: %{customdata}<extra></extra>',
             xgap=1, ygap=1
         ),
         row=1, col=2
@@ -864,7 +1021,8 @@ def visualize_document_pair(
     logger.debug("Adding Panel 3: Matrix view of overlap...")
     fig.add_trace(
         go.Heatmap(
-            z=overlap,
+            z=display_overlap,
+            customdata=phrase_hover_overlap,
             colorscale=[
                 [0, 'white'],
                 [0.001, 'lavender'],
@@ -875,7 +1033,7 @@ def visualize_document_pair(
             ],
             zmin=0, zmax=1,
             colorbar=dict(title="Overlap", x=0.97, len=0.20, y=0.89),
-            hovertemplate='Cell: (%{x}, %{y})<br>Overlap: %{z:.4f}<extra></extra>',
+            hovertemplate='Cell: (%{x}, %{y})<br>Overlap: %{z:.4f}<br>Phrase: %{customdata}<extra></extra>',
             xgap=1, ygap=1
         ),
         row=1, col=3
@@ -920,10 +1078,10 @@ def visualize_document_pair(
     logger.debug("Adding Panel 4: Continuous heatmap of doc 1...")
     fig.add_trace(
         go.Heatmap(
-            z=grid1, colorscale='Blues',
+            z=display_grid1, customdata=phrase_hover_grid1, colorscale='Blues',
             zmin=0, zmax=1,
-            colorbar=dict(title="Activation", x=0.29, len=0.20, y=0.61),
-            hovertemplate='X: %{x}<br>Y: %{y}<br>Activation: %{z:.4f}<extra></extra>',
+            colorbar=dict(title="Activation", x=0.29, len=0.20, y=0.67),
+            hovertemplate='X: %{x}<br>Y: %{y}<br>Activation: %{z:.4f}<br>Phrase: %{customdata}<extra></extra>',
             xgap=0, ygap=0
         ),
         row=2, col=1
@@ -933,10 +1091,10 @@ def visualize_document_pair(
     logger.debug("Adding Panel 5: Continuous heatmap of doc 2...")
     fig.add_trace(
         go.Heatmap(
-            z=grid2, colorscale='Oranges',
+            z=display_grid2, customdata=phrase_hover_grid2, colorscale='Oranges',
             zmin=0, zmax=1,
-            colorbar=dict(title="Activation", x=0.63, len=0.20, y=0.61),
-            hovertemplate='X: %{x}<br>Y: %{y}<br>Activation: %{z:.4f}<extra></extra>',
+            colorbar=dict(title="Activation", x=0.63, len=0.20, y=0.67),
+            hovertemplate='X: %{x}<br>Y: %{y}<br>Activation: %{z:.4f}<br>Phrase: %{customdata}<extra></extra>',
             xgap=0, ygap=0
         ),
         row=2, col=2
@@ -946,10 +1104,10 @@ def visualize_document_pair(
     logger.debug("Adding Panel 6: Continuous heatmap of overlap...")
     fig.add_trace(
         go.Heatmap(
-            z=overlap, colorscale='Purples',
+            z=display_overlap, customdata=phrase_hover_overlap, colorscale='Purples',
             zmin=0, zmax=1,
-            colorbar=dict(title="Overlap", x=0.97, len=0.20, y=0.61),
-            hovertemplate='X: %{x}<br>Y: %{y}<br>Overlap: %{z:.4f}<extra></extra>',
+            colorbar=dict(title="Overlap", x=0.97, len=0.20, y=0.67),
+            hovertemplate='X: %{x}<br>Y: %{y}<br>Overlap: %{z:.4f}<br>Phrase: %{customdata}<extra></extra>',
             xgap=0, ygap=0
         ),
         row=2, col=3
@@ -967,13 +1125,33 @@ def visualize_document_pair(
         z_min, z_max = -1, 1
     else:
         z_min, z_max = -max_abs_diff, max_abs_diff
+    # Build customdata grid for difference map hover (shows phrase labels)
+    phrase_label_grid = np.full((grid_size, grid_size), "", dtype=object)
+    if diff_phrase_labels:
+        for entry in diff_phrase_labels:
+            cx, cy = entry["cell"]
+            p1 = entry.get("phrase1") or ""
+            p2 = entry.get("phrase2") or ""
+            if p1 and p2 and p1 == p2:
+                label = p1
+            elif p1 and p2:
+                label = f"{p1}/{p2}"
+            elif p1:
+                label = p1
+            elif p2:
+                label = p2
+            else:
+                label = ""
+            if 0 <= cy < grid_size and 0 <= cx < grid_size:
+                phrase_label_grid[cy, cx] = label
+
     fig.add_trace(
         go.Heatmap(
             z=diff, colorscale='RdBu',
-            # z=diff, colorscale='RdBu_r',
             zmid=0, zmin=z_min, zmax=z_max,
-            colorbar=dict(title="Difference", x=0.29, len=0.20, y=0.34),
-            hovertemplate='X: %{x}<br>Y: %{y}<br>Difference: %{z:.4f}<extra></extra>',
+            customdata=phrase_label_grid,
+            colorbar=dict(title="Difference", x=0.29, len=0.16, y=0.47),
+            hovertemplate='X: %{x}<br>Y: %{y}<br>Difference: %{z:.4f}<br>Phrase: %{customdata}<extra></extra>',
             xgap=0, ygap=0
         ),
         row=3, col=1
@@ -1100,6 +1278,78 @@ def visualize_document_pair(
     )
 
     # ========================================================================
+    # ROW 5: Context Phrases & Difference Labels
+    # ========================================================================
+
+    # Panel 13 (Row 5, Col 1): Context phrases for doc 1
+    logger.debug("Adding Panel 13: Context phrases for doc 1...")
+    if context_phrases and doc_id1 in context_phrases:
+        ctx1 = context_phrases[doc_id1]
+        ctx1_data = [
+            [str(i + 1) for i in range(len(ctx1))],
+            [c["phrase"][:40] for c in ctx1],
+            [f"({c['top_cells'][0]['col']}, {c['top_cells'][0]['row']})" if c.get("top_cells") else "—" for c in ctx1],
+            [f"{c['top_cells'][0]['value']:.4f}" if c.get("top_cells") else "—" for c in ctx1]
+        ]
+    else:
+        ctx1_data = [["—"], ["—"], ["—"], ["—"]]
+    fig.add_trace(
+        go.Table(
+            header=dict(values=['<b>#</b>', '<b>Phrase</b>', '<b>Top Cell</b>', '<b>Value</b>'],
+                        fill_color='lightblue', align='left', font=dict(size=10)),
+            cells=dict(values=ctx1_data, fill_color='white', align='left',
+                       font=dict(size=9), height=22)
+        ),
+        row=5, col=1
+    )
+
+    # Panel 14 (Row 5, Col 2): Context phrases for doc 2
+    logger.debug("Adding Panel 14: Context phrases for doc 2...")
+    if context_phrases and doc_id2 in context_phrases:
+        ctx2 = context_phrases[doc_id2]
+        ctx2_data = [
+            [str(i + 1) for i in range(len(ctx2))],
+            [c["phrase"][:40] for c in ctx2],
+            [f"({c['top_cells'][0]['col']}, {c['top_cells'][0]['row']})" if c.get("top_cells") else "—" for c in ctx2],
+            [f"{c['top_cells'][0]['value']:.4f}" if c.get("top_cells") else "—" for c in ctx2]
+        ]
+    else:
+        ctx2_data = [["—"], ["—"], ["—"], ["—"]]
+    fig.add_trace(
+        go.Table(
+            header=dict(values=['<b>#</b>', '<b>Phrase</b>', '<b>Top Cell</b>', '<b>Value</b>'],
+                        fill_color='lightsalmon', align='left', font=dict(size=10)),
+            cells=dict(values=ctx2_data, fill_color='white', align='left',
+                       font=dict(size=9), height=22)
+        ),
+        row=5, col=2
+    )
+
+    # Panel 15 (Row 5, Col 3): Difference phrase labels
+    logger.debug("Adding Panel 15: Difference phrase labels...")
+    if diff_phrase_labels:
+        dfl_data = [
+            [str(i + 1) for i in range(len(diff_phrase_labels))],
+            [f"({c['cell'][0]}, {c['cell'][1]})" for c in diff_phrase_labels],
+            [f"{c['diff']:.4f}" for c in diff_phrase_labels],
+            [c.get("phrase1") or "—" for c in diff_phrase_labels],
+            [c.get("phrase2") or "—" for c in diff_phrase_labels]
+        ]
+        dfl_headers = ['<b>#</b>', '<b>Cell</b>', '<b>Diff</b>', '<b>Phrase1</b>', '<b>Phrase2</b>']
+    else:
+        dfl_data = [["—"], ["—"], ["—"], ["—"], ["—"]]
+        dfl_headers = ['<b>#</b>', '<b>Cell</b>', '<b>Diff</b>', '<b>Phrase1</b>', '<b>Phrase2</b>']
+    fig.add_trace(
+        go.Table(
+            header=dict(values=dfl_headers,
+                        fill_color='thistle', align='left', font=dict(size=10)),
+            cells=dict(values=dfl_data, fill_color='white', align='left',
+                       font=dict(size=9), height=22)
+        ),
+        row=5, col=3
+    )
+
+    # ========================================================================
     # Update axes
     # ========================================================================
     logger.debug("Updating axes...")
@@ -1130,19 +1380,24 @@ def visualize_document_pair(
         fig.update_xaxes(visible=False, row=4, col=col_num)
         fig.update_yaxes(visible=False, row=4, col=col_num)
 
+    # Row 5 tables: hide axes
+    for col_num in [1, 2, 3]:
+        fig.update_xaxes(visible=False, row=5, col=col_num)
+        fig.update_yaxes(visible=False, row=5, col=col_num)
+
     # ========================================================================
     # Layout
     # ========================================================================
     logger.debug("Updating layout...")
     fig.update_layout(
         title=dict(
-            text=f'<b>Comparative Analysis → Doc {doc_id1}: "{(doc_text1 or "N/A")[:128]}" vs Doc {doc_id2}: "{(doc_text2 or "N/A")[:128]}"</b>',
+            text=f'<b>Comparative Analysis → Doc {doc_id1}: "{(doc_text1 or "N/A")[:64]}" vs Doc {doc_id2}: "{(doc_text2 or "N/A")[:64]}"</b>',
             x=0.5, xanchor='center', font=dict(size=18)
         ),
         height=figure_height,
         width=figure_width,
         showlegend=True,
-        legend=dict(x=0.85, y=0.34, bgcolor='rgba(255,255,255,0.8)',
+        legend=dict(x=0.85, y=0.47, bgcolor='rgba(255,255,255,0.8)',
                     bordercolor='lightgray', borderwidth=1),
         template='plotly_white',
         autosize=False,
@@ -1198,7 +1453,9 @@ def visualize_document_pair(
                 "figure_height": figure_height,
                 "colorscale": colorscale
             },
-            top_cells={"doc1": top_cells_1, "doc2": top_cells_2}
+            top_cells={"doc1": top_cells_1, "doc2": top_cells_2},
+            context_phrases=context_phrases,
+            diff_phrase_labels=diff_phrase_labels,
         )
 
     logger.info(f"Visualization complete for '{doc_id1}' vs '{doc_id2}'")
@@ -1272,8 +1529,8 @@ def main():
     # Figure dimensions
     parser.add_argument('--width', type=int, default=1800,
                         help='Figure width in pixels (default: 1800)')
-    parser.add_argument('--height', type=int, default=1500,
-                        help='Figure height in pixels (default: 1500)')
+    parser.add_argument('--height', type=int, default=2200,
+                        help='Figure height in pixels (default: 2200)')
     
     # Color scheme
     parser.add_argument('--colorscale', type=str, default='Blues',
@@ -1449,6 +1706,34 @@ def main():
             print(f"Grid size: {grid_size}×{grid_size}")
             print(f"Total Customtexts: {metadata['num_docs']}")
 
+            # ── Load phrase fingerprints for context phrase analysis ─────
+            phrase_fp_matrix = None
+            phrase_to_row = None
+            phrase_vocab = None
+            phrase_fp_dir = args.run_dir / "phrase_fingerprints"
+            if phrase_fp_dir.exists():
+                try:
+                    logger.info("Loading phrase fingerprints for context analysis...")
+                    npz_path = phrase_fp_dir / "phrase_fingerprints.npz"
+                    meta_path = phrase_fp_dir / "phrase_fingerprints_meta.json"
+                    if npz_path.exists() and meta_path.exists():
+                        with open(meta_path, "r", encoding="utf-8") as f:
+                            pf_meta = json.load(f)
+                        phrase_to_row = pf_meta.get("phrase_to_row", pf_meta)
+                        phrase_vocab = set(phrase_to_row.keys())
+                        data = np.load(str(npz_path))
+                        phrase_fp_matrix = data["fingerprints"]
+                        logger.info(f"Loaded phrase fingerprint matrix: {phrase_fp_matrix.shape}")
+                    else:
+                        logger.warning("Phrase fingerprint files not found, skipping context analysis")
+                except Exception as e:
+                    logger.warning(f"Could not load phrase fingerprints: {e}")
+                    phrase_fp_matrix = None
+                    phrase_to_row = None
+                    phrase_vocab = None
+            else:
+                logger.info("No phrase_fingerprints directory found, skipping context phrase analysis")
+
             visualize_document_pair(
                 doc_id1=args.doc_id1,
                 doc_id2=args.doc_id2,
@@ -1469,6 +1754,9 @@ def main():
                 generate_html=not args.no_html,
                 generate_png=not args.no_png,
                 save_metadata=not args.no_metadata,
+                phrase_fingerprint_matrix=phrase_fp_matrix,
+                phrase_to_row=phrase_to_row,
+                phrase_vocab=phrase_vocab,
             )
 
             print(f"\nComparison complete! Files saved in {args.output}")

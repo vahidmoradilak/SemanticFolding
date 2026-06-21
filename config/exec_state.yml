@@ -1,5 +1,5 @@
 last_run_id: run_20260616_110007
-last_step: 7
+last_step: 6
 runs:
   run_20260519_214612:
     corpus: data\corpus.txt
@@ -2612,7 +2612,7 @@ runs:
           smoothing_sigma: '1.5'
           top_percent: '0.05'
       6:
-        completed_at: '2026-06-18T08:59:34.527521'
+        completed_at: '2026-06-20T10:56:45.875631'
         output: outputs/run_20260616_110007/customtext_fingerprints
         params:
           compute_diversity: 'false'

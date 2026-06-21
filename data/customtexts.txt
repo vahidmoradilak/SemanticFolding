@@ -1,7 +1,7 @@
 0, الله اله الرحمن الرحیم فرعون بسم lord god 
 2, Emotional intelligence is the capacity to recognize, understand.
-3, that focuses on identifying and changing negative thought patterns and behaviors.
 1, enhances cognitive abilities, such as memory and problem
+3, that focuses on identifying and changing negative thought patterns and behaviors.
 4, Blockchain technology offers a decentralized approach to data management
 5, مِن شَرِّ ٱلۡوَسۡوَاسِ ٱلۡخَنَّاسِ,From the evil of the retreating whisperer
 6, مِن شَرِّ ٱلۡوَسۡوَاسِ ٱلۡخَنَّاسِ 
@@ -12,15 +12,10 @@
 11, إِنَّ ٱلَّذِينَ كَفَرُواْ سَوَآءٌ عَلَيۡهِمۡ ءَأَنذَرۡتَهُمۡ أَمۡ لَمۡ تُنذِرۡهُمۡ لَا يُؤۡمِنُونَ,"Indeed, those who disbelieve - it is all the same for them whether you warn them or do not warn them - they will not believe"
 12, إِنَّ ٱلَّذِينَ كَفَرُواْ سَوَآءٌ عَلَيۡهِمۡ ءَأَنذَرۡتَهُمۡ أَمۡ لَمۡ تُنذِرۡهُمۡ لَا يُؤۡمِنُونَ
 13,"Indeed, those who disbelieve - it is all the same for them whether you warn them or do not warn them - they will not believe"
-14, allah
+14, الله
 15, Allah
 16, ALLAH
-17, الله
-18, طه
-19, يس
-20, يسٓ
-21, یس
-22, یسٓ
+17, allah
 23, the Entirely Merciful, the Especially Merciful
 24, الرحمن و الرحیم
 25, شَدِيدُ ٱلۡعِقَابِ
@@ -29,3 +24,4 @@
 28, ولدن
 724,إِنَّمَا وَلِيُّكُمُ ٱللَّهُ وَرَسُولُهُۥ وَٱلَّذِينَ ءَامَنُواْ ٱلَّذِينَ يُقِيمُونَ ٱلصَّلَوٰةَ وَيُؤۡتُونَ ٱلزَّكَوٰةَ وَهُمۡ رَٰكِعُونَ,"Your ally is none but Allah and therefore His Messenger and those who have believed - those who establish prayer and give zakah, and they bow in worship"
 725, انما ولیکم الله والذین ءامنوا و یوتون الزکاه و هم الرکعون
+4326,حمٓ,"Ha, Meem"
