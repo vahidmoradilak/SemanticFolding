@@ -36,16 +36,16 @@ python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\
 python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_fingerprints.py --corpus data\customtexts.txt --fingerprints outputs/run_20260608_172547/phrase_fingerprints --output outputs/run_20260608_172547/customtext_fingerprints --grid-size 64 --idf-weights outputs\run_20260608_172547\term_context_matrix\idf_weights.json --keep-verbs --smoothing-sigma 1.5
 
 phrase_viz:
-python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\phrase_visualizer.py --fingerprints outputs/run_20260616_110007/phrase_fingerprints --output outputs/run_20260616_110007/phrase_viz --width 1800 --height 1800 --grid-size 64 --threshold 0.0 --border-color lightgray --border-width 1 --max-shapes 300 --colorscale Blues --phrase1 الله --phrase2 allah
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\phrase_visualizer.py --fingerprints outputs/run_20260616_110007_6236/phrase_fingerprints --output outputs/run_20260616_110007_6236/phrase_viz --width 1800 --height 1800 --grid-size 64 --threshold 0.0 --border-color lightgray --border-width 1 --max-shapes 300 --colorscale Blues --phrase1 الله --phrase2 allah
 
 doc_viz:
-python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\doc_visualizer.py --run-dir outputs\run_20260616_110007 --output outputs\run_20260616_110007\doc_viz --doc-id 724
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\doc_visualizer.py --run-dir outputs\run_20260616_110007_6236 --output outputs\run_20260616_110007_6236\doc_viz --doc-id 724
 
 customtext_viz:
-python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_visualizer.py --run-dir outputs\run_20260616_110007 --output outputs\run_20260616_110007\customtext_viz --border-width 1 --border-color lightgray --border-width 1 --width 1800 --height 600 --grid-size 64 --threshold 0.0 --max-shapes 300 --colorscale Blues --doc-id 724
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_visualizer.py --run-dir outputs\run_20260616_110007_6236 --output outputs\run_20260616_110007_6236\customtext_viz --border-width 1 --border-color lightgray --border-width 1 --width 1800 --height 600 --grid-size 64 --threshold 0.0 --max-shapes 300 --colorscale Blues --doc-id 724
 
 customtext_viz_pair:
-python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_visualizer.py --run-dir outputs\run_20260616_110007 --output outputs\run_20260616_110007\customtext_viz --border-width 1 --border-color lightgray --border-width 1 --width 1800 --height 1800 --grid-size 64 --threshold 0.0 --max-shapes 300 --colorscale Blues --doc-id1 11 --doc-id2 12
+python D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\semantic_folding\customtext_visualizer.py --run-dir outputs\run_20260616_110007_6236 --output outputs\run_20260616_110007_6236\customtext_viz --border-width 1 --border-color lightgray --border-width 1 --width 1800 --height 1800 --grid-size 64 --threshold 0.0 --max-shapes 300 --colorscale Blues --doc-id1 11 --doc-id2 12
 
 Main Menu:
   1. Start new run

@@ -1,5 +1,5 @@
-last_run_id: run_20260526_101313
-last_step: 6
+last_run_id: run_20260526_101313_38_fr_en
+last_step: 7
 runs:
   run_20260526_101313_38_fr_en:
     corpus: data\corpus_fr.txt
@@ -7,8 +7,8 @@ runs:
     steps:
       1:
         completed_at: '2026-05-26T10:14:24.649532'
-        mapping: outputs\run_20260526_101313\extracted_phrases\phrase_to_contexts.json
-        output: outputs/run_20260526_101313/extracted_phrases
+        mapping: outputs\run_20260526_101313_38_fr_en\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260526_101313_38_fr_en/extracted_phrases
         params:
           corpus: data\corpus_fr.txt
           keep_verbs: 'true'
@@ -16,73 +16,73 @@ runs:
           min_word_length: '3'
           no_filter_generic: 'false'
           no_spacy: 'false'
-          output: outputs/run_20260526_101313/extracted_phrases
+          output: outputs/run_20260526_101313_38_fr_en/extracted_phrases
           stats: 'false'
-        vocab: outputs\run_20260526_101313\extracted_phrases\vocabulary.csv
+        vocab: outputs\run_20260526_101313_38_fr_en\extracted_phrases\vocabulary.csv
       2:
         completed_at: '2026-05-26T10:14:40.881015'
-        idf_weights: outputs\run_20260526_101313\term_context_matrix\idf_weights.json
-        matrix_npz: outputs\run_20260526_101313\term_context_matrix\term_context_matrix.npz
-        metadata: outputs\run_20260526_101313\term_context_matrix\term_context_matrix.json
-        output: outputs/run_20260526_101313/term_context_matrix
+        idf_weights: outputs\run_20260526_101313_38_fr_en\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260526_101313_38_fr_en\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260526_101313_38_fr_en\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260526_101313_38_fr_en/term_context_matrix
         params:
           corpus: data\corpus_fr.txt
-          mapping: outputs\run_20260526_101313\extracted_phrases\phrase_to_contexts.json
+          mapping: outputs\run_20260526_101313_38_fr_en\extracted_phrases\phrase_to_contexts.json
           no_tfidf: 'false'
-          output: outputs/run_20260526_101313/term_context_matrix
-          vocab: outputs\run_20260526_101313\extracted_phrases\vocabulary.csv
+          output: outputs/run_20260526_101313_38_fr_en/term_context_matrix
+          vocab: outputs\run_20260526_101313_38_fr_en\extracted_phrases\vocabulary.csv
       3:
         completed_at: '2026-05-26T10:24:31.152639'
-        coordinates: outputs\run_20260526_101313\semantic_space\context_coordinates.json
-        output: outputs/run_20260526_101313/semantic_space
+        coordinates: outputs\run_20260526_101313_38_fr_en\semantic_space\context_coordinates.json
+        output: outputs/run_20260526_101313_38_fr_en/semantic_space
         params:
           grid_size: '64'
-          matrix_npz: outputs\run_20260526_101313\term_context_matrix\term_context_matrix.npz
-          metadata: outputs\run_20260526_101313\term_context_matrix\term_context_matrix.json
+          matrix_npz: outputs\run_20260526_101313_38_fr_en\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260526_101313_38_fr_en\term_context_matrix\term_context_matrix.json
           method: tsne
-          output: outputs/run_20260526_101313/semantic_space
+          output: outputs/run_20260526_101313_38_fr_en/semantic_space
           show_density: 'false'
           visualize: 'true'
       4:
         completed_at: '2026-05-26T10:25:24.693800'
-        output: outputs/run_20260526_101313/phrase_fingerprints
+        output: outputs/run_20260526_101313_38_fr_en/phrase_fingerprints
         params:
-          coordinates: outputs\run_20260526_101313\semantic_space\context_coordinates.json
+          coordinates: outputs\run_20260526_101313_38_fr_en\semantic_space\context_coordinates.json
           grid_size: '64'
-          metadata: outputs\run_20260526_101313\term_context_matrix\term_context_matrix.json
+          metadata: outputs\run_20260526_101313_38_fr_en\term_context_matrix\term_context_matrix.json
           morton: 'true'
           no_smooth: 'false'
-          output: outputs/run_20260526_101313/phrase_fingerprints
+          output: outputs/run_20260526_101313_38_fr_en/phrase_fingerprints
           smoothing_sigma: '1.5'
       5:
         completed_at: '2026-05-26T10:27:52.387985'
-        output: outputs/run_20260526_101313/doc_fingerprints
+        output: outputs/run_20260526_101313_38_fr_en/doc_fingerprints
         params:
           compute_diversity: 'false'
           corpus: data\corpus_fr.txt
           diversity_sample: '100'
           filter_generic: 'true'
-          fingerprints: outputs/run_20260526_101313/phrase_fingerprints
+          fingerprints: outputs/run_20260526_101313_38_fr_en/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260526_101313\term_context_matrix\idf_weights.json
+          idf_weights: outputs\run_20260526_101313_38_fr_en\term_context_matrix\idf_weights.json
           keep_verbs: 'true'
           min_peak_distance: '2'
           min_word_length: '3'
           morton: 'true'
           no_normalize: 'true'
           normalize_method: l2
-          output: outputs/run_20260526_101313/doc_fingerprints
+          output: outputs/run_20260526_101313_38_fr_en/doc_fingerprints
           smoothing_sigma: '1.5'
           top_percent: '0.1'
       6:
         completed_at: '2026-05-26T10:45:46.393761'
-        output: outputs/run_20260526_101313/query_results
+        output: outputs/run_20260526_101313_38_fr_en/query_results
         params:
-          doc_fingerprints: outputs/run_20260526_101313/doc_fingerprints
-          fingerprints: outputs/run_20260526_101313/phrase_fingerprints
+          doc_fingerprints: outputs/run_20260526_101313_38_fr_en/doc_fingerprints
+          fingerprints: outputs/run_20260526_101313_38_fr_en/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260526_101313\term_context_matrix\idf_weights.json
-          output: outputs/run_20260526_101313/query_results
+          idf_weights: outputs\run_20260526_101313_38_fr_en\term_context_matrix\idf_weights.json
+          output: outputs/run_20260526_101313_38_fr_en/query_results
           query: L'intelligence émotionnelle est la capacité à reconnaître, comprendre
             et gérer ses propres émotions, tout en étant capable d'influencer celles
             d'autrui. Elle joue un rôle crucial dans le développement de relations
@@ -101,14 +101,27 @@ runs:
           spreading_steps: '1'
           top_k: '5'
           weighting: idf
+      7:
+        completed_at: '2026-06-21T11:20:54.341617'
+        output: outputs/run_20260526_101313_38_fr_en/query_results
+        params:
+          doc_fingerprints: outputs/run_20260526_101313_38_fr_en/doc_fingerprints
+          fingerprints: outputs/run_20260526_101313_38_fr_en/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260526_101313_38_fr_en\term_context_matrix\idf_weights.json
+          output: outputs/run_20260526_101313_38_fr_en/query_results
+          query: pour
+          spreading_steps: '1'
+          top_k: '5'
+          weighting: idf
   run_20260526_112036_19_fr_en:
     corpus: data\corpus_en_fr.txt
     created_at: '2026-05-26T11:20:36.597239'
     steps:
       1:
         completed_at: '2026-05-26T11:20:58.102154'
-        mapping: outputs\run_20260526_112036\extracted_phrases\phrase_to_contexts.json
-        output: outputs/run_20260526_112036/extracted_phrases
+        mapping: outputs\run_20260526_112036_19_fr_en\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260526_112036_19_fr_en/extracted_phrases
         params:
           corpus: data\corpus_en_fr.txt
           keep_verbs: 'true'
@@ -116,73 +129,73 @@ runs:
           min_word_length: '3'
           no_filter_generic: 'false'
           no_spacy: 'false'
-          output: outputs/run_20260526_112036/extracted_phrases
+          output: outputs/run_20260526_112036_19_fr_en/extracted_phrases
           stats: 'false'
-        vocab: outputs\run_20260526_112036\extracted_phrases\vocabulary.csv
+        vocab: outputs\run_20260526_112036_19_fr_en\extracted_phrases\vocabulary.csv
       2:
         completed_at: '2026-05-26T11:24:47.310563'
-        idf_weights: outputs\run_20260526_112036\term_context_matrix\idf_weights.json
-        matrix_npz: outputs\run_20260526_112036\term_context_matrix\term_context_matrix.npz
-        metadata: outputs\run_20260526_112036\term_context_matrix\term_context_matrix.json
-        output: outputs/run_20260526_112036/term_context_matrix
+        idf_weights: outputs\run_20260526_112036_19_fr_en\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260526_112036_19_fr_en\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260526_112036_19_fr_en\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260526_112036_19_fr_en/term_context_matrix
         params:
           corpus: data\corpus_en_fr.txt
-          mapping: outputs\run_20260526_112036\extracted_phrases\phrase_to_contexts.json
+          mapping: outputs\run_20260526_112036_19_fr_en\extracted_phrases\phrase_to_contexts.json
           no_tfidf: 'false'
-          output: outputs/run_20260526_112036/term_context_matrix
-          vocab: outputs\run_20260526_112036\extracted_phrases\vocabulary.csv
+          output: outputs/run_20260526_112036_19_fr_en/term_context_matrix
+          vocab: outputs\run_20260526_112036_19_fr_en\extracted_phrases\vocabulary.csv
       3:
         completed_at: '2026-05-26T11:26:07.398318'
-        coordinates: outputs\run_20260526_112036\semantic_space\context_coordinates.json
-        output: outputs/run_20260526_112036/semantic_space
+        coordinates: outputs\run_20260526_112036_19_fr_en\semantic_space\context_coordinates.json
+        output: outputs/run_20260526_112036_19_fr_en/semantic_space
         params:
           grid_size: '64'
-          matrix_npz: outputs\run_20260526_112036\term_context_matrix\term_context_matrix.npz
-          metadata: outputs\run_20260526_112036\term_context_matrix\term_context_matrix.json
+          matrix_npz: outputs\run_20260526_112036_19_fr_en\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260526_112036_19_fr_en\term_context_matrix\term_context_matrix.json
           method: tsne
-          output: outputs/run_20260526_112036/semantic_space
+          output: outputs/run_20260526_112036_19_fr_en/semantic_space
           show_density: 'false'
           visualize: 'true'
       4:
         completed_at: '2026-05-26T11:30:36.603518'
-        output: outputs/run_20260526_112036/phrase_fingerprints
+        output: outputs/run_20260526_112036_19_fr_en/phrase_fingerprints
         params:
-          coordinates: outputs\run_20260526_112036\semantic_space\context_coordinates.json
+          coordinates: outputs\run_20260526_112036_19_fr_en\semantic_space\context_coordinates.json
           grid_size: '64'
-          metadata: outputs\run_20260526_112036\term_context_matrix\term_context_matrix.json
+          metadata: outputs\run_20260526_112036_19_fr_en\term_context_matrix\term_context_matrix.json
           morton: 'true'
           no_smooth: 'false'
-          output: outputs/run_20260526_112036/phrase_fingerprints
+          output: outputs/run_20260526_112036_19_fr_en/phrase_fingerprints
           smoothing_sigma: '1.5'
       5:
         completed_at: '2026-05-26T11:32:02.831826'
-        output: outputs/run_20260526_112036/doc_fingerprints
+        output: outputs/run_20260526_112036_19_fr_en/doc_fingerprints
         params:
           compute_diversity: 'false'
           corpus: data\corpus_en_fr.txt
           diversity_sample: '100'
           filter_generic: 'true'
-          fingerprints: outputs/run_20260526_112036/phrase_fingerprints
+          fingerprints: outputs/run_20260526_112036_19_fr_en/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260526_112036\term_context_matrix\idf_weights.json
+          idf_weights: outputs\run_20260526_112036_19_fr_en\term_context_matrix\idf_weights.json
           keep_verbs: 'true'
           min_peak_distance: '2'
           min_word_length: '3'
           morton: 'true'
           no_normalize: 'true'
           normalize_method: l2
-          output: outputs/run_20260526_112036/doc_fingerprints
+          output: outputs/run_20260526_112036_19_fr_en/doc_fingerprints
           smoothing_sigma: '1.5'
           top_percent: '0.1'
       6:
         completed_at: '2026-05-26T11:34:40.139056'
-        output: outputs/run_20260526_112036/query_results
+        output: outputs/run_20260526_112036_19_fr_en/query_results
         params:
-          doc_fingerprints: outputs/run_20260526_112036/doc_fingerprints
-          fingerprints: outputs/run_20260526_112036/phrase_fingerprints
+          doc_fingerprints: outputs/run_20260526_112036_19_fr_en/doc_fingerprints
+          fingerprints: outputs/run_20260526_112036_19_fr_en/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260526_112036\term_context_matrix\idf_weights.json
-          output: outputs/run_20260526_112036/query_results
+          idf_weights: outputs\run_20260526_112036_19_fr_en\term_context_matrix\idf_weights.json
+          output: outputs/run_20260526_112036_19_fr_en/query_results
           query: qui doivent être relevés pour favoriser son adoption à plus grande
             échelle.
           spreading_steps: '1'
@@ -194,85 +207,85 @@ runs:
     steps:
       1:
         completed_at: '2026-05-31T08:59:56.795706'
-        mapping: outputs\run_20260531_085922\extracted_phrases\phrase_to_contexts.json
-        output: outputs/run_20260531_085922/extracted_phrases
+        mapping: outputs\run_20260531_085922_corpus\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260531_085922_corpus/extracted_phrases
         params:
           corpus: data\corpus.txt
           keep_verbs: 'true'
           min_freq: '1'
           no_filter_generic: 'false'
           no_spacy: 'false'
-          output: outputs/run_20260531_085922/extracted_phrases
+          output: outputs/run_20260531_085922_corpus/extracted_phrases
           stats: 'false'
-        vocab: outputs\run_20260531_085922\extracted_phrases\vocabulary.csv
+        vocab: outputs\run_20260531_085922_corpus\extracted_phrases\vocabulary.csv
       2:
         completed_at: '2026-05-31T09:00:06.412951'
-        idf_weights: outputs\run_20260531_085922\term_context_matrix\idf_weights.json
-        matrix_npz: outputs\run_20260531_085922\term_context_matrix\term_context_matrix.npz
-        metadata: outputs\run_20260531_085922\term_context_matrix\term_context_matrix.json
-        output: outputs/run_20260531_085922/term_context_matrix
+        idf_weights: outputs\run_20260531_085922_corpus\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260531_085922_corpus\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260531_085922_corpus\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260531_085922_corpus/term_context_matrix
         params:
           corpus: data\corpus.txt
-          mapping: outputs\run_20260531_085922\extracted_phrases\phrase_to_contexts.json
+          mapping: outputs\run_20260531_085922_corpus\extracted_phrases\phrase_to_contexts.json
           no_tfidf: 'false'
-          output: outputs/run_20260531_085922/term_context_matrix
-          vocab: outputs\run_20260531_085922\extracted_phrases\vocabulary.csv
+          output: outputs/run_20260531_085922_corpus/term_context_matrix
+          vocab: outputs\run_20260531_085922_corpus\extracted_phrases\vocabulary.csv
       3:
         completed_at: '2026-05-31T09:00:34.368556'
-        coordinates: outputs\run_20260531_085922\semantic_space\context_coordinates.json
-        output: outputs/run_20260531_085922/semantic_space
+        coordinates: outputs\run_20260531_085922_corpus\semantic_space\context_coordinates.json
+        output: outputs/run_20260531_085922_corpus/semantic_space
         params:
           grid_size: '64'
-          matrix_npz: outputs\run_20260531_085922\term_context_matrix\term_context_matrix.npz
-          metadata: outputs\run_20260531_085922\term_context_matrix\term_context_matrix.json
+          matrix_npz: outputs\run_20260531_085922_corpus\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260531_085922_corpus\term_context_matrix\term_context_matrix.json
           method: tsne
-          output: outputs/run_20260531_085922/semantic_space
+          output: outputs/run_20260531_085922_corpus/semantic_space
           show_density: 'false'
           visualize: 'true'
       4:
         completed_at: '2026-05-31T09:02:45.127959'
-        output: outputs/run_20260531_085922/phrase_fingerprints
+        output: outputs/run_20260531_085922_corpus/phrase_fingerprints
         params:
-          coordinates: outputs\run_20260531_085922\semantic_space\context_coordinates.json
+          coordinates: outputs\run_20260531_085922_corpus\semantic_space\context_coordinates.json
           grid_size: '64'
-          metadata: outputs\run_20260531_085922\term_context_matrix\term_context_matrix.json
+          metadata: outputs\run_20260531_085922_corpus\term_context_matrix\term_context_matrix.json
           morton: 'true'
           no_smooth: 'false'
-          output: outputs/run_20260531_085922/phrase_fingerprints
+          output: outputs/run_20260531_085922_corpus/phrase_fingerprints
           smoothing_sigma: '1.5'
       5:
         completed_at: '2026-05-31T09:03:11.477450'
-        output: outputs/run_20260531_085922/doc_fingerprints
+        output: outputs/run_20260531_085922_corpus/doc_fingerprints
         params:
           corpus: data\corpus.txt
-          fingerprints: outputs/run_20260531_085922/phrase_fingerprints
+          fingerprints: outputs/run_20260531_085922_corpus/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260531_085922\term_context_matrix\idf_weights.json
+          idf_weights: outputs\run_20260531_085922_corpus\term_context_matrix\idf_weights.json
           keep_verbs: 'true'
           morton: 'true'
-          output: outputs/run_20260531_085922/doc_fingerprints
+          output: outputs/run_20260531_085922_corpus/doc_fingerprints
           smoothing_sigma: '1.5'
       6:
         completed_at: '2026-05-31T09:03:42.855273'
-        output: outputs/run_20260531_085922/customtext_fingerprints
+        output: outputs/run_20260531_085922_corpus/customtext_fingerprints
         params:
           corpus: data\customtexts.txt
-          fingerprints: outputs/run_20260531_085922/phrase_fingerprints
+          fingerprints: outputs/run_20260531_085922_corpus/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260531_085922\term_context_matrix\idf_weights.json
+          idf_weights: outputs\run_20260531_085922_corpus\term_context_matrix\idf_weights.json
           keep_verbs: 'true'
           morton: 'true'
-          output: outputs/run_20260531_085922/customtext_fingerprints
+          output: outputs/run_20260531_085922_corpus/customtext_fingerprints
           smoothing_sigma: '1.5'
       7:
         completed_at: '2026-05-31T09:05:21.328905'
-        output: outputs/run_20260531_085922/query_results
+        output: outputs/run_20260531_085922_corpus/query_results
         params:
-          doc_fingerprints: outputs/run_20260531_085922/doc_fingerprints
-          fingerprints: outputs/run_20260531_085922/phrase_fingerprints
+          doc_fingerprints: outputs/run_20260531_085922_corpus/doc_fingerprints
+          fingerprints: outputs/run_20260531_085922_corpus/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260531_085922\term_context_matrix\idf_weights.json
-          output: outputs/run_20260531_085922/query_results
+          idf_weights: outputs\run_20260531_085922_corpus\term_context_matrix\idf_weights.json
+          output: outputs/run_20260531_085922_corpus/query_results
           query: Blockchain technology offers a decentralized approach to data management
           spreading_steps: '1'
           top_k: '5'
@@ -283,85 +296,85 @@ runs:
     steps:
       1:
         completed_at: '2026-06-07T16:20:20.990198'
-        mapping: outputs\run_20260607_161955\extracted_phrases\phrase_to_contexts.json
-        output: outputs/run_20260607_161955/extracted_phrases
+        mapping: outputs\run_20260607_161955_764\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260607_161955_764/extracted_phrases
         params:
           corpus: data\quran\quran_ayahs_tail764.txt
           keep_verbs: 'true'
           min_freq: '1'
           no_filter_generic: 'false'
           no_spacy: 'false'
-          output: outputs/run_20260607_161955/extracted_phrases
+          output: outputs/run_20260607_161955_764/extracted_phrases
           stats: 'false'
-        vocab: outputs\run_20260607_161955\extracted_phrases\vocabulary.csv
+        vocab: outputs\run_20260607_161955_764\extracted_phrases\vocabulary.csv
       2:
         completed_at: '2026-06-07T16:25:33.268804'
-        idf_weights: outputs\run_20260607_161955\term_context_matrix\idf_weights.json
-        matrix_npz: outputs\run_20260607_161955\term_context_matrix\term_context_matrix.npz
-        metadata: outputs\run_20260607_161955\term_context_matrix\term_context_matrix.json
-        output: outputs/run_20260607_161955/term_context_matrix
+        idf_weights: outputs\run_20260607_161955_764\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260607_161955_764\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260607_161955_764\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260607_161955_764/term_context_matrix
         params:
           corpus: data\quran\quran_ayahs_tail764.txt
-          mapping: outputs\run_20260607_161955\extracted_phrases\phrase_to_contexts.json
+          mapping: outputs\run_20260607_161955_764\extracted_phrases\phrase_to_contexts.json
           no_tfidf: 'false'
-          output: outputs/run_20260607_161955/term_context_matrix
-          vocab: outputs\run_20260607_161955\extracted_phrases\vocabulary.csv
+          output: outputs/run_20260607_161955_764/term_context_matrix
+          vocab: outputs\run_20260607_161955_764\extracted_phrases\vocabulary.csv
       3:
         completed_at: '2026-06-07T16:26:25.619806'
-        coordinates: outputs\run_20260607_161955\semantic_space\context_coordinates.json
-        output: outputs/run_20260607_161955/semantic_space
+        coordinates: outputs\run_20260607_161955_764\semantic_space\context_coordinates.json
+        output: outputs/run_20260607_161955_764/semantic_space
         params:
           grid_size: '64'
-          matrix_npz: outputs\run_20260607_161955\term_context_matrix\term_context_matrix.npz
-          metadata: outputs\run_20260607_161955\term_context_matrix\term_context_matrix.json
+          matrix_npz: outputs\run_20260607_161955_764\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260607_161955_764\term_context_matrix\term_context_matrix.json
           method: tsne
-          output: outputs/run_20260607_161955/semantic_space
+          output: outputs/run_20260607_161955_764/semantic_space
           show_density: 'false'
           visualize: 'true'
       4:
         completed_at: '2026-06-07T16:27:40.963609'
-        output: outputs/run_20260607_161955/phrase_fingerprints
+        output: outputs/run_20260607_161955_764/phrase_fingerprints
         params:
-          coordinates: outputs\run_20260607_161955\semantic_space\context_coordinates.json
+          coordinates: outputs\run_20260607_161955_764\semantic_space\context_coordinates.json
           grid_size: '64'
-          metadata: outputs\run_20260607_161955\term_context_matrix\term_context_matrix.json
+          metadata: outputs\run_20260607_161955_764\term_context_matrix\term_context_matrix.json
           morton: 'true'
           no_smooth: 'false'
-          output: outputs/run_20260607_161955/phrase_fingerprints
+          output: outputs/run_20260607_161955_764/phrase_fingerprints
           smoothing_sigma: '1.5'
       5:
         completed_at: '2026-06-07T16:29:30.372715'
-        output: outputs/run_20260607_161955/doc_fingerprints
+        output: outputs/run_20260607_161955_764/doc_fingerprints
         params:
           corpus: data\quran\quran_ayahs_tail764.txt
-          fingerprints: outputs/run_20260607_161955/phrase_fingerprints
+          fingerprints: outputs/run_20260607_161955_764/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260607_161955\term_context_matrix\idf_weights.json
+          idf_weights: outputs\run_20260607_161955_764\term_context_matrix\idf_weights.json
           keep_verbs: 'true'
           morton: 'true'
-          output: outputs/run_20260607_161955/doc_fingerprints
+          output: outputs/run_20260607_161955_764/doc_fingerprints
           smoothing_sigma: '1.5'
       6:
         completed_at: '2026-06-07T16:33:15.008954'
-        output: outputs/run_20260607_161955/customtext_fingerprints
+        output: outputs/run_20260607_161955_764/customtext_fingerprints
         params:
           corpus: data\customtexts.txt
-          fingerprints: outputs/run_20260607_161955/phrase_fingerprints
+          fingerprints: outputs/run_20260607_161955_764/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260607_161955\term_context_matrix\idf_weights.json
+          idf_weights: outputs\run_20260607_161955_764\term_context_matrix\idf_weights.json
           keep_verbs: 'true'
           morton: 'true'
-          output: outputs/run_20260607_161955/customtext_fingerprints
+          output: outputs/run_20260607_161955_764/customtext_fingerprints
           smoothing_sigma: '1.5'
       7:
         completed_at: '2026-06-07T16:41:09.379882'
-        output: outputs/run_20260607_161955/query_results
+        output: outputs/run_20260607_161955_764/query_results
         params:
-          doc_fingerprints: outputs/run_20260607_161955/doc_fingerprints
-          fingerprints: outputs/run_20260607_161955/phrase_fingerprints
+          doc_fingerprints: outputs/run_20260607_161955_764/doc_fingerprints
+          fingerprints: outputs/run_20260607_161955_764/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260607_161955\term_context_matrix\idf_weights.json
-          output: outputs/run_20260607_161955/query_results
+          idf_weights: outputs\run_20260607_161955_764\term_context_matrix\idf_weights.json
+          output: outputs/run_20260607_161955_764/query_results
           query: مِن شَرِّ ٱلۡوَسۡوَاسِ ٱلۡخَنَّاسِ,From the evil of the retreating
             whisperer
           spreading_steps: '1'
@@ -373,8 +386,8 @@ runs:
     steps:
       1:
         completed_at: '2026-06-16T11:02:05.533973'
-        mapping: outputs\run_20260616_110007\extracted_phrases\phrase_to_contexts.json
-        output: outputs/run_20260616_110007/extracted_phrases
+        mapping: outputs\run_20260616_110007_6236\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260616_110007_6236/extracted_phrases
         params:
           corpus: data\quran\quran_ayahs_clean.txt
           keep_verbs: 'true'
@@ -382,93 +395,93 @@ runs:
           min_word_length: '3'
           no_filter_generic: 'false'
           no_spacy: 'false'
-          output: outputs/run_20260616_110007/extracted_phrases
+          output: outputs/run_20260616_110007_6236/extracted_phrases
           stats: 'false'
-        vocab: outputs\run_20260616_110007\extracted_phrases\vocabulary.csv
+        vocab: outputs\run_20260616_110007_6236\extracted_phrases\vocabulary.csv
       2:
         completed_at: '2026-06-16T17:05:56.318508'
-        idf_weights: outputs\run_20260616_110007\term_context_matrix\idf_weights.json
-        matrix_npz: outputs\run_20260616_110007\term_context_matrix\term_context_matrix.npz
-        metadata: outputs\run_20260616_110007\term_context_matrix\term_context_matrix.json
-        output: outputs/run_20260616_110007/term_context_matrix
+        idf_weights: outputs\run_20260616_110007_6236\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260616_110007_6236\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260616_110007_6236\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260616_110007_6236/term_context_matrix
         params:
           corpus: data\quran\quran_ayahs_clean.txt
-          mapping: outputs\run_20260616_110007\extracted_phrases\phrase_to_contexts.json
+          mapping: outputs\run_20260616_110007_6236\extracted_phrases\phrase_to_contexts.json
           no_tfidf: 'false'
-          output: outputs/run_20260616_110007/term_context_matrix
-          vocab: outputs\run_20260616_110007\extracted_phrases\vocabulary.csv
+          output: outputs/run_20260616_110007_6236/term_context_matrix
+          vocab: outputs\run_20260616_110007_6236\extracted_phrases\vocabulary.csv
       3:
         completed_at: '2026-06-18T08:47:21.884606'
-        coordinates: outputs\run_20260616_110007\semantic_space\context_coordinates.json
-        output: outputs/run_20260616_110007/semantic_space
+        coordinates: outputs\run_20260616_110007_6236\semantic_space\context_coordinates.json
+        output: outputs/run_20260616_110007_6236/semantic_space
         params:
           grid_size: '64'
-          matrix_npz: outputs\run_20260616_110007\term_context_matrix\term_context_matrix.npz
-          metadata: outputs\run_20260616_110007\term_context_matrix\term_context_matrix.json
+          matrix_npz: outputs\run_20260616_110007_6236\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260616_110007_6236\term_context_matrix\term_context_matrix.json
           method: tsne
-          output: outputs/run_20260616_110007/semantic_space
+          output: outputs/run_20260616_110007_6236/semantic_space
           show_density: 'false'
           visualize: 'true'
       4:
         completed_at: '2026-06-18T08:51:11.494167'
-        output: outputs/run_20260616_110007/phrase_fingerprints
+        output: outputs/run_20260616_110007_6236/phrase_fingerprints
         params:
-          coordinates: outputs\run_20260616_110007\semantic_space\context_coordinates.json
+          coordinates: outputs\run_20260616_110007_6236\semantic_space\context_coordinates.json
           grid_size: '64'
-          metadata: outputs\run_20260616_110007\term_context_matrix\term_context_matrix.json
+          metadata: outputs\run_20260616_110007_6236\term_context_matrix\term_context_matrix.json
           morton: 'true'
           no_smooth: 'false'
-          output: outputs/run_20260616_110007/phrase_fingerprints
+          output: outputs/run_20260616_110007_6236/phrase_fingerprints
           smoothing_sigma: '1.5'
       5:
         completed_at: '2026-06-18T08:58:12.574945'
-        output: outputs/run_20260616_110007/doc_fingerprints
+        output: outputs/run_20260616_110007_6236/doc_fingerprints
         params:
           compute_diversity: 'false'
           corpus: data\quran\quran_ayahs_clean.txt
           diversity_sample: '100'
           filter_generic: 'true'
-          fingerprints: outputs/run_20260616_110007/phrase_fingerprints
+          fingerprints: outputs/run_20260616_110007_6236/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260616_110007\term_context_matrix\idf_weights.json
+          idf_weights: outputs\run_20260616_110007_6236\term_context_matrix\idf_weights.json
           keep_verbs: 'true'
           min_peak_distance: '2'
           min_word_length: '3'
           morton: 'true'
           no_normalize: 'true'
           normalize_method: l2
-          output: outputs/run_20260616_110007/doc_fingerprints
+          output: outputs/run_20260616_110007_6236/doc_fingerprints
           smoothing_sigma: '1.5'
           top_percent: '0.05'
       6:
         completed_at: '2026-06-20T10:56:45.875631'
-        output: outputs/run_20260616_110007/customtext_fingerprints
+        output: outputs/run_20260616_110007_6236/customtext_fingerprints
         params:
           compute_diversity: 'false'
           corpus: data\customtexts.txt
           diversity_sample: '100'
           filter_generic: 'true'
-          fingerprints: outputs/run_20260616_110007/phrase_fingerprints
+          fingerprints: outputs/run_20260616_110007_6236/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260616_110007\term_context_matrix\idf_weights.json
+          idf_weights: outputs\run_20260616_110007_6236\term_context_matrix\idf_weights.json
           keep_verbs: 'true'
           min_peak_distance: '2'
           min_word_length: '3'
           morton: 'true'
           no_normalize: 'true'
           normalize_method: l2
-          output: outputs/run_20260616_110007/customtext_fingerprints
+          output: outputs/run_20260616_110007_6236/customtext_fingerprints
           smoothing_sigma: '1.5'
           top_percent: '0.05'
       7:
         completed_at: '2026-06-18T09:06:11.844349'
-        output: outputs/run_20260616_110007/query_results
+        output: outputs/run_20260616_110007_6236/query_results
         params:
-          doc_fingerprints: outputs/run_20260616_110007/doc_fingerprints
-          fingerprints: outputs/run_20260616_110007/phrase_fingerprints
+          doc_fingerprints: outputs/run_20260616_110007_6236/doc_fingerprints
+          fingerprints: outputs/run_20260616_110007_6236/phrase_fingerprints
           grid_size: '64'
-          idf_weights: outputs\run_20260616_110007\term_context_matrix\idf_weights.json
-          output: outputs/run_20260616_110007/query_results
+          idf_weights: outputs\run_20260616_110007_6236\term_context_matrix\idf_weights.json
+          output: outputs/run_20260616_110007_6236/query_results
           query: ولدن
           spreading_steps: '0'
           top_k: '5'
