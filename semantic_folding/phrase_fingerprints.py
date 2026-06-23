@@ -688,7 +688,7 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--smoothing-sigma",
         type=float,
-        default=1.0,
+        default=1.5,
         dest="sigma",
         help=(
             "Standard deviation of the Gaussian smoothing kernel in index "

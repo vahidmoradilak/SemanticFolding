@@ -68,7 +68,7 @@ semantic_space:
   method: "tsne"                 # Options: tsne, umap, pca
 
   # Grid configuration
-  grid_size: 128                  # Semantic space resolution (8, 16, 32, 64, 128)
+  grid_size: 64                   # Semantic space resolution (must match global grid_size)
   grid_padding: 0                # Padding around grid edges
   enable_grid: true              # Generate discrete grid coordinates
 
@@ -119,8 +119,8 @@ document_fingerprints:
   min_word_length: 3
   remove_verbs: false           # you already have this, good
   filter_generic: true
-  min_peak_distance: 2          # added
-  smoothing_sigma: 1.0          # added
+  min_peak_distance: 2
+  smoothing_sigma: 1.5
   use_morton: true
   compute_diversity: false      # if you want it off by default
   diversity_sample: 100
@@ -132,19 +132,24 @@ customtext_fingerprints:
   no_normalize: true
   normalize_method: "l2"
   min_word_length: 3
-  remove_verbs: false           # you already have this, good
+  remove_verbs: false
   filter_generic: true
-  min_peak_distance: 2          # added
-  smoothing_sigma: 1.0          # added
+  min_peak_distance: 2
+  smoothing_sigma: 1.5
   use_morton: true
   compute_diversity: false      # if you want it off by default
   diversity_sample: 100
 # ============================================================
 # PHASE 7: QUERY PROCESSING
 # ============================================================
-# Maps to new query_processing.py CLI:
-#   top_k            → --top-k
-#   spreading_steps  → --spreading-steps
+# Maps to query_processing.py CLI:
+#   top_k              → --top-k
+#   spreading_steps    → --spreading-steps
+#   weighting          → --weighting
+#   smoothing_sigma    → --smoothing-sigma
+#   min_peak_distance  → --min-peak-distance
+#   top_percent        → --top-percent
+#   normalization      → --normalization
 #
 # NOT in CLI (handled internally or via --config):
 #   idf path is resolved by runner from Step 3 output directory
@@ -158,6 +163,12 @@ query_processing:
   # Set to 0 to disable spreading entirely (exact-match only).
   spreading_steps: 1             # Neighbourhood expansion steps (0 = disabled)
   weighting: "idf"
+
+  # Fingerprint construction parameters (MUST match document_fingerprints Step 5)
+  smoothing_sigma: 1.5           # Gaussian smoothing sigma before peak detection
+  min_peak_distance: 2           # Minimum distance between semantic hotspots
+  top_percent: 0.10              # Fraction of bits kept after peak detection
+  normalization: "l2"            # Query fingerprint normalization method
 
 # ============================================================
 # PHASE 7: PHRASE VISUALIZATION

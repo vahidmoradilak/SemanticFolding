@@ -530,8 +530,8 @@ def sparsify_to_sdr_topological(
     grid_2d           : np.ndarray,
     top_percent       : float,
     grid_size         : int,
-    min_peak_distance : int   = 4,
-    smoothing_sigma   : float = 1.2,
+    min_peak_distance : int   = 2,
+    smoothing_sigma   : float = 1.5,
     contrast_boost    : bool  = True,
 ) -> csr_matrix:
     """
@@ -559,7 +559,7 @@ def sparsify_to_sdr_topological(
     grid_size : int
         Side length of the square grid.
     min_peak_distance : int
-        Minimum distance between detected peaks (in grid cells).
+        Minimum distance between detected peaks semantic hotspots (in grid cells).
         Larger values → fewer, more separated hotspots.
     smoothing_sigma : float
         Gaussian sigma for pre-smoothing. Helps merge nearby contexts
@@ -1060,8 +1060,8 @@ def main():
     parser.add_argument(
         "--smoothing-sigma",
         type=float,
-        default=0.5,
-        help="Gaussian smoothing sigma before peak detection (default: 0.5, set 0 to disable)",
+        default=1.5,
+        help="Gaussian smoothing sigma before peak detection (default: 1.5, set 0 to disable)",
     )
 
     exclusive_group = parser.add_mutually_exclusive_group()
