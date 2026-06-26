@@ -43,9 +43,12 @@ from functools import lru_cache
 import json, os
 
 
-# nltk.data.path.insert(0, 'C:\\nltk_data')
-nltk.data.path.insert(0, "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_data")
-os.environ['NLTK_DATA'] = r'D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_data'
+# Set up NLTK data path relative to project root
+_nltk_path = Path(__file__).resolve().parent.parent / "nltk_data"
+if _nltk_path.exists():
+    # nltk.data.path.insert(0, "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_data")
+    nltk.data.path.insert(0, str(_nltk_path))
+    os.environ['NLTK_DATA'] = str(_nltk_path)
 
 import re
 _ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')

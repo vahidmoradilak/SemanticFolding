@@ -316,7 +316,8 @@ class PhraseVisualizationHandler(VisualizationHandler):
     def build_command(self, params: Dict[str, str]) -> List[str]:
         script_path = str(Path(__file__).resolve().parent.parent / "semantic_folding/phrase_visualizer.py")
         cmd = [
-            "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\SemanticFolding\\.venv\\scripts\\python",
+            # "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\SemanticFolding\\.venv\\scripts\\python",
+            sys.executable,
             script_path
         ]
         cmd.extend(['--fingerprints', params['fingerprints']])
@@ -457,7 +458,7 @@ class DocumentVisualizationHandler(VisualizationHandler):
     def build_command(self, params: Dict[str, Any]) -> List[str]:
         script_path = str(Path(__file__).resolve().parent.parent / "semantic_folding/doc_visualizer.py")
         cmd = [
-            "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\SemanticFolding\\.venv\\scripts\\python",
+            sys.executable,
             script_path
         ]
         cmd.extend(['--run-dir', str(params['run_dir'])])
@@ -723,7 +724,7 @@ class CustomTextVisualizationHandler(VisualizationHandler):
     def build_command(self, params: Dict[str, str]) -> List[str]:
         script_path = str(Path(__file__).resolve().parent.parent / "semantic_folding/customtext_visualizer.py")
         cmd = [
-            "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\SemanticFolding\\.venv\\scripts\\python",
+            sys.executable,
             script_path
         ]
         cmd.extend(['--run-dir', str(params['run_dir'])])
@@ -846,6 +847,10 @@ class SemanticRunner:
         "idf_weights":          ["query_processing", "idf_weights"],
         "top_k":                ["query_processing", "top_k"],
         "spreading_steps":      ["query_processing", "spreading_steps"],
+        "smoothing_sigma":      ["query_processing", "smoothing_sigma"],
+        "min_peak_distance":    ["query_processing", "min_peak_distance"],
+        "top_percent":          ["query_processing", "top_percent"],
+        "normalization":        ["query_processing", "normalization"],
 
         # Phrase Visualization
         "threshold":            ["phrase_visualization", "threshold"],
@@ -1183,7 +1188,7 @@ class SemanticRunner:
     def build_command(self, step, params):
         script_path = str(Path(__file__).resolve().parent.parent / step["script"])
         cmd = [
-            "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\SemanticFolding\\.venv\\scripts\\python",
+            sys.executable,
             script_path
         ]
         for param, value in params.items():

@@ -13,15 +13,16 @@
 12, إِنَّ ٱلَّذِينَ كَفَرُواْ سَوَآءٌ عَلَيۡهِمۡ ءَأَنذَرۡتَهُمۡ أَمۡ لَمۡ تُنذِرۡهُمۡ لَا يُؤۡمِنُونَ
 13,"Indeed, those who disbelieve - it is all the same for them whether you warn them or do not warn them - they will not believe"
 14, الله
-15, Allah
-16, ALLAH
-17, allah
+15, AllaH
+16, allah
 23, the Entirely Merciful, the Especially Merciful
 24, الرحمن و الرحیم
-25, شَدِيدُ ٱلۡعِقَابِ
-26, ولدان
-27, وِلۡدَٰنٞ
-28, ولدن
+25, غَفُورٞ رَّحِيمٌ
+30, عذاب اليم
+31, شَدِيدُ ٱلۡعِقَابِ
+36, ولدن
+37, وِلۡدَٰنٞ
 724,إِنَّمَا وَلِيُّكُمُ ٱللَّهُ وَرَسُولُهُۥ وَٱلَّذِينَ ءَامَنُواْ ٱلَّذِينَ يُقِيمُونَ ٱلصَّلَوٰةَ وَيُؤۡتُونَ ٱلزَّكَوٰةَ وَهُمۡ رَٰكِعُونَ,"Your ally is none but Allah and therefore His Messenger and those who have believed - those who establish prayer and give zakah, and they bow in worship"
 725, انما ولیکم الله والذین ءامنوا و یوتون الزکاه و هم الرکعون
+3706,يسٓ,"Ya, Seen"
 4326,حمٓ,"Ha, Meem"
