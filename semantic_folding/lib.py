@@ -1820,21 +1820,37 @@ def compute_jaccard_similarity(
 # Z-ORDER CURVE UTILITIES
 # ============================================================================
 
-def xy_to_morton(x: int, y: int) -> int:
+def _spread_bits(value: int) -> int:
+    """Spread bits of a 16-bit integer by inserting a 0 between each bit."""
+    value &= 0x0000FFFF
+    value = (value | (value << 8))  & 0x00FF00FF
+    value = (value | (value << 4))  & 0x0F0F0F0F
+    value = (value | (value << 2))  & 0x33333333
+    value = (value | (value << 1))  & 0x55555555
+    return value
+
+
+def _compact_bits(value: int) -> int:
+    """Extract every other bit from a 32-bit integer (inverse of _spread_bits)."""
+    value &= 0x55555555
+    value = (value ^ (value >> 1)) & 0x33333333
+    value = (value ^ (value >> 2)) & 0x0F0F0F0F
+    value = (value ^ (value >> 4)) & 0x00FF00FF
+    value = (value ^ (value >> 8)) & 0x0000FFFF
+    return value
+
+
+def xy_to_morton(x: int, y: int, grid_size: int = None) -> int:
     """
     Convert 2D coordinates to Morton code (Z-order curve index).
     
     Morton codes interleave the binary representations of x and y coordinates,
-    creating a space-filling curve that preserves spatial locality. Points
-    close in 2D space tend to have similar Morton codes.
-    
-    Algorithm:
-        For x=5 (binary: 101) and y=3 (binary: 011):
-        Interleave: y1 x1 y0 x0 y2 x2 → 100111 = 39
+    creating a space-filling curve that preserves spatial locality.
     
     Args:
         x: X coordinate (non-negative integer)
         y: Y coordinate (non-negative integer)
+        grid_size: Ignored; kept for API compatibility with Step 3-6 callers.
     
     Returns:
         Morton code (Z-order index)
@@ -1850,33 +1866,19 @@ def xy_to_morton(x: int, y: int) -> int:
         3
         >>> xy_to_morton(5, 3)
         39
-    
-    Note:
-        Used in phrase_fingerprints.py and doc_fingerprints.py for
-        Z-order curve thresholding, which preserves spatial structure
-        when selecting top-k bits.
     """
-    def part1by1(n: int) -> int:
-        """Spread bits of n by inserting a 0 between each bit"""
-        n &= 0x0000ffff
-        n = (n | (n << 8)) & 0x00FF00FF
-        n = (n | (n << 4)) & 0x0F0F0F0F
-        n = (n | (n << 2)) & 0x33333333
-        n = (n | (n << 1)) & 0x55555555
-        return n
-    
-    return (part1by1(y) << 1) + part1by1(x)
+    return _spread_bits(x) | (_spread_bits(y) << 1)
 
 
-def morton_to_xy(morton: int) -> Tuple[int, int]:
+def morton_to_xy(index: int, grid_size: int = None) -> Tuple[int, int]:
     """
-    Convert Morton code back to 2D coordinates.
+    Convert Morton (Z-order) index back to 2D coordinates.
     
-    Inverse operation of xy_to_morton(), extracting the interleaved
-    x and y coordinates from the Morton code.
+    Inverse operation of xy_to_morton().
     
     Args:
-        morton: Morton code (Z-order index)
+        index: Morton code (Z-order index)
+        grid_size: Ignored; kept for API compatibility with visualizer callers.
     
     Returns:
         Tuple of (x, y) coordinates
@@ -1892,21 +1894,9 @@ def morton_to_xy(morton: int) -> Tuple[int, int]:
         (1, 1)
         >>> morton_to_xy(39)
         (5, 3)
-    
-    Note:
-        Useful for debugging and visualization of Z-order traversal.
     """
-    def compact1by1(n: int) -> int:
-        """Extract every other bit"""
-        n &= 0x55555555
-        n = (n ^ (n >> 1)) & 0x33333333
-        n = (n ^ (n >> 2)) & 0x0F0F0F0F
-        n = (n ^ (n >> 4)) & 0x00FF00FF
-        n = (n ^ (n >> 8)) & 0x0000FFFF
-        return n
-    
-    x = compact1by1(morton)
-    y = compact1by1(morton >> 1)
+    x = _compact_bits(index)
+    y = _compact_bits(index >> 1)
     return (x, y)
 
 

@@ -11,9 +11,8 @@ from typing import Dict, List, Optional, Tuple
 from tqdm import tqdm
 
 import numpy as np
-from scipy.ndimage import gaussian_filter1d
 
-from lib import get_logger
+from lib import get_logger, xy_to_morton
 logger = get_logger("phrase_fingerprints")
 
 """
@@ -130,96 +129,6 @@ Exit Codes
 3   Grid size mismatch — a coordinate value exceeds ``grid_size - 1``.
 4   Unexpected runtime error.
 """
-
-
-# ---------------------------------------------------------------------------
-# Morton (Z-order) encoding helpers
-# ---------------------------------------------------------------------------
-
-def _spread_bits(value: int) -> int:
-    """
-    Spread the bits of a non-negative integer by inserting a zero between
-    every pair of adjacent bits.
-
-    This is the core primitive for 2-D Morton code computation.  Given an
-    integer whose binary representation is ``...b3 b2 b1 b0``, the result is
-    ``...0 b3 0 b2 0 b1 0 b0``.
-
-    Parameters
-    ----------
-    value:
-        Non-negative integer to spread.  Behaviour is undefined for negative
-        values or values that require more than 16 bits.
-
-    Returns
-    -------
-    int
-        The bit-spread integer.
-
-    Examples
-    --------
-    >>> _spread_bits(0b0011)   # 3
-    0b00000101               # 5
-    >>> _spread_bits(0b1010)   # 10
-    0b01000100               # 68
-    """
-    value &= 0x0000FFFF
-    value = (value | (value << 8))  & 0x00FF00FF
-    value = (value | (value << 4))  & 0x0F0F0F0F
-    value = (value | (value << 2))  & 0x33333333
-    value = (value | (value << 1))  & 0x55555555
-    return value
-
-
-def xy_to_morton(x: int, y: int, grid_size: int) -> int:
-    """
-    Encode a 2-D integer coordinate as a Morton (Z-order curve) code.
-
-    The Morton code interleaves the bits of ``x`` and ``y`` so that
-    coordinates that are close in 2-D space map to indices that are close in
-    1-D space.  This locality property makes the resulting fingerprint index
-    meaningful under Hamming distance.
-
-    The code is **not** the raw Morton number but is remapped to the range
-    ``[0, grid_size * grid_size - 1]`` so it can directly index a fingerprint
-    vector of that length.
-
-    Parameters
-    ----------
-    x:
-        Column coordinate on the semantic grid, in ``[0, grid_size - 1]``.
-    y:
-        Row coordinate on the semantic grid, in ``[0, grid_size - 1]``.
-    grid_size:
-        Side length of the square grid.  Must be a power of two for the
-        Morton mapping to be bijective.
-
-    Returns
-    -------
-    int
-        Morton index in ``[0, grid_size * grid_size - 1]``.
-
-    Raises
-    ------
-    ValueError
-        If ``x`` or ``y`` is negative or ``>= grid_size``.
-
-    Examples
-    --------
-    >>> xy_to_morton(0, 0, 64)
-    0
-    >>> xy_to_morton(1, 0, 64)
-    1
-    >>> xy_to_morton(0, 1, 64)
-    2
-    >>> xy_to_morton(1, 1, 64)
-    3
-    """
-    if not (0 <= x < grid_size and 0 <= y < grid_size):
-        raise ValueError(
-            f"Coordinates ({x}, {y}) out of range for grid_size={grid_size}."
-        )
-    return _spread_bits(x) | (_spread_bits(y) << 1)
 
 
 # ---------------------------------------------------------------------------

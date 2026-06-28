@@ -77,6 +77,8 @@ if not SPACY_AVAILABLE:
 
 
 from lib import (
+    xy_to_morton,
+    morton_to_xy,
     compute_fingerprint_diversity,
     expand_phrases,
     normalize_phrase,
@@ -208,64 +210,8 @@ def extract_phrases_from_doc(
 
 
 # ---------------------------------------------------------------------------
-# Morton encoding helpers
-# ---------------------------------------------------------------------------
-
-def _spread_bits(value: int) -> int:
-    """
-    Spread bits of a 16-bit integer to prepare for Morton encoding.
-    Used to interleave x and y coordinates into a single Z-order index.
-    """
-    value &= 0x0000FFFF
-    value = (value | (value << 8))  & 0x00FF00FF
-    value = (value | (value << 4))  & 0x0F0F0F0F
-    value = (value | (value << 2))  & 0x33333333
-    value = (value | (value << 1))  & 0x55555555
-    return value
-
-
-def xy_to_morton(x: int, y: int, grid_size: int) -> int:
-    """
-    Convert 2D grid coordinates (x, y) to 1D Morton (Z-order) index.
-    
-    Morton encoding preserves 2D spatial locality when flattening to 1D,
-    ensuring that nearby cells in 2D space remain nearby in the 1D array.
-    
-    Parameters
-    ----------
-    x, y : int
-        Grid coordinates (0-indexed).
-    grid_size : int
-        Side length of the square grid (unused but kept for API consistency).
-    
-    Returns
-    -------
-    int
-        Morton-encoded 1D index.
-    """
-    return _spread_bits(x) | (_spread_bits(y) << 1)
-
-
-# ---------------------------------------------------------------------------
 # Single-document fingerprint builder (2D topology-preserving)
 # ---------------------------------------------------------------------------
-def morton_to_xy(index: int, grid_size: int) -> Tuple[int, int]:
-    """Inverse of xy_to_morton: converts a Morton (Z-order) index back to (x, y)."""
-    # Extract bits: Morton = (spread(y) << 1) | spread(x)
-    x = 0
-    y = 0
-    bit = 0
-    while index > 0 or (1 << bit) < grid_size * grid_size:
-        # Bit for x is in even positions (0,2,4,...), y in odd (1,3,5,...)
-        if index & 1:
-            x |= (1 << (bit // 2))
-        index >>= 1
-        bit += 1
-        if index & 1:
-            y |= (1 << (bit // 2))
-        index >>= 1
-        bit += 1
-    return x, y
 
 def build_index_to_xy_table(grid_size: int, use_morton: bool = True) -> np.ndarray:
     """

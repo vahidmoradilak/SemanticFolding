@@ -28,7 +28,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
 
-from lib import get_logger
+from lib import get_logger, morton_to_xy
 logger = get_logger("phrase_visualizer")
 
 
@@ -61,24 +61,6 @@ def normalize_for_display(grid: np.ndarray) -> np.ndarray:
 # ============================================================================
 # Morton Encoding Reversal (Z-order curve decoding)
 # ============================================================================
-
-def _compact_bits(value: int) -> int:
-    """Inverse of _spread_bits: extracts every other bit to un-zip Morton code."""
-    value &= 0x55555555
-    value = (value ^ (value >> 1)) & 0x33333333
-    value = (value ^ (value >> 2)) & 0x0F0F0F0F
-    value = (value ^ (value >> 4)) & 0x00FF00FF
-    value = (value ^ (value >> 8)) & 0x0000FFFF
-    return value
-
-
-def morton_to_xy(morton_code: int) -> Tuple[int, int]:
-    """Convert 1D Morton index back to 2D (x, y) coordinates."""
-    x = _compact_bits(morton_code)
-    y = _compact_bits(morton_code >> 1)
-    logger.debug(f"Morton {morton_code} -> (x={x}, y={y})")
-    return x, y
-
 
 def inverse_flatten(fp: np.ndarray, grid_size: int, use_morton: bool) -> np.ndarray:
     """Reconstruct 2D spatial grid from 1D fingerprint vector."""

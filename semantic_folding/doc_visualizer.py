@@ -16,7 +16,7 @@ from typing import Dict, Tuple, List
 import argparse
 from scipy.ndimage import gaussian_filter
 from scipy.sparse import csr_matrix
-from doc_fingerprints import morton_to_xy
+from lib import morton_to_xy
 # Import from your lib module
 from lib import load_document_fingerprints, load_phrase_fingerprints_sparse, get_logger
 
