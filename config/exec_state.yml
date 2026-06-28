@@ -1,4 +1,4 @@
-last_run_id: run_20260526_101313_38_fr_en
+last_run_id: run_20260628_141331
 last_step: 7
 runs:
   run_20260526_101313_38_fr_en:
@@ -484,5 +484,111 @@ runs:
           output: outputs/run_20260616_110007_6236/query_results
           query: ولدن
           spreading_steps: '0'
+          top_k: '5'
+          weighting: idf
+  run_20260628_141331:
+    corpus: data\quran\quran_ayahs_clean.txt
+    created_at: '2026-06-28T14:13:31.600086'
+    steps:
+      1:
+        completed_at: '2026-06-28T14:15:59.730992'
+        mapping: outputs\run_20260628_141331\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260628_141331/extracted_phrases
+        params:
+          corpus: data\quran\quran_ayahs_clean.txt
+          keep_verbs: 'true'
+          min_freq: '1'
+          min_word_length: '3'
+          no_filter_generic: 'false'
+          no_spacy: 'false'
+          output: outputs/run_20260628_141331/extracted_phrases
+          stats: 'false'
+        vocab: outputs\run_20260628_141331\extracted_phrases\vocabulary.csv
+      2:
+        completed_at: '2026-06-28T14:19:47.881148'
+        idf_weights: outputs\run_20260628_141331\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260628_141331\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260628_141331\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260628_141331/term_context_matrix
+        params:
+          corpus: data\quran\quran_ayahs_clean.txt
+          mapping: outputs\run_20260628_141331\extracted_phrases\phrase_to_contexts.json
+          no_tfidf: 'false'
+          output: outputs/run_20260628_141331/term_context_matrix
+          vocab: outputs\run_20260628_141331\extracted_phrases\vocabulary.csv
+      3:
+        completed_at: '2026-06-28T14:21:47.960307'
+        coordinates: outputs\run_20260628_141331\semantic_space\context_coordinates.json
+        output: outputs/run_20260628_141331/semantic_space
+        params:
+          grid_size: '64'
+          matrix_npz: outputs\run_20260628_141331\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260628_141331\term_context_matrix\term_context_matrix.json
+          method: tsne
+          output: outputs/run_20260628_141331/semantic_space
+          show_density: 'false'
+          visualize: 'true'
+      4:
+        completed_at: '2026-06-28T14:25:15.918734'
+        output: outputs/run_20260628_141331/phrase_fingerprints
+        params:
+          coordinates: outputs\run_20260628_141331\semantic_space\context_coordinates.json
+          grid_size: '64'
+          metadata: outputs\run_20260628_141331\term_context_matrix\term_context_matrix.json
+          morton: 'true'
+          no_smooth: 'false'
+          output: outputs/run_20260628_141331/phrase_fingerprints
+          smoothing_sigma: '1.5'
+      5:
+        completed_at: '2026-06-28T14:30:17.686573'
+        output: outputs/run_20260628_141331/doc_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: data\quran\quran_ayahs_clean.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs/run_20260628_141331/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260628_141331\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '3'
+          morton: 'true'
+          no_normalize: 'true'
+          normalize_method: l2
+          output: outputs/run_20260628_141331/doc_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.1'
+      6:
+        completed_at: '2026-06-28T14:31:23.359387'
+        output: outputs/run_20260628_141331/customtext_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: data\customtexts.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs/run_20260628_141331/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260628_141331\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '3'
+          morton: 'true'
+          no_normalize: 'true'
+          normalize_method: l2
+          output: outputs/run_20260628_141331/customtext_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.1'
+      7:
+        completed_at: '2026-06-28T14:39:15.932288'
+        output: outputs/run_20260628_141331/query_results
+        params:
+          doc_fingerprints: outputs/run_20260628_141331/doc_fingerprints
+          fingerprints: outputs/run_20260628_141331/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260628_141331\term_context_matrix\idf_weights.json
+          output: outputs/run_20260628_141331/query_results
+          query: قل اعوذ برب ناس
+          spreading_steps: '1'
           top_k: '5'
           weighting: idf

@@ -40,7 +40,7 @@
 - TF-IDF: applied in Step 2
 - Dim reduction: t-SNE (default; also supports UMAP, PCA)
 - Spreading: radius=1, decay=0.5 (in query processor) — spread=0 loses recall on Q4/C09, spread=2 doesn't improve
-- top_percent: 0.10 (0.05 loses C00 in Q5, 0.15 dilutes signal)
+- top_percent: 0.05 (0.10 dilutes signal; 0.05 gives better discrimination on the Quran corpus)
 - Query weighting: IDF (best; uniform drops C17 ranking and loses C00)
 - Normalization: L2 for query, `sqrt(nnz)` for document fingerprints
 - Geometric scoring: optional `--geometric` flag (Step 7) applies a 3×3 spatial adjacency kernel before scoring, rewarding nearby (not just exact) cell overlap on the 2D grid. See `semantic_folding/parameters_tuning.md` for evaluation.

@@ -113,7 +113,7 @@ phrase_fingerprints:
 # PHASE 5: DOCUMENT FINGERPRINTS
 # ============================================================
 document_fingerprints:
-  top_percent: 0.10
+  top_percent: 0.05
   no_normalize: true
   normalize_method: "l2"
   min_word_length: 3
@@ -167,7 +167,7 @@ query_processing:
   # Fingerprint construction parameters (MUST match document_fingerprints Step 5)
   smoothing_sigma: 1.5           # Gaussian smoothing sigma before peak detection
   min_peak_distance: 2           # Minimum distance between semantic hotspots
-  top_percent: 0.10              # Fraction of bits kept after peak detection
+  top_percent: 0.05              # Fraction of bits kept after peak detection
   normalization: "l2"            # Query fingerprint normalization method
 
 # ============================================================

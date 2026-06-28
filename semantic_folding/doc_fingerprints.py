@@ -32,7 +32,8 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from lib import get_logger, SPACY_AVAILABLE
+from lib import get_logger
+from phrase_extractor import SPACY_AVAILABLE
 from fingerprint_builder import build_fingerprints, write_outputs
 
 logger = get_logger("doc_fingerprints")
