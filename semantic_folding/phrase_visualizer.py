@@ -32,6 +32,32 @@ from lib import get_logger
 logger = get_logger("phrase_visualizer")
 
 
+def normalize_for_display(grid: np.ndarray) -> np.ndarray:
+    """
+    Normalize a 2D grid to [0, 1] range for color mapping visibility.
+
+    Phrase fingerprints may have very small values (e.g. after Gaussian
+    smoothing with small sigma) that map to near-zero in standard colormaps,
+    appearing as nearly blank. This function scales active cells to [0, 1]
+    without affecting inactive (zero) cells.
+
+    Args:
+        grid: 2D fingerprint grid.
+
+    Returns:
+        Normalized grid with active cells in [0, 1], zeros unchanged.
+    """
+    result = np.zeros_like(grid)
+    active = grid > 0
+    if active.any():
+        vmin, vmax = grid[active].min(), grid[active].max()
+        if vmax > vmin:
+            result[active] = (grid[active] - vmin) / (vmax - vmin)
+        else:
+            result[active] = 0.5
+    return result
+
+
 # ============================================================================
 # Morton Encoding Reversal (Z-order curve decoding)
 # ============================================================================
@@ -164,6 +190,7 @@ def visualize_matrix_view(
     fp = fingerprints[idx]
     
     grid = inverse_flatten(fp, grid_size, use_morton)
+    display_grid = normalize_for_display(grid)
     
     # Get activated cells above threshold
     activated_coords = np.argwhere(grid > threshold)
@@ -176,7 +203,7 @@ def visualize_matrix_view(
     
     # Add heatmap with discrete colors for better cell visibility
     fig.add_trace(go.Heatmap(
-        z=grid,
+        z=display_grid,
         colorscale=[
             [0, 'white'],
             [0.001, 'lightblue'],
@@ -463,6 +490,7 @@ def visualize_single_phrase(
     # Reconstruct 2D grid from flattened fingerprint
     logger.info(f"Reconstructing 2D grid (size={grid_size}, morton={use_morton})")
     grid = inverse_flatten(fp, grid_size, use_morton)
+    display_grid = normalize_for_display(grid)
     
     # Extract top 20 most active cells for metadata export
     top_cells = get_top_active_cells(grid, top_n=20)
@@ -514,7 +542,7 @@ def visualize_single_phrase(
     # Uses continuous colorscale for smooth gradient visualization
     # xgap=0, ygap=0 ensures crisp rendering without gaps between cells
     heatmap = go.Heatmap(
-        z=grid,
+        z=display_grid,
         colorscale=colorscale,
         zmin=0,
         zmax=1,
@@ -535,7 +563,7 @@ def visualize_single_phrase(
     # Uses discrete colorscale from white (inactive) to darkred (highly active)
     # xgap=1, ygap=1 creates visible separation between cells
     matrix_heatmap = go.Heatmap(
-        z=grid,
+        z=display_grid,
         colorscale=[
             [0, 'white'],        # No activation
             [0.001, 'lightblue'], # Minimal activation
@@ -865,6 +893,8 @@ def visualize_phrase_pair(
     logger.info(f"Reconstructing 2D grids (size={grid_size}, morton={use_morton})")
     grid1 = inverse_flatten(fp1, grid_size, use_morton)
     grid2 = inverse_flatten(fp2, grid_size, use_morton)
+    display_grid1 = normalize_for_display(grid1)
+    display_grid2 = normalize_for_display(grid2)
     logger.debug(f"Grid 1 shape: {grid1.shape}, Grid 2 shape: {grid2.shape}")
     
     # Extract top active cells for each phrase and their overlap
@@ -883,8 +913,10 @@ def visualize_phrase_pair(
     # Compute overlap and difference grids for comparison
     logger.debug("Computing overlap and difference grids...")
     overlap = np.minimum(grid1, grid2)
+    display_overlap = normalize_for_display(overlap)
     activated_coords_overlap = np.argwhere(overlap > threshold)
     diff = grid1 - grid2
+    max_abs_diff = max(abs(diff.min()), abs(diff.max())) or 1.0
     
     logger.info(f"Phrase 1: {len(activated_coords_1)} activated cells (threshold={threshold})")
     logger.info(f"Phrase 2: {len(activated_coords_2)} activated cells (threshold={threshold})")
@@ -968,7 +1000,7 @@ def visualize_phrase_pair(
     logger.debug("Adding Panel 1: Matrix view of phrase 1...")
     fig.add_trace(
         go.Heatmap(
-            z=grid1,
+            z=display_grid1,
             colorscale=[
                 [0, 'white'],
                 [0.001, 'lightblue'],
@@ -1035,7 +1067,7 @@ def visualize_phrase_pair(
     logger.debug("Adding Panel 2: Matrix view of phrase 2...")
     fig.add_trace(
         go.Heatmap(
-            z=grid2,
+            z=display_grid2,
             colorscale=[
                 [0, 'white'],
                 [0.001, 'lightyellow'],
@@ -1047,7 +1079,7 @@ def visualize_phrase_pair(
             zmin=0, zmax=1,
             colorbar=dict(
                 title="Activation",
-                x=0.63,
+                x=0.62,
                 len=0.28,
                 y=0.83
             ),
@@ -1102,7 +1134,7 @@ def visualize_phrase_pair(
     logger.debug("Adding Panel 3: Matrix view of overlap...")
     fig.add_trace(
         go.Heatmap(
-            z=overlap,
+            z=display_overlap,
             colorscale=[
                 [0, 'white'],
                 [0.001, 'lavender'],
@@ -1175,7 +1207,7 @@ def visualize_phrase_pair(
     logger.debug("Adding Panel 4: Continuous heatmap of phrase 1...")
     fig.add_trace(
         go.Heatmap(
-            z=grid1,
+            z=display_grid1,
             colorscale='Blues',
             zmin=0, zmax=1,
             colorbar=dict(
@@ -1196,7 +1228,7 @@ def visualize_phrase_pair(
     logger.debug("Adding Panel 5: Continuous heatmap of phrase 2...")
     fig.add_trace(
         go.Heatmap(
-            z=grid2,
+            z=display_grid2,
             colorscale='Oranges',
             zmin=0, zmax=1,
             colorbar=dict(
@@ -1217,7 +1249,7 @@ def visualize_phrase_pair(
     logger.debug("Adding Panel 6: Continuous heatmap of overlap...")
     fig.add_trace(
         go.Heatmap(
-            z=overlap,
+            z=display_overlap,
             colorscale='Purples',
             zmin=0, zmax=1,
             colorbar=dict(
@@ -1244,9 +1276,8 @@ def visualize_phrase_pair(
         go.Heatmap(
             z=diff,
             colorscale='RdBu',
-            # colorscale='RdBu_r',
             zmid=0,
-            zmin=-1, zmax=1,
+            zmin=-max_abs_diff, zmax=max_abs_diff,
             colorbar=dict(
                 title="Difference",
                 x=0.29,
