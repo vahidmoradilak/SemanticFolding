@@ -1517,6 +1517,7 @@ def main():
     parser.add_argument('--doc-id2', type=str, help='Second customtext for comparison')
 
     parser.add_argument('--grid-size', type=int, default=128, help='Grid dimension (default: 128)')
+    parser.add_argument('--text-file', type=str, default=None, help='Path to customtexts data file')
 
     # Activation threshold
     parser.add_argument('--threshold', type=float, default=0.0, 
@@ -1634,7 +1635,7 @@ def main():
             
             grid_size = metadata['grid_size']
 
-            text_dir = "data\\customtexts.txt"
+            text_dir = args.text_file or "data/customtexts.txt"
             doc_text = get_document_by_id(text_dir, args.doc_id)
             
             print(f"Visualizing customtext {args.doc_id}: {doc_text}")
@@ -1697,7 +1698,7 @@ def main():
             grid_size = metadata['grid_size']
             use_morton = metadata.get('use_morton', False)
 
-            text_dir = "data\\customtexts.txt"
+            text_dir = args.text_file or "data/customtexts.txt"
             doc_text1 = get_document_by_id(text_dir, args.doc_id1)
             doc_text2 = get_document_by_id(text_dir, args.doc_id2)
 

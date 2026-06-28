@@ -1488,7 +1488,7 @@ class SemanticRunner:
                 self._delete_all_orphaned(orphaned)
 
     def _find_orphaned_directories(self, runs: dict) -> list:
-        output_base = Path("output")
+        output_base = Path("outputs")
         if not output_base.exists():
             return []
         known_runs = set(runs.keys())
@@ -1565,7 +1565,7 @@ class SemanticRunner:
         time.sleep(2)
 
     def _delete_run_directories(self, run_id: str) -> list:
-        output_base = Path("output")
+        output_base = Path("outputs")
         if not output_base.exists():
             return []
         deleted = []

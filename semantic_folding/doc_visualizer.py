@@ -497,6 +497,12 @@ def main():
         default=1.0,
         help='Width of 4×4 block borders (default: 1.0)'
     )
+    parser.add_argument(
+        '--text-file',
+        type=str,
+        default=None,
+        help='Path to corpus text file (default: derived from config)'
+    )
     
     args = parser.parse_args()
     
@@ -549,10 +555,7 @@ def main():
     
     grid_size = metadata['grid_size']
     
-    text_dir = "data\\quran\\quran_ayahs_clean.txt" 
-    # text_dir = "data\\quran\\quran_ayahs_NE.txt" 
-    # text_dir = "data\\quran\\quran_ayahs_tail764.txt" 
-    # text_dir = "data\\corpus.txt"
+    text_dir = args.text_file or "data/quran/quran_ayahs_clean.txt"
     doc_text = get_document_by_id(text_dir, args.doc_id)
             
     print(f"Visualizing customtext {args.doc_id}: {doc_text}")
