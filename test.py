@@ -89,7 +89,12 @@ def split_id_arabic_english(line: str):
     return ctx_id, arabic_text, english_text
 
 line = '10,فِي جَنَّـٰتٖ يَتَسَآءَلُونَ,"[Who will be] in gardens, questioning each other"'
-ctx_id, arabic_text, english_text = split_id_arabic_english(line)
-print(ctx_id)
-print(arabic_text)
-print(english_text)
+# ctx_id, arabic_text, english_text = split_id_arabic_english(line)
+# print(ctx_id)
+# print(arabic_text)
+# print(english_text)
+
+ag = ""
+ad = "ff"
+ss = ag or ad
+print(ss)

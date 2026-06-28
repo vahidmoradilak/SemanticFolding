@@ -43,9 +43,12 @@ from functools import lru_cache
 import json, os
 
 
-# nltk.data.path.insert(0, 'C:\\nltk_data')
-nltk.data.path.insert(0, "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_data")
-os.environ['NLTK_DATA'] = r'D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_data'
+# Set up NLTK data path relative to project root
+_nltk_path = Path(__file__).resolve().parent.parent / "nltk_data"
+if _nltk_path.exists():
+    # nltk.data.path.insert(0, "D:\\darsi\\ms\\Thesis\\Dr.Banaie\\code050302\\nltk_data")
+    nltk.data.path.insert(0, str(_nltk_path))
+    os.environ['NLTK_DATA'] = str(_nltk_path)
 
 import re
 _ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
@@ -116,6 +119,23 @@ en_stop_words = (_BASE_STOP_WORDS - _STOP_WORD_EXCEPTIONS) | _EXTRA_STOP_WORDS
 _DOMAIN_ACRONYMS = {'ai', 'ml', 'nlp', 'iot', 'api', 'p2p', 'qa', 'ui', 'db', 'id', 'os'}
 
 def is_generic_word(word: str, min_length: int = 3) -> bool:
+    """
+    Determine if a single word is too generic to carry semantic meaning.
+
+    Generic words are filtered out during phrase expansion to maintain
+    semantic quality. A word is considered generic if it meets any of:
+    - Too short (< min_length characters)
+    - Common stop word (articles, prepositions, etc.)
+    - Pure numeric string or contains non-alpha characters
+    - Domain acronyms (ai, ml, nlp, etc.) are preserved.
+
+    Args:
+        word: Input word to evaluate
+        min_length: Minimum character length threshold (default: 3)
+
+    Returns:
+        True if word is generic and should be filtered, False otherwise
+    """
     if word.lower() in _DOMAIN_ACRONYMS:
         return False
     if len(word) < min_length:
@@ -148,15 +168,6 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.NOUN
 
 @lru_cache(maxsize=10000)
-def lemmatize_token(word: str, pos_tag_str: str) -> str:
-    pos = get_wordnet_pos(pos_tag_str)
-    return lemmatizer.lemmatize(word.lower(), pos=pos)
-
-def clear_lemma_cache():
-    lemmatize_token.cache_clear()
-
-
-@lru_cache(maxsize=10000)
 def lemmatize_token(word: str, pos_tag: str) -> str:
     """
     Lemmatize a single token with POS-aware processing and caching.
@@ -187,41 +198,6 @@ def lemmatize_token(word: str, pos_tag: str) -> str:
     pos = get_wordnet_pos(pos_tag)
     return lemmatizer.lemmatize(word.lower(), pos=pos)
 
-
-def is_generic_word(word: str, min_length: int = 3) -> bool:
-    """
-    Determine if a single word is too generic to carry semantic meaning.
-    
-    Generic words are filtered out during phrase expansion to maintain
-    semantic quality. A word is considered generic if it meets any of:
-    - Too short (< min_length characters)
-    - Common stop word (articles, prepositions, etc.)
-    - Pure numeric string
-    
-    Args:
-        word: Input word to evaluate
-        min_length: Minimum character length threshold (default: 3)
-    
-    Returns:
-        True if word is generic and should be filtered, False otherwise
-    
-    Examples:
-        >>> is_generic_word('the')
-        True  # stop word
-        >>> is_generic_word('ai')
-        True  # too short (< 3 chars)
-        >>> is_generic_word('123')
-        True  # numeric
-        >>> is_generic_word('algorithm')
-        False  # meaningful content word
-    """
-    if len(word) < min_length:
-        return True
-    if word in en_stop_words:
-        return True
-    if word.isdigit():
-        return True
-    return False
 
 def split_arabic_english(text: str):
     ar_positions = [m.start() for m in _ARABIC_SCRIPT.finditer(text)]
@@ -1295,98 +1271,6 @@ def _load_fingerprint_matrix(
 
 # ─────────────────────────────────────────────────────────────────────────────
 
-def load_phrase_fingerprints_sparse(
-    fingerprints_dir : Path,
-    grid_size        : int,
-) -> Dict[str, np.ndarray]:
-    """
-    Load phrase fingerprints produced by Step 4 (phrase_fingerprints.py).
-
-    Expected files in fingerprints_dir:
-        phrase_fingerprints.npz        — dense float32 matrix,
-                                         key "fingerprints",
-                                         shape (n_phrases, grid_size²)
-        phrase_fingerprints_meta.json  — {phrase_string: row_index}
-
-    Parameters
-    ----------
-    fingerprints_dir:
-        Step 4 output directory (e.g. outputs/run/phrase_fingerprints/).
-    grid_size:
-        Grid side-length; used to validate matrix column count.
-
-    Returns
-    -------
-    Dict[str, np.ndarray]
-        phrase_string  →  float32 vector of length grid_size².
-
-    Raises
-    ------
-    FileNotFoundError  — if either expected file is missing.
-    ValueError         — if column count != grid_size²,
-                         or if index_map references out-of-bound rows.
-    """
-    fingerprints_dir = Path(fingerprints_dir)
-
-    matrix, index_map = _load_fingerprint_matrix(
-        npz_path   = fingerprints_dir / "phrase_fingerprints.npz",
-        index_path = fingerprints_dir / "phrase_fingerprints_meta.json",
-        npz_key    = "fingerprints",
-        label      = "phrase",
-        grid_size  = grid_size,
-    )
-
-    n_rows = matrix.shape[0]
-    n_keys = len(index_map)
-
-    # ── alignment audit ──────────────────────────────────────────────────────
-    if n_keys != n_rows:
-        logger.warning(
-            f"index_map has {n_keys} entries but matrix has {n_rows} rows "
-            f"— index map and matrix may be misaligned. "
-            f"Only mapped entries will be used."
-        )
-
-    # ── out-of-bound row check ────────────────────────────────────────────────
-    bad_phrases = {
-        phrase: idx
-        for phrase, idx in index_map.items()
-        if idx < 0 or idx >= n_rows
-    }
-    if bad_phrases:
-        raise ValueError(
-            f"index_map contains {len(bad_phrases)} out-of-bound row "
-            f"reference(s) for matrix with {n_rows} rows. "
-            f"Examples: { {k: v for k, v in list(bad_phrases.items())[:5]} }"
-        )
-
-    # ── build output dict — only rows that are mapped ─────────────────────────
-    phrase_fps: Dict[str, np.ndarray] = {
-        phrase: matrix[idx].astype(np.float32)
-        for phrase, idx in index_map.items()
-    }
-
-    # ── report unmapped rows (matrix rows with no phrase key) ─────────────────
-    mapped_row_indices = set(index_map.values())
-    unmapped_rows = [i for i in range(n_rows) if i not in mapped_row_indices]
-    if unmapped_rows:
-        logger.warning(
-            f"{len(unmapped_rows)} matrix row(s) have no corresponding phrase "
-            f"key in the index map and will be ignored. "
-            f"First few unmapped row indices: {unmapped_rows[:10]}"
-        )
-
-    logger.success(
-        f"Loaded {len(phrase_fps)} phrase fingerprints "
-        f"(grid_size={grid_size}, vector_size={grid_size**2}, "
-        f"matrix_rows={n_rows}, mapped={len(phrase_fps)}, "
-        f"unmapped_rows={len(unmapped_rows)})."
-    )
-    return phrase_fps
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-
 def load_document_fingerprints(
     doc_fp_dir : Path,
 ) -> Tuple[Dict[str, "csr_matrix"], Dict]:
@@ -1451,6 +1335,8 @@ def load_document_fingerprints(
         f"(grid_size={grid_size}, use_morton={use_morton})."
     )
     return doc_fingerprints, combined_metadata
+
+
 def load_phrase_fingerprints_sparse(
     fingerprints_dir : Path,
     grid_size        : int,
@@ -1560,7 +1446,7 @@ def load_phrase_fingerprints_sparse(
         phrase_fps[phrase] = csr_matrix(row_dense.reshape(1, -1))
 
     logger.success(f"Loaded {len(phrase_fps)} phrase fingerprints (sparse format).")
-    return phrase_fps
+    return phrase_fps #csr_matrix
 
 
 def load_fingerprint_cache(
@@ -1934,21 +1820,37 @@ def compute_jaccard_similarity(
 # Z-ORDER CURVE UTILITIES
 # ============================================================================
 
-def xy_to_morton(x: int, y: int) -> int:
+def _spread_bits(value: int) -> int:
+    """Spread bits of a 16-bit integer by inserting a 0 between each bit."""
+    value &= 0x0000FFFF
+    value = (value | (value << 8))  & 0x00FF00FF
+    value = (value | (value << 4))  & 0x0F0F0F0F
+    value = (value | (value << 2))  & 0x33333333
+    value = (value | (value << 1))  & 0x55555555
+    return value
+
+
+def _compact_bits(value: int) -> int:
+    """Extract every other bit from a 32-bit integer (inverse of _spread_bits)."""
+    value &= 0x55555555
+    value = (value ^ (value >> 1)) & 0x33333333
+    value = (value ^ (value >> 2)) & 0x0F0F0F0F
+    value = (value ^ (value >> 4)) & 0x00FF00FF
+    value = (value ^ (value >> 8)) & 0x0000FFFF
+    return value
+
+
+def xy_to_morton(x: int, y: int, grid_size: int = None) -> int:
     """
     Convert 2D coordinates to Morton code (Z-order curve index).
     
     Morton codes interleave the binary representations of x and y coordinates,
-    creating a space-filling curve that preserves spatial locality. Points
-    close in 2D space tend to have similar Morton codes.
-    
-    Algorithm:
-        For x=5 (binary: 101) and y=3 (binary: 011):
-        Interleave: y1 x1 y0 x0 y2 x2 → 100111 = 39
+    creating a space-filling curve that preserves spatial locality.
     
     Args:
         x: X coordinate (non-negative integer)
         y: Y coordinate (non-negative integer)
+        grid_size: Ignored; kept for API compatibility with Step 3-6 callers.
     
     Returns:
         Morton code (Z-order index)
@@ -1964,33 +1866,19 @@ def xy_to_morton(x: int, y: int) -> int:
         3
         >>> xy_to_morton(5, 3)
         39
-    
-    Note:
-        Used in phrase_fingerprints.py and doc_fingerprints.py for
-        Z-order curve thresholding, which preserves spatial structure
-        when selecting top-k bits.
     """
-    def part1by1(n: int) -> int:
-        """Spread bits of n by inserting a 0 between each bit"""
-        n &= 0x0000ffff
-        n = (n | (n << 8)) & 0x00FF00FF
-        n = (n | (n << 4)) & 0x0F0F0F0F
-        n = (n | (n << 2)) & 0x33333333
-        n = (n | (n << 1)) & 0x55555555
-        return n
-    
-    return (part1by1(y) << 1) + part1by1(x)
+    return _spread_bits(x) | (_spread_bits(y) << 1)
 
 
-def morton_to_xy(morton: int) -> Tuple[int, int]:
+def morton_to_xy(index: int, grid_size: int = None) -> Tuple[int, int]:
     """
-    Convert Morton code back to 2D coordinates.
+    Convert Morton (Z-order) index back to 2D coordinates.
     
-    Inverse operation of xy_to_morton(), extracting the interleaved
-    x and y coordinates from the Morton code.
+    Inverse operation of xy_to_morton().
     
     Args:
-        morton: Morton code (Z-order index)
+        index: Morton code (Z-order index)
+        grid_size: Ignored; kept for API compatibility with visualizer callers.
     
     Returns:
         Tuple of (x, y) coordinates
@@ -2006,21 +1894,9 @@ def morton_to_xy(morton: int) -> Tuple[int, int]:
         (1, 1)
         >>> morton_to_xy(39)
         (5, 3)
-    
-    Note:
-        Useful for debugging and visualization of Z-order traversal.
     """
-    def compact1by1(n: int) -> int:
-        """Extract every other bit"""
-        n &= 0x55555555
-        n = (n ^ (n >> 1)) & 0x33333333
-        n = (n ^ (n >> 2)) & 0x0F0F0F0F
-        n = (n ^ (n >> 4)) & 0x00FF00FF
-        n = (n ^ (n >> 8)) & 0x0000FFFF
-        return n
-    
-    x = compact1by1(morton)
-    y = compact1by1(morton >> 1)
+    x = _compact_bits(index)
+    y = _compact_bits(index >> 1)
     return (x, y)
 
 

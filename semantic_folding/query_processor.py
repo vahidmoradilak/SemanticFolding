@@ -66,6 +66,8 @@ from phrase_extractor import (
     extract_raw_phrases_spacy,
 )
 from lib import (
+    xy_to_morton,
+    morton_to_xy,
     expand_phrases,
     get_zorder_neighbors,
     load_document_fingerprints,
@@ -78,7 +80,7 @@ from lib import (
     normalize_arabic_phrase,
     sparsify_fingerprint,
 )
-from doc_fingerprints import (
+from fingerprint_builder import (
     build_document_fingerprint_2d,
     sparsify_to_sdr_topological,
     build_index_to_xy_table,
@@ -1329,32 +1331,6 @@ def construct_query_fingerprint(
     )
 
     return acc_csr, metadata
-
-# Morton encoding helpers (can be moved to lib.py later)
-def _spread_bits(value: int) -> int:
-    value &= 0x0000FFFF
-    value = (value | (value << 8))  & 0x00FF00FF
-    value = (value | (value << 4))  & 0x0F0F0F0F
-    value = (value | (value << 2))  & 0x33333333
-    value = (value | (value << 1))  & 0x55555555
-    return value
-
-def xy_to_morton(x: int, y: int, grid_size: int) -> int:
-    return _spread_bits(x) | (_spread_bits(y) << 1)
-
-def morton_to_xy(index: int, grid_size: int) -> Tuple[int, int]:
-    x = y = 0
-    bit = 0
-    while index > 0 or (1 << bit) < grid_size * grid_size:
-        if index & 1:
-            x |= (1 << (bit // 2))
-        index >>= 1
-        bit += 1
-        if index & 1:
-            y |= (1 << (bit // 2))
-        index >>= 1
-        bit += 1
-    return x, y
 
 def _unflatten_vector(vec: np.ndarray, grid_size: int, use_morton: bool) -> np.ndarray:
     """Convert flat fingerprint (Morton or row‑major) to 2D grid."""
