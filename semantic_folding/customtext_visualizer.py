@@ -20,7 +20,7 @@ from scipy.sparse import csr_matrix
 from lib import morton_to_xy
 # Import from your lib module
 from lib import load_document_fingerprints, load_phrase_fingerprints_sparse, get_logger
-from customtext_fingerprints import extract_phrases_from_doc
+from fingerprint_builder import extract_phrases_from_doc
 
 # Initialize logger
 logger = get_logger("customtext_visualizer")

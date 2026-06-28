@@ -80,7 +80,7 @@ from lib import (
     normalize_arabic_phrase,
     sparsify_fingerprint,
 )
-from doc_fingerprints import (
+from fingerprint_builder import (
     build_document_fingerprint_2d,
     sparsify_to_sdr_topological,
     build_index_to_xy_table,
