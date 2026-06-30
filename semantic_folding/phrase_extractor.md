@@ -558,15 +558,7 @@ The normalization engine now explicitly traps comparative ($JJR, RBR$) and super
 
 **Normalization Rule:**
 
-```python
-def normalize_adjective(word: str, tag: str) -> str:
-    """
-    Normalize comparative/superlative adjectives to base form.
-    
-    Handles both correctly tagged and mis-tagged forms.
-    """
-    # Correctly tagged comparatives/superlatives
-    if tag in ['JJR', 'JJS', 'RBR', 'RBS']:
+The normalization logic is built into `normalize_phrase()` via `lemmatize_token()`, which handles comparative/superlative forms through POS-aware lemmatization.
         return lemmatize(word, 'a')  # Force adjective lemmatization
     
     # Mis-tagged forms (NLTK sometimes tags as JJ)
