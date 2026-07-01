@@ -27,14 +27,12 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Set
 import nltk
-from nltk.corpus import stopwords
+from nltk.corpus import stopwords, wordnet
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
-from nltk import pos_tag
 from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import Counter
 from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
 from scipy.sparse import hstack, csr_matrix, lil_matrix
 from rich import print
 from loguru import logger
@@ -56,6 +54,7 @@ import re
 _ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
 from hazm import Normalizer, word_tokenize
 normalizer = Normalizer()
+from nltk import pos_tag, word_tokenize
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 LOG_DIR = Path("logs")
