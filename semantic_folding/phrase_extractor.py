@@ -44,13 +44,13 @@ except ImportError:
     logger.warning("spaCy not installed — falling back to NLTK extraction")
     SPACY_AVAILABLE = False
 
-from hazm import Normalizer, word_tokenize
+from hazm import Normalizer, word_tokenize as hazm_word_tokenize
 normalizer = Normalizer()
 
 # NLTK only needed when spaCy is unavailable
 if not SPACY_AVAILABLE:
     logger.debug("Importing NLTK fallback tokenizer and POS tagger")
-    from nltk.tokenize import word_tokenize
+    from nltk.tokenize import word_tokenize as nltk_word_tokenize
     from nltk import pos_tag
 
 from lib import detect_language, extract_raw_phrases_ar_fa
@@ -84,7 +84,7 @@ def extract_raw_phrases_fallback(text: str) -> Set[str]:
     logger.debug(f"[FALLBACK] Extracting phrases from text ({len(text)} chars)")
     phrases: Set[str] = set()
 
-    tokens = word_tokenize(text)
+    tokens = nltk_word_tokenize(text)
     tagged = pos_tag(tokens)
     logger.debug(f"[FALLBACK] Tokenized → {len(tagged)} tokens")
 

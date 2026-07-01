@@ -28,7 +28,8 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Set
 import nltk
 from nltk.corpus import stopwords, wordnet
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize as nltk_word_tokenize
+from nltk import pos_tag
 from nltk.util import ngrams
 from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import Counter
@@ -52,9 +53,8 @@ if _nltk_path.exists():
 
 import re
 _ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
-from hazm import Normalizer, word_tokenize
+from hazm import Normalizer, word_tokenize as hazm_word_tokenize
 normalizer = Normalizer()
-from nltk import pos_tag, word_tokenize
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 LOG_DIR = Path("logs")
@@ -308,7 +308,7 @@ def normalize_phrase(text: str, remove_verbs: bool = True) -> Optional[str]:
     logger.debug(f"[NORMALIZE ENTER] text={text!r} remove_verbs={remove_verbs}")
 
     # ── step 1: tokenize ──────────────────────────────────────────────────────
-    tokens = word_tokenize(text)
+    tokens = nltk_word_tokenize(text)
     if not tokens:
         logger.debug("[NORMALIZE] empty token list after word_tokenize — returning None")
         return None
@@ -509,7 +509,7 @@ def _norm_ar(t: str) -> str:
 def extract_raw_phrases_ar_fa(text: str) -> Set[str]:
     phrases = set()
     text = normalizer.normalize(text)
-    tokens = word_tokenize(text)
+    tokens = hazm_word_tokenize(text)
     if not tokens:
         return phrases
 
@@ -704,7 +704,7 @@ def normalize_arabic_phrase(text: str):
     text = text.replace("\u0626", "\u064a")  # yeh-with-hamza → ya
 
     # 2. tokenize
-    tokens = word_tokenize(text)
+    tokens = hazm_word_tokenize(text)
 
     # 3. stopword removal
     tokens = [

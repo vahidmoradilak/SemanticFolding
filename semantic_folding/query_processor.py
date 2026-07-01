@@ -110,7 +110,7 @@ except ImportError:
 # NLTK only needed when spaCy is unavailable
 if not SPACY_AVAILABLE:
     logger.debug("Importing NLTK fallback tokenizer and POS tagger")
-    from nltk.tokenize import word_tokenize
+    from nltk.tokenize import word_tokenize as nltk_word_tokenize
     from nltk import pos_tag
 
 
