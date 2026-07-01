@@ -63,7 +63,7 @@ PIPELINE_DEFAULTS = {
     "spreading_steps": 1,
     "top_k": 5,
     "weighting": "idf",
-    "top_percent": 0.10,
+    "top_percent": 0.05,
     "smoothing_sigma": 1.5,
     "keep_verbs": True,
     "min_word_length": 3,

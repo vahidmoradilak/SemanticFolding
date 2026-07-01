@@ -62,9 +62,7 @@ All pipeline stages leverage a consistent set of core functions:
 - **`normalize_fingerprint()`**: Unified normalization (L1, L2, binary, raw) for activation maps
 - **`xy_to_morton()`**: Z-order curve encoding for spatial locality preservation
 - **`sparsify_fingerprint()`**: Value-based thresholding with configurable percentiles
-- **`compute_idf_weights()`**: Corpus-level IDF statistics for phrase importance weighting
 - **`compute_fingerprint_diversity()`**: Activation diversity metrics for quality assessment
-- **`export_fingerprints_to_numpy()`**: Efficient serialization to NumPy format
 
 ### TF-IDF Matrix Normalization
 
@@ -513,7 +511,7 @@ For each document:
 4. Aggregate phrase fingerprints with optional weighting:
    - Uniform: $w_i = 1$
    - Frequency: $w_i = \text{count}(p_i, D)$
-   - IDF: $w_i = \log\frac{N}{df(p_i)}$ via `compute_idf_weights()`
+    - IDF: $w_i = \log\frac{N}{df(p_i)}$
 5. Normalize via `normalize_fingerprint()`
 6. Apply Z-order thresholding via `xy_to_morton()` or value-based via `sparsify_fingerprint()`
 7. Compute diversity metrics via `compute_fingerprint_diversity()`

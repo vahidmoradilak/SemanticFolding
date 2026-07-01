@@ -24,7 +24,7 @@ Usage
         --idf-weights outputs/run/term_context/idf_weights.json \
         --output-dir  outputs/run/customtext_fingerprints \
         --grid-size   16 \
-        --top-percent 0.1
+        --top-percent 0.05
 """
 
 from __future__ import annotations
@@ -32,7 +32,8 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from lib import get_logger, SPACY_AVAILABLE
+from lib import get_logger
+from phrase_extractor import SPACY_AVAILABLE
 from fingerprint_builder import build_fingerprints, write_outputs
 
 logger = get_logger("customtext_fingerprints")

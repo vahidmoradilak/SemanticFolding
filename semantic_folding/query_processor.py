@@ -85,7 +85,7 @@ from fingerprint_builder import (
     sparsify_to_sdr_topological,
     build_index_to_xy_table,
 )
-SPARCITY_GAURD=0.005
+SPARSITY_GUARD=0.005
 # ─────────────────────────────────────────────────────────────────────────────
 # Logging — level driven by LOG_LEVEL env var (default: INFO)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1466,7 +1466,7 @@ def apply_spreading(
     n_cells  = fingerprint.shape[1]
     sparsity = fingerprint.nnz / n_cells
 
-    if sparsity < SPARCITY_GAURD:
+    if sparsity < SPARSITY_GUARD:
         logger.warning(...)
         return fingerprint, {
             "spreading_applied": False,
@@ -2087,7 +2087,7 @@ def process_query(
 
         if grid_2d is not None:
             # Sparsify using topology-preserving peak detection (same as Step 5)
-            top_percent = getattr(args, "top_percent", 0.10)
+            top_percent = getattr(args, "top_percent", 0.05)
             query_fp = sparsify_to_sdr_topological(
                 grid_2d=grid_2d,
                 top_percent=top_percent,
@@ -2349,9 +2349,9 @@ def parse_args() -> argparse.Namespace:
 
     # ── Fingerprint sparsification ────────────────────────────────────────────
     parser.add_argument(
-        "--top-percent", dest="top_percent", type=float, default=0.10,
+        "--top-percent", dest="top_percent", type=float, default=0.05,
         help="Fraction of highest-activation bits to keep in query fingerprint "
-             "(must match doc_fingerprints --top-percent). Typical: 0.10.",
+             "(must match doc_fingerprints --top-percent). Typical: 0.05.",
     )
 
     # ── Ranking ───────────────────────────────────────────────────────────────
