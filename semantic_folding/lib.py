@@ -508,8 +508,11 @@ def _norm_ar(t: str) -> str:
 
 def extract_raw_phrases_ar_fa(text: str) -> Set[str]:
     phrases = set()
+
     text = normalizer.normalize(text)
-    tokens = hazm_word_tokenize(text)
+    # tokens = hazm_word_tokenize(text)
+    # tokens = text.split()
+    tokens = nltk_word_tokenize(text)
     if not tokens:
         return phrases
 
@@ -648,6 +651,7 @@ _QURANIC_KEEP: Set[str] = {
     # 2349 and 3706
     "طه", "يس",
     "يسٓ",
+    "یس", "یسٓ",
     # # Verse 5774
     # "كرام", "برره", "كرام برره",
     # # Verse 5799
@@ -704,7 +708,9 @@ def normalize_arabic_phrase(text: str):
     text = text.replace("\u0626", "\u064a")  # yeh-with-hamza → ya
 
     # 2. tokenize
-    tokens = hazm_word_tokenize(text)
+    # tokens = hazm_word_tokenize(text)
+    # tokens = text.split()
+    tokens = nltk_word_tokenize(text)
 
     # 3. stopword removal
     tokens = [
