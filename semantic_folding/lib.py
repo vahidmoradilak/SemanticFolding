@@ -576,6 +576,8 @@ _AR_FUNCTION_WORDS = {
     # negation
     "لا", "لم", "لن", "لما", "ليس", "غير", "الا", "سوى",
     "عدا", "خلا", "حاشا", "لست", "لستم", "ليسا", "ليسوا",
+    # negation / relative / interrogative particle
+    "ما",
     # particles
     "قد", "هل", "س", "سوف", "إن", "ان", "کأن", "كان",
     "کان", "لقد", "انما", "انّ", "ان", "فان", "وان",
@@ -638,7 +640,7 @@ _AR_FUNCTION_WORDS = _AR_FUNCTION_WORDS | {
     for w in _AR_FUNCTION_WORDS
 }
 
-_AR_CLITICS = {"و", "ف", "ب", "ل", "ك", "ک", "س", "بال", "فل", "ول", "فب"}
+_AR_CLITICS = {"ال", "و", "ف", "ب", "ل", "ك", "ک", "س", "بال", "فل", "ول", "فب"}
 
 # ---------------------------------------------------------
 # Quranic important-term whitelist
@@ -712,27 +714,43 @@ def normalize_arabic_phrase(text: str):
     # tokens = text.split()
     tokens = nltk_word_tokenize(text)
 
-    # 3. stopword removal
+    # 3. strip clitic prefixes from each token
+    #    Try clitics longest-first; only accept if the stem is >= 2 chars
+    #    AND is not itself a function word (prevents over-stripping like
+    #    الله → له which is a stopword).
+    stripped = []
+    for t in tokens:
+        stem = t
+        for cl in _AR_CLITIC_PREFIXES:
+            if t.startswith(cl) and len(t) > len(cl):
+                s = t[len(cl):]
+                if len(s) >= 2 and s not in ARABIC_STOPWORDS:
+                    stem = s
+                    break
+        stripped.append(stem)
+    tokens = stripped
+
+    # 4. stopword removal
     tokens = [
         t for t in tokens
         if t not in ARABIC_STOPWORDS
     ]
 
-    # 4. remove very short tokens
+    # 5. remove very short tokens
     tokens = [
         t for t in tokens
         if len(t) >= 2
     ]
 
-    # 5. reject empty
+    # 6. reject empty
     if not tokens:
         return None
 
-    # 6. reject too long
+    # 7. reject too long
     if len(tokens) > 5:
         return None
 
-    # 7. structural validation:
+    # 8. structural validation:
     #    multi-word phrases must contain at least one content word
     #    (≥ 3 chars AND not in function-word list)
     if len(tokens) > 1:
@@ -743,7 +761,7 @@ def normalize_arabic_phrase(text: str):
         if not has_content:
             return None
 
-    # 8. single-token phrases: ensure it's not a known compound stopword
+    # 9. single-token phrases: ensure it's not a known compound stopword
     if len(tokens) == 1:
         t = tokens[0]
         if t in ARABIC_STOPWORDS:
