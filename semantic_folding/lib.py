@@ -519,29 +519,37 @@ def extract_raw_phrases_ar_fa(text: str) -> Set[str]:
     # Pre-normalize each token to match _AR_FUNCTION_WORDS codepoints
     normed = [_norm_ar(t) for t in tokens]
 
-    # unigram — only keep tokens ≥ 3 chars that are NOT in the function-word list
+    # unigram — only keep tokens ≥ 2 chars that are NOT in the function-word list
     for i, tok in enumerate(tokens):
         nt = normed[i]
-        if len(nt) >= 3 and nt not in _AR_FUNCTION_WORDS:
+        if len(nt) >= 2 and nt not in _AR_FUNCTION_WORDS:
             phrases.add(nt)
 
-    # bigram — skip if first token is a conjunction clitic or both are function words
-    for i in range(len(tokens) - 1):
+    # POS-tag filtered bigram — only accept Noun/Adj/Noun-like + Noun patterns,
+    # mirroring the English fallback extractor's strategy.
+    # Also reject if either normalized token is a known function word (safety
+    # net for NLTK's English-trained tagger which sometimes tags Arabic
+    # function words / verbs as nouns).
+    NOUN_LIKE = {'NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS', 'VBN'}
+    tagged = nltk.pos_tag(tokens)
+    for i in range(len(tagged) - 1):
+        w1, t1 = tagged[i]
+        w2, t2 = tagged[i + 1]
         n1, n2 = normed[i], normed[i + 1]
-        if n1 in _AR_CLITICS:
-            continue
-        if n1 in _AR_FUNCTION_WORDS and n2 in _AR_FUNCTION_WORDS:
-            continue
-        phrases.add(f"{n1} {n2}")
+        if t1 in NOUN_LIKE and t2.startswith('N'):
+            if n1 not in _AR_FUNCTION_WORDS and n2 not in _AR_FUNCTION_WORDS:
+                phrases.add(f"{n1} {n2}")
 
-    # trigram — same logic
-    for i in range(len(tokens) - 2):
+    # trigram — all 3 tokens must be noun/adjective-like (strict POS filter)
+    for i in range(len(tagged) - 2):
+        w1, t1 = tagged[i]
+        w2, t2 = tagged[i + 1]
+        w3, t3 = tagged[i + 2]
         n1, n2, n3 = normed[i], normed[i + 1], normed[i + 2]
-        if n1 in _AR_CLITICS:
-            continue
-        if n1 in _AR_FUNCTION_WORDS and n2 in _AR_FUNCTION_WORDS and n3 in _AR_FUNCTION_WORDS:
-            continue
-        phrases.add(f"{n1} {n2} {n3}")
+        if (t1 in NOUN_LIKE and t2 in NOUN_LIKE and t3 in NOUN_LIKE
+            and all(n not in _AR_FUNCTION_WORDS for n in (n1, n2, n3))
+            and all(len(n) >= 2 for n in (n1, n2, n3))):
+            phrases.add(f"{n1} {n2} {n3}")
 
     return phrases
 

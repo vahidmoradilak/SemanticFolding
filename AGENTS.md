@@ -73,6 +73,23 @@
 - Document IDs match corpus line numbers (C00–C19)
 - Relevance: binary (relevant/not) — update for graded when needed
 
+## Extraction Symmetry
+
+Arabic and English use the same POS-pattern bigram extraction strategy:
+
+| | Arabic (`lib.py:extract_raw_phrases_ar_fa`) | English (`phrase_extractor.py:extract_raw_phrases_spacy`) |
+|---|---|---|
+| **Unigrams** | tokens ≥ 2 chars, not in `_AR_FUNCTION_WORDS` | tokens ≥ 2 chars, `pos_` ∈ {NOUN,PROPN,ADJ,VERB,ADV}, not `is_stop` |
+| **Bigrams** | NLTK POS pattern `[NN/NNS/NNP/NNPS/JJ/JJR/JJS/VBN] + [N*]`, plus both tokens must not be in `_AR_FUNCTION_WORDS` | spaCy noun chunks + left modifiers + compound chains + conjunction expansion |
+| **Trigrams** | strict POS filter `[NN/JJ/VBN] + [NN/JJ/VBN] + [NN/JJ/VBN]`, plus function-word guard | spaCy noun chunks + left-anchored sub-spans |
+
+Key changes from old approach:
+- `_AR_CLITICS` includes `ال`, `و`, `ف`, `ب`, `ل`, `ك`, `ک`, `س`, `بال`, `فل`, `ول`, `فب`
+- Clitic stripping guard: stem ≥ 2 chars AND not a function word (preserves `الله`)
+- `_AR_FUNCTION_WORDS` includes `ما` (negation/relative particle, freq 523→0)
+- `min_word_length = 2` for Arabic (preserves حروف مقطعه like `طه`, `يس`)
+- `bilingual_groups` (`phrase_bilingual.json`) removed — was too noisy
+
 ## Evaluation
 
 - Metrics script: run `.venv\scripts\python tools\compute_ir_metrics.py`

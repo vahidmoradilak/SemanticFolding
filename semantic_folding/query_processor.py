@@ -1034,7 +1034,7 @@ def extract_query_phrases(
             else:
                 logger.debug("Stage 1: using NLTK fallback extractor")
             
-            en_raw = extract_raw_phrases_fallback(english_clean_lower, max_ngram=4)
+            en_raw = extract_raw_phrases_fallback(english_clean_lower)
             
 
         logger.debug(f"for {english_clean} | {len(en_raw)} En raw phrases extracted")
@@ -1933,7 +1933,7 @@ def process_query(
         doc = nlp(query)
         raw = extract_raw_phrases_spacy(doc)
     else:
-        raw = extract_raw_phrases_fallback(query, max_ngram=4)
+        raw = extract_raw_phrases_fallback(query)
 
     logger.debug(f"  [STAGE 1] raw candidates={raw}")
 
