@@ -92,10 +92,11 @@ Key changes from old approach:
 
 ## Evaluation
 
-- Metrics script: run `.venv\scripts\python tools\compute_ir_metrics.py`
-- Report output: `outputs/run_<timestamp>/query_metrics/qa_evaluation_report.md`
-- Key metrics: P@K, R@K, MRR, NDCG@K, AP
-- Normalization diagnostic: check doc_nnz uniqueness
+- Benchmark framework: `semantic_folding/dataset_benchmark/musique/run_benchmark.py`
+- Key command: `.venv\scripts\python semantic_folding\dataset_benchmark\musique\run_benchmark.py`
+- Key metrics (from benchmark): P@K, R@K, MRR, NDCG@K, AP
+- Baseline comparison: run `compare_baselines.py` after SF benchmark
+- BM25 baseline: `bm25_baseline.py`
 
 ## Naming Conventions
 

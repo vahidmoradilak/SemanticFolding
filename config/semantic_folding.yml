@@ -40,7 +40,7 @@ paths:
 # ============================================================
 phrase_extraction:
   # Frequency filtering
-  min_word_length: 3             # Minimum character length for single words
+  min_word_length: 2             # Minimum character length for single words (2 for Arabic حروف مقطعه)
   max_ngram: 3                   # N-gram ceiling (fallback if spaCy unavailable)
 
   # Extraction method
@@ -114,9 +114,9 @@ phrase_fingerprints:
 # ============================================================
 document_fingerprints:
   top_percent: 0.05
-  no_normalize: true
+  no_normalize: false
   normalize_method: "l2"
-  min_word_length: 3
+  min_word_length: 2
   remove_verbs: false           # you already have this, good
   filter_generic: true
   min_peak_distance: 2
@@ -129,9 +129,9 @@ document_fingerprints:
 # ============================================================
 customtext_fingerprints:
   top_percent: 0.05
-  no_normalize: true
+  no_normalize: false
   normalize_method: "l2"
-  min_word_length: 3
+  min_word_length: 2
   remove_verbs: false
   filter_generic: true
   min_peak_distance: 2
@@ -171,7 +171,7 @@ query_processing:
   normalization: "l2"            # Query fingerprint normalization method
 
 # ============================================================
-# PHASE 7: PHRASE VISUALIZATION
+# PHASE 8: PHRASE VISUALIZATION
 # ============================================================
 phrase_visualization:
   # Enable/disable visualization generation

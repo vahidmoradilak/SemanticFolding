@@ -1726,7 +1726,11 @@ def display_results(
     )
 
     print("\n" + "=" * 80)
-    print(f"QUERY: {query}")
+    try:
+        print(f"QUERY: {query}")
+    except UnicodeEncodeError:
+        safe_query = query.encode("ascii", errors="replace").decode("ascii")
+        print(f"QUERY: {safe_query}")
     print("=" * 80)
 
     if verbose:

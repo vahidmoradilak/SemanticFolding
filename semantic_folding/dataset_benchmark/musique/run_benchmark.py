@@ -55,7 +55,7 @@ STEP_SCRIPTS = {
     3: SEMANTIC_FOLDING / "semantic_space.py",
     4: SEMANTIC_FOLDING / "phrase_fingerprints.py",
     5: SEMANTIC_FOLDING / "doc_fingerprints.py",
-    6: SEMANTIC_FOLDING / "query_processor.py",
+    7: SEMANTIC_FOLDING / "query_processor.py",
 }
 
 PIPELINE_DEFAULTS = {
@@ -448,7 +448,7 @@ def phase2_benchmark(run_dir: Path, entries: List[dict], query_start: int,
 
         result_json = query_out_dir / "query_results.json"
         t0 = time.time()
-        ok = run_step(STEP_SCRIPTS[6], [
+        ok = run_step(STEP_SCRIPTS[7], [
             "--query", query_text,
             "--fingerprints", str(run_dir / "phrase_fingerprints"),
             "--doc-fingerprints", str(run_dir / "doc_fingerprints"),
