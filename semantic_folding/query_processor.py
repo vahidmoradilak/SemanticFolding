@@ -2378,6 +2378,11 @@ def parse_args() -> argparse.Namespace:
 
     # ── Output ────────────────────────────────────────────────────────────────
     parser.add_argument(
+        "--simple-query", dest="simple_query", action="store_true", default=False,
+        help="Skip 2D topological pipeline; use direct weighted fingerprint "
+             "combination instead.  Better for short/keyword queries.",
+    )
+    parser.add_argument(
         "--output", dest="output_json", type=Path, default=None,
         help="Save all query results to this JSON file.",
     )
@@ -2581,15 +2586,21 @@ def main() -> None:
     for i, query in enumerate(queries, 1):
         logger.info(f"[{i}/{len(queries)}] Processing: {query!r}")
 
+        # Prepare kwargs — skip 2D pipeline for --simple-query
+        pq_kwargs = dict(
+            idf_weights=idf_weights,
+            use_morton=use_morton,
+        )
+        if not getattr(args, "simple_query", False):
+            pq_kwargs["phrase_fp_matrix"] = phrase_fp_matrix
+            pq_kwargs["phrase_to_row"] = phrase_to_row
+
         results, metadata = process_query(
             query,
             phrase_fingerprints,
             doc_fingerprints,
             args,
-            idf_weights,
-            use_morton=use_morton,
-            phrase_fp_matrix=phrase_fp_matrix,
-            phrase_to_row=phrase_to_row,
+            **pq_kwargs,
         )
 
         if "error" in metadata:

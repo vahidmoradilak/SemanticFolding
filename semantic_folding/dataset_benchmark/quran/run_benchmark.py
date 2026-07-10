@@ -93,7 +93,7 @@ def run_step(script_path: Path, args: list, cwd: Path, label: str,
     t0 = time.time()
     try:
         subprocess.run(cmd, cwd=str(cwd), check=True, timeout=timeout,
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, encoding="utf8", errors="replace")
         elapsed = time.time() - t0
         logger.info(f"  [{label}] done in {elapsed:.0f}s")
         return True
@@ -370,14 +370,14 @@ def phase2_evaluate(run_dir: Path, params: dict) -> Optional[Path]:
             "num_relevant": len(relevant),
             "sf_mrr": sf_metrics["mrr"],
             "sf_ap": sf_metrics["ap"],
-            "sf_p5": sf_metrics["p@5"],
-            "sf_r5": sf_metrics["r@5"],
-            "sf_ndcg10": sf_metrics["ndcg@10"],
+            "sf_p@5": sf_metrics["p@5"],
+            "sf_r@5": sf_metrics["r@5"],
+            "sf_ndcg@10": sf_metrics["ndcg@10"],
             "bm25_mrr": bm25_metrics["mrr"],
             "bm25_ap": bm25_metrics["ap"],
-            "bm25_p5": bm25_metrics["p@5"],
-            "bm25_r5": bm25_metrics["r@5"],
-            "bm25_ndcg10": bm25_metrics["ndcg@10"],
+            "bm25_p@5": bm25_metrics["p@5"],
+            "bm25_r@5": bm25_metrics["r@5"],
+            "bm25_ndcg@10": bm25_metrics["ndcg@10"],
         })
 
     # Save per-query results
@@ -417,39 +417,86 @@ def phase2_evaluate(run_dir: Path, params: dict) -> Optional[Path]:
     return eval_dir
 
 
+def _extract_key_query_terms(question: str, run_dir: Path) -> str:
+    """Simplify query to key content terms, removing noise words.
+
+    Keeps only vocabulary-matched nouns/proper nouns, discarding common
+    verbs and high-frequency generic terms like 'quran' and 'prophet'.
+    Falls back to the original query if no key terms survive filtering.
+    """
+    import re
+
+    _VERB_BLOCKLIST = {
+        "say", "describe", "teach", "command", "instruct", "promise",
+        "narrate", "tell", "mention", "speak", "talk", "ask", "give",
+        "make", "take", "do", "does", "know", "think", "believe",
+        "practice", "importance",
+    }
+    _GENERIC_BLOCKLIST = {
+        "quran", "prophet", "surah", "people", "story", "chapter",
+        "message", "opening", "great",
+    }
+
+    meta_path = run_dir / "phrase_fingerprints" / "phrase_fingerprints_meta.json"
+    try:
+        with open(meta_path, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+        vocab = set(meta.get("phrase_to_row", {}).keys())
+    except Exception:
+        return question
+
+    tokens = re.findall(r"[a-zA-Z]+", question.lower())
+    key_terms = [
+        t for t in tokens
+        if t in vocab and len(t) >= 3
+        and t not in _VERB_BLOCKLIST and t not in _GENERIC_BLOCKLIST
+    ]
+    seen, uniq = set(), []
+    for t in key_terms:
+        if t not in seen:
+            seen.add(t)
+            uniq.append(t)
+
+    return " ".join(uniq) if uniq else question
+
+
 def _run_step7_query(run_dir: Path, question: str, params: dict) -> List[Tuple[str, float]]:
     """Run a single query through Step 7 (query_processor.py)."""
     import tempfile
 
-    # Write query to temp file
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False, encoding="utf8") as f:
-        f.write(question + "\n")
-        query_path = f.name
-
-    output_dir = Path(tempfile.mkdtemp())
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf8") as f:
+        result_json = Path(f.name)
 
     try:
+        # Simplify query to key terms for better fingerprint discrimination
+        simplified = _extract_key_query_terms(question, run_dir)
+
         cmd = [
             sys.executable, str(STEP_SCRIPTS[7]),
-            "--queries", query_path,
-            "--corpus", str(run_dir / "corpus.txt"),
-            "--fingerprints", str(run_dir / "doc_fingerprints"),
-            "--output", str(output_dir),
+            "--query", simplified,
+            "--fingerprints", str(run_dir / "phrase_fingerprints"),
+            "--doc-fingerprints", str(run_dir / "doc_fingerprints"),
+            "--idf-weights", str(run_dir / "term_context_matrix" / "idf_weights.json"),
+            "--output", str(result_json),
             "--grid-size", str(params["grid_size"]),
             "--top-k", str(params["top_k"]),
             "--spreading-steps", str(params["spreading_steps"]),
             "--weighting", params["weighting"],
+            "--keep-verbs", "--min-word-length", str(params.get("min_word_length", 2)),
+            "--simple-query",
         ]
-        result = subprocess.run(cmd, cwd=str(PROJECT_ROOT), check=True,
-                                capture_output=True, text=True, timeout=300)
+        subprocess.run(cmd, cwd=str(PROJECT_ROOT), check=True,
+                       capture_output=False, timeout=300)
 
-        # Read results
-        results_file = output_dir / "query_results" / "query_001.json"
-        if results_file.exists():
-            with open(results_file, "r") as f:
+        # Read results from JSON output
+        if result_json.exists():
+            with open(result_json, "r", encoding="utf8") as f:
                 data = json.load(f)
-            # data is a list of [doc_id, score] sorted by score desc
-            retrieved = [(item[0], item[1]) for item in data]
+            # data is a list of [{query, results, metadata}]
+            if isinstance(data, list) and len(data) > 0:
+                retrieved = [(item[0], item[1]) for item in data[0].get("results", [])]
+            else:
+                retrieved = []
         else:
             retrieved = []
 
@@ -457,9 +504,8 @@ def _run_step7_query(run_dir: Path, question: str, params: dict) -> List[Tuple[s
         logger.error(f"Step 7 query failed: {e}")
         retrieved = []
     finally:
-        # Cleanup
-        os.unlink(query_path)
-        shutil.rmtree(str(output_dir), ignore_errors=True)
+        if result_json.exists():
+            os.unlink(result_json)
 
     return retrieved
 

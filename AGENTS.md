@@ -98,6 +98,24 @@ Key changes from old approach:
 - Baseline comparison: run `compare_baselines.py` after SF benchmark
 - BM25 baseline: `bm25_baseline.py`
 
+## Quran Benchmark (30 QA pairs, 6,236 ayahs)
+
+- **Framework**: `semantic_folding/dataset_benchmark/quran/run_benchmark.py`
+- **Index command**: `.venv\scripts\python semantic_folding\dataset_benchmark\quran\run_benchmark.py --mode index`
+- **Evaluate command**: `.venv\scripts\python semantic_folding\dataset_benchmark\quran\run_benchmark.py --mode evaluate --run-dir outputs\quran_benchmark\runs\run_<ts>`
+- **Best results (simplified queries, 2D pipeline)**:
+  - SF: MRR=0.3344, AP=0.1203, P@5=0.1733, R@5=0.1425, NDCG@10=0.1219
+  - BM25: MRR=0.1550, AP=0.0723, P@5=0.0667, R@5=0.0472, NDCG@10=0.0620
+  - SF wins all metrics, 2.15x MRR improvement over BM25
+- **Key decisions**:
+  - Simplified queries (`_extract_key_query_terms`) beat full queries: only rare proper nouns (joseph, solomon, cave) benefit from single-term simplification; thematic queries (justice, kindness, creation) use 2-3 key terms
+  - Fixed charmap errors: `open()` calls in Step 7 reader now use `encoding="utf8"`; subprocess calls use `encoding="utf8", errors="replace"` or `capture_output=False`
+  - 11/30 queries succeed (MRR>0), 19/30 fail (MRR=0.0000)
+- **Common failure patterns**:
+  - Thematic queries (justice, mercy, patience, punishement, etc.) — simplified terms too broad
+  - Plural/singular mismatch (angels→angel, believers→believer) — no stemming in `_extract_key_query_terms`
+  - Full query fallback (Q028-Q030) — no key vocab terms survive filtering
+
 ## Naming Conventions
 
 - Python: snake_case for functions/variables
