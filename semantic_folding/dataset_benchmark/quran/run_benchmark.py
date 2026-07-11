@@ -325,13 +325,15 @@ def phase1_index(params: dict) -> Optional[Path]:
 # Phase 2 — Evaluate
 # ============================================================================
 
-def phase2_evaluate(run_dir: Path, params: dict) -> Optional[Path]:
+def phase2_evaluate(run_dir: Path, params: dict, qa_path: Optional[Path] = None) -> Optional[Path]:
     """Run Step 7 for each QA pair, compute SF + BM25 metrics."""
+    if qa_path is None:
+        qa_path = QA_PATH
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     eval_dir = EVALS_DIR / f"eval_{ts}"
     eval_dir.mkdir(parents=True, exist_ok=True)
 
-    qa_pairs = load_qa_pairs(QA_PATH)
+    qa_pairs = load_qa_pairs(qa_path)
     corpus_path = run_dir / "corpus.txt"
 
     # Load corpus for BM25
@@ -399,7 +401,7 @@ def phase2_evaluate(run_dir: Path, params: dict) -> Optional[Path]:
             "timestamp": ts,
             "run_dir": str(run_dir),
             "num_queries": len(qa_pairs),
-            "qa_path": str(QA_PATH),
+            "qa_path": str(qa_path),
         },
         "pipeline": {k: v for k, v in params.items()},
     }
@@ -636,6 +638,8 @@ def cli_main():
                         help="Pre-built run directory (for --mode evaluate)")
     parser.add_argument("--eval-dir", type=Path, default=None,
                         help="Evaluation directory (for --mode report)")
+    parser.add_argument("--qa-file", type=str, default=None,
+                        help="QA file path (default: data/quran/quran_qa.jsonl)")
 
     # Pipeline params
     parser.add_argument("--grid-size", type=int, default=PIPELINE_DEFAULTS["grid_size"])
@@ -676,7 +680,8 @@ def cli_main():
         if not args.run_dir:
             logger.error("--run-dir required for evaluate mode")
             sys.exit(1)
-        eval_dir = phase2_evaluate(args.run_dir, params)
+        qa_path = Path(args.qa_file) if args.qa_file else QA_PATH
+        eval_dir = phase2_evaluate(args.run_dir, params, qa_path)
         if eval_dir:
             logger.success(f"Evaluation done: {eval_dir}")
         return
