@@ -32,6 +32,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from tqdm import tqdm
+
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -66,7 +68,7 @@ STEP_SCRIPTS = {
 
 PIPELINE_DEFAULTS = {
     "grid_size": 64,
-    "spreading_steps": 0,
+    "spreading_steps": 1,
     "top_k": 5,
     "weighting": "idf",
     "top_percent": 0.05,
@@ -348,23 +350,26 @@ def phase2_evaluate(run_dir: Path, params: dict, qa_path: Optional[Path] = None)
     bm25_results = []
     all_metrics = []
 
-    for qa in qa_pairs:
+    pbar = tqdm(qa_pairs, desc="Evaluating", unit="query", ncols=80)
+    for qa in pbar:
         qid = qa["id"]
         question = qa["question"]
         relevant = qa["relevant"]  # list of line number strings
-        logger.info(f"  [{qid}] {question[:60]}...")
+        pbar.set_postfix_str(f"{qid}")
 
         # SF retrieval via Step 7
         sf_retrieved = _run_step7_query(run_dir, question, params)
         sf_metrics = compute_metrics(sf_retrieved, relevant)
         sf_results.append({"id": qid, "question": question, "retrieved": sf_retrieved, "metrics": sf_metrics})
-        logger.info(f"    SF: MRR={sf_metrics['mrr']:.4f} AP={sf_metrics['ap']:.4f}")
+        sf_mrr = sf_metrics['mrr']
 
         # BM25 retrieval
         bm25_retrieved = bm25_retrieve(question, corpus_lines, corpus_ids)
         bm25_metrics = compute_metrics(bm25_retrieved, relevant)
         bm25_results.append({"id": qid, "question": question, "retrieved": bm25_retrieved, "metrics": bm25_metrics})
-        logger.info(f"    BM25: MRR={bm25_metrics['mrr']:.4f} AP={bm25_metrics['ap']:.4f}")
+        bm25_mrr = bm25_metrics['mrr']
+
+        pbar.set_postfix_str(f"{qid} SF={sf_mrr:.2f} BM25={bm25_mrr:.2f}")
 
         all_metrics.append({
             "id": qid,
