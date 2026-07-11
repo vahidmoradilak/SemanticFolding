@@ -9,9 +9,11 @@ For each existing QA pair:
 
 Output: data/quran/quran_qa_semantic.jsonl
 
-Also generates: data/quran/quran_random_30.txt (30 random Arabic ayahs)
+With --num-random N: generates N random Arabic ayahs + QA file at
+  data/quran/quran_random_N.txt and data/quran/quran_random_N_qa.jsonl
 """
 
+import argparse
 import json
 import random
 import sys
@@ -33,8 +35,6 @@ CORPUS_PATH = DATA_DIR / "quran_ayahs_clean.txt"
 FP_NPZ = RUN_DIR / "doc_fingerprints" / "doc_fingerprints.npz"
 FP_META = RUN_DIR / "doc_fingerprints" / "doc_fingerprints_meta.json"
 OUT_PATH = DATA_DIR / "quran_qa_semantic.jsonl"
-RANDOM_PATH = DATA_DIR / "quran_random_30.txt"
-RANDOM_QA_PATH = DATA_DIR / "quran_random_qa.jsonl"
 
 TOP_K = 10  # number of near ayahs to add with relevance=1
 
@@ -98,11 +98,15 @@ def find_near_ayahs(ref_ayah: str, matrix: np.ndarray, doc_to_row: dict, top_k: 
 
 
 def main():
-    # Load data
+    parser = argparse.ArgumentParser(description="Build semantic QA datasets")
+    parser.add_argument("--num-random", type=int, default=0,
+                        help="Generate N random Arabic ayahs + QA file")
+    args = parser.parse_args()
+
     corpus = load_corpus(CORPUS_PATH)
     matrix, doc_to_row = load_fingerprints(FP_NPZ, FP_META)
 
-    # Load QA pairs and transform
+    # Always build semantic QA from existing pairs
     qa_pairs = []
     with open(QA_PATH, "r", encoding="utf8") as f:
         for line in f:
@@ -117,99 +121,63 @@ def main():
         qid = qa["id"]
         category = qa["category"]
         relevant = qa["relevant"]
-
         if not relevant:
-            logger.warning(f"{qid}: no relevant ayahs, skipping")
             continue
-
         ref_ayah = relevant[0]
-
-        # Get Arabic text
         if ref_ayah not in corpus:
-            logger.warning(f"{qid}: ayah {ref_ayah} not in corpus")
             continue
         arabic_text = corpus[ref_ayah][0]
-
-        # Find near ayahs
         near_ayahs = find_near_ayahs(ref_ayah, matrix, doc_to_row)
-        if not near_ayahs:
-            logger.warning(f"{qid}: no near ayahs found for {ref_ayah}")
-
-        # Build relevance dict
         relevance = {ref_ayah: 2}
         for near in near_ayahs:
             relevance[near] = 1
+        out_entries.append({
+            "id": qid, "category": category, "question": arabic_text,
+            "relevant": [ref_ayah] + near_ayahs, "relevance": relevance,
+        })
 
-        # Build relevant list (ref first, then near)
-        new_relevant = [ref_ayah] + near_ayahs
-
-        entry = {
-            "id": qid,
-            "category": category,
-            "question": arabic_text,
-            "relevant": new_relevant,
-            "relevance": relevance,
-        }
-        out_entries.append(entry)
-
-    # Write output
     with open(OUT_PATH, "w", encoding="utf8") as f:
         for entry in out_entries:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
     logger.info(f"Wrote {len(out_entries)} entries to {OUT_PATH}")
 
-    # Generate 30 random Arabic ayahs
+    # Generate random ayahs + QA if --num-random > 0
+    if args.num_random > 0:
+        build_random_qa(corpus, matrix, doc_to_row, args.num_random)
+
+
+def build_random_qa(corpus: dict, matrix: np.ndarray, doc_to_row: dict, num: int = 30):
+    """Generate num random Arabic ayahs + QA file."""
     all_ayah_nums = list(corpus.keys())
     random.seed(42)
-    chosen = random.sample(all_ayah_nums, min(30, len(all_ayah_nums)))
-    with open(RANDOM_PATH, "w", encoding="utf8") as f:
+    chosen = random.sample(all_ayah_nums, min(num, len(all_ayah_nums)))
+
+    txt_path = DATA_DIR / f"quran_random_{num}.txt"
+    qa_path = DATA_DIR / f"quran_random_{num}_qa.jsonl"
+
+    with open(txt_path, "w", encoding="utf8") as f:
         for idx in chosen:
             f.write(corpus[idx][0] + "\n")
-    logger.info(f"Wrote {len(chosen)} random Arabic ayahs to {RANDOM_PATH}")
+    logger.info(f"Wrote {len(chosen)} random Arabic ayahs to {txt_path}")
 
-    # Build random QA from random_30.txt
-    build_random_qa(corpus, matrix, doc_to_row)
-
-
-def build_random_qa(corpus: dict, matrix: np.ndarray, doc_to_row: dict):
-    """Convert quran_random_30.txt → quran_random_qa.jsonl (same format as semantic)."""
-    # Build reverse index: arabic_text → ayah_number
     text_to_ayah = {v[0]: k for k, v in corpus.items()}
-
-    with open(RANDOM_PATH, "r", encoding="utf8") as f:
-        random_lines = [line.strip() for line in f if line.strip()]
-
     entries = []
     missed = 0
-    for i, arabic_text in enumerate(random_lines):
-        ayah_num = text_to_ayah.get(arabic_text)
-        if ayah_num is None:
-            # Try stripped match
-            stripped = arabic_text.strip()
-            ayah_num = text_to_ayah.get(stripped)
-        if ayah_num is None:
-            logger.warning(f"Random ayah #{i+1}: text not found in corpus")
-            missed += 1
-            continue
-
+    for i, ayah_num in enumerate(chosen):
+        arabic_text = corpus[ayah_num][0]
         near_ayahs = find_near_ayahs(ayah_num, matrix, doc_to_row)
         relevance = {ayah_num: 2}
         for near in near_ayahs:
             relevance[near] = 1
+        entries.append({
+            "id": f"R{i+1:03d}", "category": "random", "question": arabic_text,
+            "relevant": [ayah_num] + near_ayahs, "relevance": relevance,
+        })
 
-        entry = {
-            "id": f"R{i+1:03d}",
-            "category": "random",
-            "question": arabic_text,
-            "relevant": [ayah_num] + near_ayahs,
-            "relevance": relevance,
-        }
-        entries.append(entry)
-
-    with open(RANDOM_QA_PATH, "w", encoding="utf8") as f:
+    with open(qa_path, "w", encoding="utf8") as f:
         for entry in entries:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-    logger.info(f"Wrote {len(entries)} random QA entries to {RANDOM_QA_PATH} (missed={missed})")
+    logger.info(f"Wrote {len(entries)} random QA entries to {qa_path} (missed={missed})")
 
 
 if __name__ == "__main__":
