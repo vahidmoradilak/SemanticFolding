@@ -278,7 +278,7 @@ to identify noun chunks, compound chains, and left-modifier expansions.
 Table~\ref{tab:extraction} summarizes the extraction strategies for both
 languages.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Arabic and English phrase extraction strategies compared.}
   \label{tab:extraction}
@@ -301,7 +301,7 @@ languages.
     left-anchored sub-spans \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Stage 2: Term-Context Matrix}
 
@@ -408,7 +408,7 @@ augment the English query terms with Arabic synonyms verified against
 the pipeline vocabulary. Table~\ref{tab:synonyms} lists all expansions
 that successfully matched existing vocabulary entries.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Arabic-English concept synonym mapping (vocabulary-verified).}
   \label{tab:synonyms}
@@ -432,7 +432,7 @@ that successfully matched existing vocabulary entries.
     heaven & جنه & angel & مليكه \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 % ===========================================================================
 \section{Experimental Setup}
@@ -451,7 +451,7 @@ preserving Arabic-English alignment.
 Table~\ref{tab:queries} lists all 30 evaluation queries grouped by
 category.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{The 30 evaluation queries organized by category.}
   \label{tab:queries}
@@ -496,7 +496,7 @@ category.
     Q016 & Which verses talk about the Night of Power? & concept & 5 \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Baselines}
 
@@ -551,7 +551,7 @@ of 2.2. The dense retriever fails to achieve meaningful results
 embedding space does not adequately capture the specialized vocabulary
 of the Quran.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Aggregate comparison across all retrieval methods.}
   \label{tab:main}
@@ -571,7 +571,7 @@ of the Quran.
     NDCG@10  & \textbf{0.1464} & 0.0620 & 0.004 & $<$0.001 \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Per-Query Breakdown}
 
@@ -631,7 +631,7 @@ Table~\ref{tab:category} aggregates results by query category, revealing
 a clear performance gradient. SF achieves near-perfect MRR on prophet
 stories (0.756) but near-zero on surah identification (0.000).
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Results broken down by query category.}
   \label{tab:category}
@@ -652,7 +652,7 @@ stories (0.756) but near-zero on surah identification (0.000).
     \textbf{Overall} & 30 & \textbf{0.345} & 0.155 & 43\% \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Success and Failure Distribution}
 
@@ -688,7 +688,7 @@ evaluation (single relevant document per query, text drawn directly
 from Quranic verses) shows MRR=0.950, confirming that the model can
 match identical or near-identical text but fails at semantic retrieval.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Dense retriever performance across different input configurations.}
   \label{tab:dense}
@@ -704,7 +704,7 @@ match identical or near-identical text but fails at semantic retrieval.
     Gold-only Arabic & Single-doc QA & 0.950 & 0.950 \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 % ===========================================================================
 \section{Ablation Studies}
@@ -716,7 +716,7 @@ We augmented concept queries with Arabic synonyms verified against the
 pipeline vocabulary (Table~\ref{tab:synonyms}). Table~\ref{tab:qe}
 shows the per-query impact.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Query expansion effect on concept queries.}
   \label{tab:qe}
@@ -741,9 +741,9 @@ shows the per-query impact.
     \textbf{Overall} & 0.3344 & 0.3261 & -0.0083 & Minimal \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Aggregate impact of query expansion on all metrics.}
   \label{tab:qe_agg}
@@ -758,14 +758,14 @@ shows the per-query impact.
     R@5 & 0.1425 & 0.1300 & -0.0125 \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Reciprocal Rank Fusion}
 
 We combined SF and BM25 rankings using RRF (Algorithm~\ref{alg:rrf})
 with three $k$ values. Table~\ref{tab:rrf} shows the aggregate results.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{RRF fusion results across different $k$ values.}
   \label{tab:rrf}
@@ -785,11 +785,11 @@ with three $k$ values. Table~\ref{tab:rrf} shows the aggregate results.
     R@5 & 0.1300 & 0.0472 & 0.1161 & 0.1161 & 0.1161 \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 Table~\ref{tab:rrf_perquery} shows the per-query effect.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Per-query RRF effect (selected queries with change).}
   \label{tab:rrf_perquery}
@@ -811,13 +811,13 @@ Table~\ref{tab:rrf_perquery} shows the per-query effect.
     Q025 patience & 0.3333 & 0.1111 & 0.2000 & -0.13 \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Ablation Summary}
 
 Table~\ref{tab:ablation_summary} summarizes all ablation experiments.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Complete ablation summary.}
   \label{tab:ablation_summary}
@@ -835,7 +835,7 @@ Table~\ref{tab:ablation_summary} summarizes all ablation experiments.
     BM25 & 0.1550 & -0.1794 & lexical baseline \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 % ===========================================================================
 \section{Failure Analysis}
@@ -860,7 +860,7 @@ We categorize the failure modes into three patterns:
         over-generates to non-relevant verses.
 \end{enumerate}
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Failing concept queries with hypothesized failure causes.}
   \label{tab:failure}
@@ -870,8 +870,7 @@ We categorize the failure modes into three patterns:
     \textbf{Query} & \textbf{Key Terms} & \textbf{Failure Cause} \\
     \midrule
     Q011 judgment & judgment, دين & Polysemy (دين = religion/debt/judgment) \\
-    Q013 punishment hell & punishment, hell, عذاب, نار & Terms too broad
-    \\
+    Q013 punishment hell & punishment, hell, عذاب, نار & Terms too broad \\
     Q014 mercy & mercy, رحمه & Morphological variants \\
     Q023 justice & justice, عدل, قسط & Synonyms not discriminative \\
     Q016 night power & night, power & ``power'' not in vocab \\
@@ -881,7 +880,7 @@ We categorize the failure modes into three patterns:
     Q030 believers & believer, مؤمن & Fingerprint over-generalization \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Spreading Effect}
 
@@ -890,7 +889,7 @@ fingerprints by an average of 60\% (205$\to$329 active bits). While this
 benefits recall for entity queries, for broad concept queries it
 activates many unrelated grid cells, reducing precision.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Spreading effect on fingerprint size across query types.}
   \label{tab:spreading}
@@ -909,7 +908,7 @@ activates many unrelated grid cells, reducing precision.
     Broad concept (believer) & 4,086 & 5,688 & +39\% \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 % ===========================================================================
 \section{Conclusion and Future Work}
@@ -924,7 +923,7 @@ through spatial organization on a 2D grid, which proves particularly
 effective for proper-name and story-based queries where 75\% of such
 queries achieve MRR~$>$~0.5.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \caption{Final ranking of all evaluated retrieval methods.}
   \label{tab:ranking}
@@ -942,7 +941,7 @@ queries achieve MRR~$>$~0.5.
     6 & Dense (English) & $<$0.001 & $-345\times$ \\
     \bottomrule
   \end{tabular}
-\end{table}
+\end{table*}
 
 However, thematic concept queries remain challenging, with 9 of 14
 concept queries achieving zero MRR. This limitation stems from the
@@ -973,6 +972,7 @@ Future work should explore the following directions:
 % ===========================================================================
 % References
 % ===========================================================================
+\clearpage
 \begin{thebibliography}{00}
 
 \bibitem{robertson2009bm25}

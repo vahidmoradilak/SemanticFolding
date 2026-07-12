@@ -1,5 +1,5 @@
 last_run_id: run_20260712_233533
-last_step: 6
+last_step: 7
 runs:
   run_20260526_101313_38_fr_en:
     corpus: data\corpus_fr.txt
@@ -685,3 +685,16 @@ runs:
           output: outputs/run_20260712_233533/customtext_fingerprints
           smoothing_sigma: '1.5'
           top_percent: '0.05'
+      7:
+        completed_at: '2026-07-13T00:42:58.330706'
+        output: outputs/run_20260712_233533/query_results
+        params:
+          doc_fingerprints: outputs/run_20260712_233533/doc_fingerprints
+          fingerprints: outputs/run_20260712_233533/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260712_233533\term_context_matrix\idf_weights.json
+          output: outputs/run_20260712_233533/query_results
+          query: in the name of gog
+          spreading_steps: '1'
+          top_k: '5'
+          weighting: idf
