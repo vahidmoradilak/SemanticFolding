@@ -15,6 +15,10 @@
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{xcolor}
+\usepackage{fontspec}
+\newfontfamily\arabicfont[Script=Arabic]{Arabic Typesetting}
+\usepackage[Latin,Arabic]{ucharclasses}
+\setTransitionsFor{Arabic}{\begingroup\arabicfont}{\endgroup}
 \usepackage{algpseudocode}
 % Define simple algorithm float environment (fallback if algorithm2e not available)
 \makeatletter
@@ -572,6 +576,72 @@ of the Quran.
     \bottomrule
   \end{tabular}
 \end{table*}
+
+\subsection{Multi-Test Evaluation}
+
+To measure robustness across diverse query formats, we evaluated on five
+distinct test configurations (Table~\ref{tab:multitest}). SF consistently
+dominates on realistic QA and full-text Arabic queries, while BM25 wins on
+fragment-level retrieval where lexical overlap is decisive. The dense
+retriever only surpasses both on the gold-only oracle task (query text
+identical to document text), confirming its limitation to near-identity
+matching.
+
+\begin{table*}[t]
+  \centering
+  \caption{Performance across five test configurations.}
+  \label{tab:multitest}
+  \footnotesize
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Test Configuration} &
+    \textbf{\textcolor{sfblue}{SF}} &
+    \textbf{BM25} &
+    \textbf{Dense} &
+    \textbf{Winner} \\
+    \midrule
+    Original 30 QA (En$\to$Ar) & 0.3454 & 0.1550 & 0.003 & SF \\
+    30 random (Ar full$\to$ayah) & 1.0000 & 0.0102 & --- & SF \\
+    300 random (Ar full$\to$ayah) & 0.9875 & 0.0102 & --- & SF \\
+    Gold-only 30 (Ar full$\to$ayah) & 0.9500 & 0.0800 & 1.000 & Dense \\
+    Fragment retrieval (1{,}600 queries) & 0.5400 & 0.7400 & 0.140 & BM25 \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\subsection{Random Query Evaluation (300 queries)}
+
+To assess scalability and robustness, we generated 300 random Arabic
+queries by selecting contiguous verse blocks from the Quran and using
+the first 10\% as the query (Arabic full-text). Table~\ref{tab:random300}
+shows the aggregate results.
+
+\begin{table*}[t]
+  \centering
+  \caption{Aggregate results on 300 random Arabic queries.}
+  \label{tab:random300}
+  \footnotesize
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Metric} &
+    \textbf{\textcolor{sfblue}{SF}} &
+    \textbf{BM25} &
+    \textbf{Winner} \\
+    \midrule
+    MRR   & \textbf{0.9875} & 0.0102 & SF \\
+    AP    & \textbf{0.4417} & 0.0035 & SF \\
+    P@5   & \textbf{0.9733} & 0.0020 & SF \\
+    R@5   & \textbf{0.4424} & 0.0009 & SF \\
+    NDCG@10 & \textbf{0.4777} & 0.0014 & SF \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+SF achieves near-perfect MRR (0.9875) and wins 297 of 300 queries,
+confirming that the pipeline generalizes well beyond the hand-crafted
+30-query benchmark. BM25's near-zero scores on random queries reflect
+its inability to match full Arabic verses when the query is itself a
+contiguous Arabic passage.
 
 \subsection{Per-Query Breakdown}
 

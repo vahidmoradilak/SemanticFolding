@@ -22,11 +22,11 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Semantic Folding}{2}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Dense Retrieval}{2}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {III}Methodology}{2}{}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Pipeline configuration parameters.}}{2}{}\protected@file@percent }
-\newlabel{tab:params}{{II}{2}{}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Stage 1: Phrase Extraction}{2}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Semantic Folding pipeline architecture.}}{2}{}\protected@file@percent }
 \newlabel{fig:pipeline}{{1}{2}{}{figure.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Stage 1: Phrase Extraction}{2}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Pipeline configuration parameters.}}{2}{}\protected@file@percent }
+\newlabel{tab:params}{{II}{2}{}{table.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Stage 2: Term-Context Matrix}{2}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Stage 3: Semantic Space Construction}{2}{}\protected@file@percent }
 \citation{reimers2019sentence}
@@ -53,42 +53,48 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Main Results}{4}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Aggregate comparison across all retrieval methods.}}{5}{}\protected@file@percent }
 \newlabel{tab:main}{{VI}{5}{}{table.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Per-Query Breakdown}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Category-Level Analysis}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Success and Failure Distribution}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Multi-Test Evaluation}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Random Query Evaluation (300 queries)}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Per-Query Breakdown}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Category-Level Analysis}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-F}}Success and Failure Distribution}{5}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Distribution of SF MRR values across the 30 queries.}}{5}{}\protected@file@percent }
 \newlabel{fig:distribution}{{2}{5}{}{figure.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Dense Retrieval Results}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-G}}Dense Retrieval Results}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Ablation Studies}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Query Expansion with Arabic Synonyms}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Reciprocal Rank Fusion}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Ablation Summary}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Failure Analysis}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Concept Query Failure Patterns}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}Spreading Effect}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion and Future Work}{5}{}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Complete per-query results: Semantic Folding vs. BM25.}}{6}{}\protected@file@percent }
-\newlabel{tab:perquery}{{VII}{6}{}{table.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Results broken down by query category.}}{6}{}\protected@file@percent }
-\newlabel{tab:category}{{VIII}{6}{}{table.8}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Dense retriever performance across different input configurations.}}{7}{}\protected@file@percent }
-\newlabel{tab:dense}{{IX}{7}{}{table.9}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces Query expansion effect on concept queries.}}{7}{}\protected@file@percent }
-\newlabel{tab:qe}{{X}{7}{}{table.10}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {XI}{\ignorespaces Aggregate impact of query expansion on all metrics.}}{7}{}\protected@file@percent }
-\newlabel{tab:qe_agg}{{XI}{7}{}{table.11}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {XII}{\ignorespaces RRF fusion results across different $k$ values.}}{7}{}\protected@file@percent }
-\newlabel{tab:rrf}{{XII}{7}{}{table.12}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {XIII}{\ignorespaces Per-query RRF effect (selected queries with change).}}{7}{}\protected@file@percent }
-\newlabel{tab:rrf_perquery}{{XIII}{7}{}{table.13}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {XIV}{\ignorespaces Complete ablation summary.}}{8}{}\protected@file@percent }
-\newlabel{tab:ablation_summary}{{XIV}{8}{}{table.14}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {XV}{\ignorespaces Failing concept queries with hypothesized failure causes.}}{8}{}\protected@file@percent }
-\newlabel{tab:failure}{{XV}{8}{}{table.15}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {XVI}{\ignorespaces Spreading effect on fingerprint size across query types.}}{8}{}\protected@file@percent }
-\newlabel{tab:spreading}{{XVI}{8}{}{table.16}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {XVII}{\ignorespaces Final ranking of all evaluated retrieval methods.}}{8}{}\protected@file@percent }
-\newlabel{tab:ranking}{{XVII}{8}{}{table.17}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Performance across five test configurations.}}{6}{}\protected@file@percent }
+\newlabel{tab:multitest}{{VII}{6}{}{table.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Aggregate results on 300 random Arabic queries.}}{6}{}\protected@file@percent }
+\newlabel{tab:random300}{{VIII}{6}{}{table.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}Spreading Effect}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion and Future Work}{6}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Complete per-query results: Semantic Folding vs. BM25.}}{7}{}\protected@file@percent }
+\newlabel{tab:perquery}{{IX}{7}{}{table.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces Results broken down by query category.}}{7}{}\protected@file@percent }
+\newlabel{tab:category}{{X}{7}{}{table.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XI}{\ignorespaces Dense retriever performance across different input configurations.}}{7}{}\protected@file@percent }
+\newlabel{tab:dense}{{XI}{7}{}{table.11}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XII}{\ignorespaces Query expansion effect on concept queries.}}{8}{}\protected@file@percent }
+\newlabel{tab:qe}{{XII}{8}{}{table.12}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XIII}{\ignorespaces Aggregate impact of query expansion on all metrics.}}{8}{}\protected@file@percent }
+\newlabel{tab:qe_agg}{{XIII}{8}{}{table.13}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XIV}{\ignorespaces RRF fusion results across different $k$ values.}}{8}{}\protected@file@percent }
+\newlabel{tab:rrf}{{XIV}{8}{}{table.14}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XV}{\ignorespaces Per-query RRF effect (selected queries with change).}}{8}{}\protected@file@percent }
+\newlabel{tab:rrf_perquery}{{XV}{8}{}{table.15}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XVI}{\ignorespaces Complete ablation summary.}}{8}{}\protected@file@percent }
+\newlabel{tab:ablation_summary}{{XVI}{8}{}{table.16}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XVII}{\ignorespaces Failing concept queries with hypothesized failure causes.}}{9}{}\protected@file@percent }
+\newlabel{tab:failure}{{XVII}{9}{}{table.17}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XVIII}{\ignorespaces Spreading effect on fingerprint size across query types.}}{9}{}\protected@file@percent }
+\newlabel{tab:spreading}{{XVIII}{9}{}{table.18}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XIX}{\ignorespaces Final ranking of all evaluated retrieval methods.}}{9}{}\protected@file@percent }
+\newlabel{tab:ranking}{{XIX}{9}{}{table.19}{}}
 \bibcite{robertson2009bm25}{1}
 \bibcite{reimers2019sentence}{2}
 \bibcite{webber2018semantic}{3}
@@ -100,5 +106,5 @@
 \bibcite{benzahia2020bm25}{9}
 \bibcite{aly2022cross}{10}
 \bibcite{widis2006semantic}{11}
-\@writefile{toc}{\contentsline {section}{References}{9}{}\protected@file@percent }
-\gdef \@abspage@last{9}
+\@writefile{toc}{\contentsline {section}{References}{10}{}\protected@file@percent }
+\gdef \@abspage@last{10}
