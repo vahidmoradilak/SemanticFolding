@@ -10,16 +10,24 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{graphicx}
-\usepackage{hyperref}
+\usepackage[hyphens]{url}
 \usepackage{cite}
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{xcolor}
-\usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{makecell}
-\usepackage{diagbox}
-\usepackage{tabularx}
+% Define simple algorithm float environment (fallback if algorithm2e not available)
+\makeatletter
+\newcounter{algorithm}
+\renewcommand{\thealgorithm}{\@arabic\c@algorithm}
+\def\fps@algorithm{tbp}
+\def\ftype@algorithm{4}
+\def\ext@algorithm{lof}
+\def\fnum@algorithm{Algorithm~\thealgorithm}
+\newenvironment{algorithm}[1][h]
+  {\@float{algorithm}[#1]\footnotesize}
+  {\end@float}
+\makeatother
 
 % -- Colors --
 \definecolor{sfblue}{RGB}{31,119,180}
@@ -329,8 +337,7 @@ interleaving.
   \label{alg:fingerprint}
   \footnotesize
   \begin{algorithmic}[1]
-    \State \textbf{Input:} Grid coordinates $(x, y)$, smoothing
-            $\sigma=1.5$
+    \State \textbf{Input:} Grid coordinates $(x, y)$, $\sigma=1.5$
     \State \textbf{Output:} Binary fingerprint $F \in \{0,1\}^{4096}$
     \State \quad
     \State $G \gets \text{GaussianKernel}(3\sigma, \sigma)$
@@ -340,7 +347,7 @@ interleaving.
     \State $threshold \gets \text{Percentile}(heatmap[heatmap>0], 0.95)$
     \State $peaks \gets heatmap > threshold$
     \State $F \gets \text{Flatten}(\text{MortonEncode}(peaks))$
-    \State \Return $F$
+    \State \textbf{return} $F$
   \end{algorithmic}
 \end{algorithm}
 
@@ -379,19 +386,18 @@ at the cost of precision.
   \label{alg:rrf}
   \footnotesize
   \begin{algorithmic}[1]
-    \State \textbf{Input:} SF ranked list $R_{SF}$, BM25 ranked list
-            $R_{BM25}$, constant $k$
-    \State \textbf{Output:} Fused ranked list $R_{RRF}$
+    \State \textbf{Input:} SF list $R_{SF}$, BM25 list $R_{BM25}$, $k$
+    \State \textbf{Output:} Fused list $R_{RRF}$
     \State \quad
     \State $scores \gets \text{EmptyDict}()$
-    \For{each $(doc_id, rank)$ in $\text{Enumerate}(R_{SF}, 1)$}
-      \State $scores[doc_id] \gets scores[doc_id] + 1/(k + rank)$
+    \For{$(doc\_id, rank)$ in $\text{Enumerate}(R_{SF}, 1)$}
+      \State $scores[doc\_id] \gets scores[doc\_id] + 1/(k + rank)$
     \EndFor
-    \For{each $(doc_id, rank)$ in $\text{Enumerate}(R_{BM25}, 1)$}
-      \State $scores[doc_id] \gets scores[doc_id] + 1/(k + rank)$
+    \For{$(doc\_id, rank)$ in $\text{Enumerate}(R_{BM25}, 1)$}
+      \State $scores[doc\_id] \gets scores[doc\_id] + 1/(k + rank)$
     \EndFor
     \State $R_{RRF} \gets \text{SortByDescending}(scores)$
-    \State \Return $R_{RRF}$
+    \State \textbf{return} $R_{RRF}$
   \end{algorithmic}
 \end{algorithm}
 
