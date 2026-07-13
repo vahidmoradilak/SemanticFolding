@@ -55,7 +55,7 @@ STEP_SCRIPTS = {
     3: SEMANTIC_FOLDING / "semantic_space.py",
     4: SEMANTIC_FOLDING / "phrase_fingerprints.py",
     5: SEMANTIC_FOLDING / "doc_fingerprints.py",
-    6: SEMANTIC_FOLDING / "query_processor.py",
+    7: SEMANTIC_FOLDING / "query_processor.py",
 }
 
 PIPELINE_DEFAULTS = {
@@ -69,6 +69,7 @@ PIPELINE_DEFAULTS = {
     "min_word_length": 3,
     "min_freq": 1,
     "morton": True,
+    "method": "tsne",
     "tsne_perplexity": 30,
     "tsne_iter": 1000,
 }
@@ -284,16 +285,18 @@ def phase1_index(entries: List[dict], start: int, end: int, params: dict) -> Opt
         update_run_status(run_dir, "failed_step2")
         return None
 
-    # Step 3 — t-SNE
+    # Step 3 — Dimensionality reduction
     out = run_dir / "semantic_space"
-    ok = run_step(STEP_SCRIPTS[3], [
+    step3_args = [
         "--matrix", str(run_dir / "term_context_matrix" / "term_context_matrix.npz"),
         "--metadata", str(run_dir / "term_context_matrix" / "term_context_matrix.json"),
         "--output", str(out),
         "--grid-size", str(params["grid_size"]),
+        "--method", params["method"],
         "--perplexity", str(params["tsne_perplexity"]),
         "--tsne-iter", str(params["tsne_iter"]),
-    ], PROJECT_ROOT, "Step 3 semantic_space", timeout=900)
+    ]
+    ok = run_step(STEP_SCRIPTS[3], step3_args, PROJECT_ROOT, "Step 3 semantic_space", timeout=900)
     if not ok:
         update_run_status(run_dir, "failed_step3")
         return None
@@ -448,7 +451,7 @@ def phase2_benchmark(run_dir: Path, entries: List[dict], query_start: int,
 
         result_json = query_out_dir / "query_results.json"
         t0 = time.time()
-        ok = run_step(STEP_SCRIPTS[6], [
+        ok = run_step(STEP_SCRIPTS[7], [
             "--query", query_text,
             "--fingerprints", str(run_dir / "phrase_fingerprints"),
             "--doc-fingerprints", str(run_dir / "doc_fingerprints"),
@@ -717,6 +720,7 @@ class BenchmarkRunner:
         params["top_k"] = int(self.get_input("  Top K", str(params["top_k"])))
         params["min_word_length"] = int(self.get_input("  Min word length", str(params["min_word_length"])))
         params["min_freq"] = int(self.get_input("  Min phrase frequency", str(params["min_freq"])))
+        params["method"] = self.get_input("  Reduction method (tsne/umap/pca)", params["method"])
         params["tsne_perplexity"] = int(self.get_input("  t-SNE perplexity", str(params["tsne_perplexity"])))
         params["tsne_iter"] = int(self.get_input("  t-SNE iterations", str(params["tsne_iter"])))
 
@@ -1022,6 +1026,8 @@ def cli_main():
                         default=PIPELINE_DEFAULTS["weighting"])
     parser.add_argument("--top-percent", type=float, default=PIPELINE_DEFAULTS["top_percent"])
     parser.add_argument("--smoothing-sigma", type=float, default=PIPELINE_DEFAULTS["smoothing_sigma"])
+    parser.add_argument("--method", choices=["tsne", "umap", "pca"],
+                        default=PIPELINE_DEFAULTS["method"])
     parser.add_argument("--no-morton", action="store_true")
     parser.add_argument("--run-dir", type=Path, default=None,
                         help="Pre-built run directory (for --mode benchmark)")

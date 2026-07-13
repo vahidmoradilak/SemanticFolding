@@ -1,6 +1,6 @@
 # QA Test Sample — Semantic Folding Pipeline
 
-Based on the provided documentation of the Semantic Folding query processing unit, the system retrieves documents by generating sparse distributed representations (fingerprints) over a $128 \times 128$ grid ($N=16384$ bits). It relies on IDF-weighted phrase extraction, Topological Bit Spreading ($r=1$) to create "semantic halos" for soft matching, and scores using a normalized dot-product formula:
+Based on the provided documentation of the Semantic Folding query processing unit, the system retrieves documents by generating sparse distributed representations (fingerprints) over a $64 \times 64$ grid ($N=4096$ bits). It relies on IDF-weighted phrase extraction, Topological Bit Spreading ($r=1$) to create "semantic halos" for soft matching, and scores using a normalized dot-product formula:
 
 \[
 \text{score}(Q, D_i) = \frac{\tilde{\mathbf{q}} \cdot \mathbf{d}_i}{\sqrt{\text{nnz}(\mathbf{d}_i)}}

@@ -28,7 +28,8 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Set
 import nltk
 from nltk.corpus import stopwords, wordnet
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize as nltk_word_tokenize
+from nltk import pos_tag
 from nltk.util import ngrams
 from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import Counter
@@ -52,9 +53,8 @@ if _nltk_path.exists():
 
 import re
 _ARABIC_SCRIPT = re.compile(r'[\u0600-\u06FF]')
-from hazm import Normalizer, word_tokenize
+from hazm import Normalizer, word_tokenize as hazm_word_tokenize
 normalizer = Normalizer()
-from nltk import pos_tag, word_tokenize
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 LOG_DIR = Path("logs")
@@ -308,7 +308,7 @@ def normalize_phrase(text: str, remove_verbs: bool = True) -> Optional[str]:
     logger.debug(f"[NORMALIZE ENTER] text={text!r} remove_verbs={remove_verbs}")
 
     # ── step 1: tokenize ──────────────────────────────────────────────────────
-    tokens = word_tokenize(text)
+    tokens = nltk_word_tokenize(text)
     if not tokens:
         logger.debug("[NORMALIZE] empty token list after word_tokenize — returning None")
         return None
@@ -508,37 +508,48 @@ def _norm_ar(t: str) -> str:
 
 def extract_raw_phrases_ar_fa(text: str) -> Set[str]:
     phrases = set()
+
     text = normalizer.normalize(text)
-    tokens = word_tokenize(text)
+    # tokens = hazm_word_tokenize(text)
+    # tokens = text.split()
+    tokens = nltk_word_tokenize(text)
     if not tokens:
         return phrases
 
     # Pre-normalize each token to match _AR_FUNCTION_WORDS codepoints
     normed = [_norm_ar(t) for t in tokens]
 
-    # unigram — only keep tokens ≥ 3 chars that are NOT in the function-word list
+    # unigram — only keep tokens ≥ 2 chars that are NOT in the function-word list
     for i, tok in enumerate(tokens):
         nt = normed[i]
-        if len(nt) >= 3 and nt not in _AR_FUNCTION_WORDS:
+        if len(nt) >= 2 and nt not in _AR_FUNCTION_WORDS:
             phrases.add(nt)
 
-    # bigram — skip if first token is a conjunction clitic or both are function words
-    for i in range(len(tokens) - 1):
+    # POS-tag filtered bigram — only accept Noun/Adj/Noun-like + Noun patterns,
+    # mirroring the English fallback extractor's strategy.
+    # Also reject if either normalized token is a known function word (safety
+    # net for NLTK's English-trained tagger which sometimes tags Arabic
+    # function words / verbs as nouns).
+    NOUN_LIKE = {'NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS', 'VBN'}
+    tagged = nltk.pos_tag(tokens)
+    for i in range(len(tagged) - 1):
+        w1, t1 = tagged[i]
+        w2, t2 = tagged[i + 1]
         n1, n2 = normed[i], normed[i + 1]
-        if n1 in _AR_CLITICS:
-            continue
-        if n1 in _AR_FUNCTION_WORDS and n2 in _AR_FUNCTION_WORDS:
-            continue
-        phrases.add(f"{n1} {n2}")
+        if t1 in NOUN_LIKE and t2.startswith('N'):
+            if n1 not in _AR_FUNCTION_WORDS and n2 not in _AR_FUNCTION_WORDS:
+                phrases.add(f"{n1} {n2}")
 
-    # trigram — same logic
-    for i in range(len(tokens) - 2):
+    # trigram — all 3 tokens must be noun/adjective-like (strict POS filter)
+    for i in range(len(tagged) - 2):
+        w1, t1 = tagged[i]
+        w2, t2 = tagged[i + 1]
+        w3, t3 = tagged[i + 2]
         n1, n2, n3 = normed[i], normed[i + 1], normed[i + 2]
-        if n1 in _AR_CLITICS:
-            continue
-        if n1 in _AR_FUNCTION_WORDS and n2 in _AR_FUNCTION_WORDS and n3 in _AR_FUNCTION_WORDS:
-            continue
-        phrases.add(f"{n1} {n2} {n3}")
+        if (t1 in NOUN_LIKE and t2 in NOUN_LIKE and t3 in NOUN_LIKE
+            and all(n not in _AR_FUNCTION_WORDS for n in (n1, n2, n3))
+            and all(len(n) >= 2 for n in (n1, n2, n3))):
+            phrases.add(f"{n1} {n2} {n3}")
 
     return phrases
 
@@ -573,6 +584,8 @@ _AR_FUNCTION_WORDS = {
     # negation
     "لا", "لم", "لن", "لما", "ليس", "غير", "الا", "سوى",
     "عدا", "خلا", "حاشا", "لست", "لستم", "ليسا", "ليسوا",
+    # negation / relative / interrogative particle
+    "ما",
     # particles
     "قد", "هل", "س", "سوف", "إن", "ان", "کأن", "كان",
     "کان", "لقد", "انما", "انّ", "ان", "فان", "وان",
@@ -635,7 +648,7 @@ _AR_FUNCTION_WORDS = _AR_FUNCTION_WORDS | {
     for w in _AR_FUNCTION_WORDS
 }
 
-_AR_CLITICS = {"و", "ف", "ب", "ل", "ك", "ک", "س", "بال", "فل", "ول", "فب"}
+_AR_CLITICS = {"ال", "و", "ف", "ب", "ل", "ك", "ک", "س", "بال", "فل", "ول", "فب"}
 
 # ---------------------------------------------------------
 # Quranic important-term whitelist
@@ -648,6 +661,7 @@ _QURANIC_KEEP: Set[str] = {
     # 2349 and 3706
     "طه", "يس",
     "يسٓ",
+    "یس", "یسٓ",
     # # Verse 5774
     # "كرام", "برره", "كرام برره",
     # # Verse 5799
@@ -704,29 +718,47 @@ def normalize_arabic_phrase(text: str):
     text = text.replace("\u0626", "\u064a")  # yeh-with-hamza → ya
 
     # 2. tokenize
-    tokens = word_tokenize(text)
+    # tokens = hazm_word_tokenize(text)
+    # tokens = text.split()
+    tokens = nltk_word_tokenize(text)
 
-    # 3. stopword removal
+    # 3. strip clitic prefixes from each token
+    #    Try clitics longest-first; only accept if the stem is >= 2 chars
+    #    AND is not itself a function word (prevents over-stripping like
+    #    الله → له which is a stopword).
+    stripped = []
+    for t in tokens:
+        stem = t
+        for cl in _AR_CLITIC_PREFIXES:
+            if t.startswith(cl) and len(t) > len(cl):
+                s = t[len(cl):]
+                if len(s) >= 2 and s not in ARABIC_STOPWORDS:
+                    stem = s
+                    break
+        stripped.append(stem)
+    tokens = stripped
+
+    # 4. stopword removal
     tokens = [
         t for t in tokens
         if t not in ARABIC_STOPWORDS
     ]
 
-    # 4. remove very short tokens
+    # 5. remove very short tokens
     tokens = [
         t for t in tokens
         if len(t) >= 2
     ]
 
-    # 5. reject empty
+    # 6. reject empty
     if not tokens:
         return None
 
-    # 6. reject too long
+    # 7. reject too long
     if len(tokens) > 5:
         return None
 
-    # 7. structural validation:
+    # 8. structural validation:
     #    multi-word phrases must contain at least one content word
     #    (≥ 3 chars AND not in function-word list)
     if len(tokens) > 1:
@@ -737,7 +769,7 @@ def normalize_arabic_phrase(text: str):
         if not has_content:
             return None
 
-    # 8. single-token phrases: ensure it's not a known compound stopword
+    # 9. single-token phrases: ensure it's not a known compound stopword
     if len(tokens) == 1:
         t = tokens[0]
         if t in ARABIC_STOPWORDS:

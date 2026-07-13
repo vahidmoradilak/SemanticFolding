@@ -44,14 +44,13 @@ except ImportError:
     logger.warning("spaCy not installed — falling back to NLTK extraction")
     SPACY_AVAILABLE = False
 
-from hazm import Normalizer, word_tokenize
+from hazm import Normalizer, word_tokenize as hazm_word_tokenize
 normalizer = Normalizer()
 
-# NLTK only needed when spaCy is unavailable
-if not SPACY_AVAILABLE:
-    logger.debug("Importing NLTK fallback tokenizer and POS tagger")
-    from nltk.tokenize import word_tokenize
-    from nltk import pos_tag
+# NLTK imports — needed unconditionally because the fallback extractor
+# may be invoked via --no-spacy even when spaCy is installed.
+from nltk.tokenize import word_tokenize as nltk_word_tokenize
+from nltk import pos_tag
 
 from lib import detect_language, extract_raw_phrases_ar_fa
 
@@ -84,7 +83,7 @@ def extract_raw_phrases_fallback(text: str) -> Set[str]:
     logger.debug(f"[FALLBACK] Extracting phrases from text ({len(text)} chars)")
     phrases: Set[str] = set()
 
-    tokens = word_tokenize(text)
+    tokens = nltk_word_tokenize(text)
     tagged = pos_tag(tokens)
     logger.debug(f"[FALLBACK] Tokenized → {len(tagged)} tokens")
 
@@ -157,7 +156,7 @@ def _collect_left_modifiers(doc) -> list[tuple[str, str]]:
         'appos', 'conj', 'ROOT', 'compound', 'amod', 'nmod',
     }
     # dep_ tags on children that signal a left modifier
-    MODIFIER_DEPS = {'amod', 'compound', 'nmod', 'nummod'}
+    MODIFIER_DEPS = {'amod', 'compound', 'nmod', 'nummod', 'poss'}
     # POS tags allowed on modifier children
     MODIFIER_POS  = {'NOUN', 'PROPN', 'ADJ', 'NUM'}
 
@@ -976,6 +975,12 @@ def extract_raw_phrases_spacy(doc) -> list[str]:
     multi_word = {p for p in raw if len(p.split()) > 1}
     for phrase in sorted(multi_word):
         add_phrase(phrase.split()[-1], "bare_heads")
+
+    # ── step 7: content-word unigrams ──────────────────────────────────────────
+    CONTENT_POS = {'NOUN', 'PROPN', 'ADJ', 'VERB', 'ADV'}
+    for token in doc:
+        if token.pos_ in CONTENT_POS and len(token.text) >= 2 and not token.is_stop:
+            add_phrase(token.text.lower(), "unigrams")
 
     return list(raw.keys())
 

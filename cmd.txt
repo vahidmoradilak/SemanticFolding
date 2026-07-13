@@ -2,7 +2,7 @@ pip install  --index-url https://mirror2.chabokan.net/pypi/simple/ uv
 cd Moradi\SemanticFolding
 uv sync 
 .venv\Scripts\activate
-uv run python .\brain_approaches\semantic_folding\semantic_folder.py 
+uv run python .\semantic_folding\semantic_folder.py 
 
 ### Install Python Libs
 uv add --trusted-host mirror2.chabokan.net -i https://mirror2.chabokan.net/pypi/simple/ umap-learn

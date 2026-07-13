@@ -73,12 +73,48 @@
 - Document IDs match corpus line numbers (C00–C19)
 - Relevance: binary (relevant/not) — update for graded when needed
 
+## Extraction Symmetry
+
+Arabic and English use the same POS-pattern bigram extraction strategy:
+
+| | Arabic (`lib.py:extract_raw_phrases_ar_fa`) | English (`phrase_extractor.py:extract_raw_phrases_spacy`) |
+|---|---|---|
+| **Unigrams** | tokens ≥ 2 chars, not in `_AR_FUNCTION_WORDS` | tokens ≥ 2 chars, `pos_` ∈ {NOUN,PROPN,ADJ,VERB,ADV}, not `is_stop` |
+| **Bigrams** | NLTK POS pattern `[NN/NNS/NNP/NNPS/JJ/JJR/JJS/VBN] + [N*]`, plus both tokens must not be in `_AR_FUNCTION_WORDS` | spaCy noun chunks + left modifiers + compound chains + conjunction expansion |
+| **Trigrams** | strict POS filter `[NN/JJ/VBN] + [NN/JJ/VBN] + [NN/JJ/VBN]`, plus function-word guard | spaCy noun chunks + left-anchored sub-spans |
+
+Key changes from old approach:
+- `_AR_CLITICS` includes `ال`, `و`, `ف`, `ب`, `ل`, `ك`, `ک`, `س`, `بال`, `فل`, `ول`, `فب`
+- Clitic stripping guard: stem ≥ 2 chars AND not a function word (preserves `الله`)
+- `_AR_FUNCTION_WORDS` includes `ما` (negation/relative particle, freq 523→0)
+- `min_word_length = 2` for Arabic (preserves حروف مقطعه like `طه`, `يس`)
+- `bilingual_groups` (`phrase_bilingual.json`) removed — was too noisy
+
 ## Evaluation
 
-- Metrics script: run `.venv\scripts\python tools\compute_ir_metrics.py`
-- Report output: `outputs/run_<timestamp>/query_metrics/qa_evaluation_report.md`
-- Key metrics: P@K, R@K, MRR, NDCG@K, AP
-- Normalization diagnostic: check doc_nnz uniqueness
+- Benchmark framework: `semantic_folding/dataset_benchmark/musique/run_benchmark.py`
+- Key command: `.venv\scripts\python semantic_folding\dataset_benchmark\musique\run_benchmark.py`
+- Key metrics (from benchmark): P@K, R@K, MRR, NDCG@K, AP
+- Baseline comparison: run `compare_baselines.py` after SF benchmark
+- BM25 baseline: `bm25_baseline.py`
+
+## Quran Benchmark (30 QA pairs, 6,236 ayahs)
+
+- **Framework**: `semantic_folding/dataset_benchmark/quran/run_benchmark.py`
+- **Index command**: `.venv\scripts\python semantic_folding\dataset_benchmark\quran\run_benchmark.py --mode index`
+- **Evaluate command**: `.venv\scripts\python semantic_folding\dataset_benchmark\quran\run_benchmark.py --mode evaluate --run-dir outputs\quran_benchmark\runs\run_<ts>`
+- **Best results (simplified queries, 2D pipeline)**:
+  - SF: MRR=0.3344, AP=0.1203, P@5=0.1733, R@5=0.1425, NDCG@10=0.1219
+  - BM25: MRR=0.1550, AP=0.0723, P@5=0.0667, R@5=0.0472, NDCG@10=0.0620
+  - SF wins all metrics, 2.15x MRR improvement over BM25
+- **Key decisions**:
+  - Simplified queries (`_extract_key_query_terms`) beat full queries: only rare proper nouns (joseph, solomon, cave) benefit from single-term simplification; thematic queries (justice, kindness, creation) use 2-3 key terms
+  - Fixed charmap errors: `open()` calls in Step 7 reader now use `encoding="utf8"`; subprocess calls use `encoding="utf8", errors="replace"` or `capture_output=False`
+  - 11/30 queries succeed (MRR>0), 19/30 fail (MRR=0.0000)
+- **Common failure patterns**:
+  - Thematic queries (justice, mercy, patience, punishement, etc.) — simplified terms too broad
+  - Plural/singular mismatch (angels→angel, believers→believer) — no stemming in `_extract_key_query_terms`
+  - Full query fallback (Q028-Q030) — no key vocab terms survive filtering
 
 ## Naming Conventions
 

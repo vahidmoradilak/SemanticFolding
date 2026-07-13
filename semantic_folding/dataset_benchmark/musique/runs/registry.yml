@@ -1,6 +1,6 @@
 runs:
-  benchmark_20260520_194850:
-    created_at: '2026-05-20T19:48:50.451106'
+  benchmark_20260709_153148:
+    created_at: '2026-07-09T15:31:48.473984'
     params:
       grid_size: '64'
       keep_verbs: 'True'
@@ -14,33 +14,144 @@ runs:
       tsne_iter: '1000'
       tsne_perplexity: '30'
       weighting: idf
-    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260520_194850
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\benchmarks\benchmark_20260709_153148
     status: completed
     type: benchmark
-  benchmark_20260520_205547:
-    created_at: '2026-05-20T20:55:47.219382'
+  benchmark_20260710_104616:
+    created_at: '2026-07-10T10:46:16.442993'
     params:
-      grid_size: '64'
+      grid_size: '128'
       keep_verbs: 'True'
-      max_queries: '100'
+      method: tsne
       min_freq: '1'
       min_word_length: '3'
       morton: 'True'
-      query_end: '100'
-      query_start: '0'
       smoothing_sigma: '1.5'
-      split: dev
       spreading_steps: '1'
       top_k: '5'
       top_percent: '0.1'
       tsne_iter: '1000'
       tsne_perplexity: '30'
       weighting: idf
-    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260520_205547
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\benchmarks\benchmark_20260710_104616
     status: completed
     type: benchmark
-  run_20260520_194203:
-    created_at: '2026-05-20T19:42:03.485668'
+  benchmark_20260710_112808:
+    created_at: '2026-07-10T11:28:08.926983'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\benchmarks\benchmark_20260710_112808
+    status: completed
+    type: benchmark
+  benchmark_20260710_121937:
+    created_at: '2026-07-10T12:19:37.299914'
+    params:
+      grid_size: '128'
+      keep_verbs: 'True'
+      method: tsne
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\benchmarks\benchmark_20260710_121937
+    status: running
+    type: benchmark
+  benchmark_20260710_141356:
+    created_at: '2026-07-10T14:13:56.901630'
+    params:
+      grid_size: '128'
+      keep_verbs: 'True'
+      method: tsne
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\benchmarks\benchmark_20260710_141356
+    status: completed
+    type: benchmark
+  benchmark_20260710_163256:
+    created_at: '2026-07-10T16:32:56.411517'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '0'
+      top_k: '5'
+      top_percent: '0.05'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\benchmarks\benchmark_20260710_163256
+    status: completed
+    type: benchmark
+  benchmark_20260710_171726:
+    created_at: '2026-07-10T17:17:26.361204'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      method: tsne
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '0'
+      top_k: '5'
+      top_percent: '0.05'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\benchmarks\benchmark_20260710_171726
+    status: completed
+    type: benchmark
+  benchmark_20260710_175934:
+    created_at: '2026-07-10T17:59:34.581017'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '0'
+      top_k: '5'
+      top_percent: '0.05'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\benchmarks\benchmark_20260710_175934
+    status: completed
+    type: benchmark
+  run_20260709_151835:
+    created_at: '2026-07-09T15:18:35.737828'
     params:
       grid_size: '64'
       keep_verbs: 'True'
@@ -54,14 +165,15 @@ runs:
       tsne_iter: '1000'
       tsne_perplexity: '30'
       weighting: idf
-    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260520_194203
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\runs\run_20260709_151835
     status: completed
     type: index
-  run_20260520_194326:
-    created_at: '2026-05-20T19:43:26.485191'
+  run_20260710_104002:
+    created_at: '2026-07-10T10:40:02.448603'
     params:
-      grid_size: '64'
+      grid_size: '128'
       keep_verbs: 'True'
+      method: tsne
       min_freq: '1'
       min_word_length: '3'
       morton: 'True'
@@ -72,6 +184,82 @@ runs:
       tsne_iter: '1000'
       tsne_perplexity: '30'
       weighting: idf
-    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260520_194326
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\runs\run_20260710_104002
+    status: completed
+    type: index
+  run_20260710_112136:
+    created_at: '2026-07-10T11:21:36.924705'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\runs\run_20260710_112136
+    status: completed
+    type: index
+  run_20260710_121228:
+    created_at: '2026-07-10T12:12:28.796023'
+    params:
+      grid_size: '128'
+      keep_verbs: 'True'
+      method: tsne
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\runs\run_20260710_121228
+    status: completed
+    type: index
+  run_20260710_162617:
+    created_at: '2026-07-10T16:26:17.323552'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '0'
+      top_k: '5'
+      top_percent: '0.05'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\runs\run_20260710_162617
+    status: completed
+    type: index
+  run_20260710_171329:
+    created_at: '2026-07-10T17:13:29.764799'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      method: tsne
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '0'
+      top_k: '5'
+      top_percent: '0.05'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\musique_benchmark\runs\run_20260710_171329
     status: completed
     type: index
