@@ -549,15 +549,15 @@ acceleration.
 \subsection{Main Results}
 
 Table~\ref{tab:main} presents the aggregate results across all 30
-queries. SF achieves MRR=0.3454, outperforming BM25 (0.1550) by a factor
+queries. SF achieves MRR=0.3344, outperforming BM25 (0.1550) by a factor
 of 2.2. The dense retriever fails to achieve meaningful results
-(MRR=0.003 on Arabic-only, <0.01 on English-only), as its multilingual
+(MRR=0.003 on Arabic-only, <0.001 on English-only), as its multilingual
 embedding space does not adequately capture the specialized vocabulary
 of the Quran.
 
 \begin{table*}[t]
   \centering
-  \caption{Aggregate comparison across all retrieval methods.}
+  \caption{Aggregate comparison across all retrieval methods (30 queries).}
   \label{tab:main}
   \footnotesize
   \begin{tabular}{lcccc}
@@ -568,11 +568,11 @@ of the Quran.
     \textbf{Dense (Ar)} &
     \textbf{Dense (En)} \\
     \midrule
-    MRR      & \textbf{0.3454} & 0.1550 & 0.003 & $<$0.001 \\
-    AP       & \textbf{0.1269} & 0.0723 & 0.002 & $<$0.001 \\
-    P@5      & \textbf{0.1667} & 0.0667 & 0.007 & 0.000 \\
-    R@5      & \textbf{0.1300} & 0.0472 & 0.010 & 0.000 \\
-    NDCG@10  & \textbf{0.1464} & 0.0620 & 0.004 & $<$0.001 \\
+    MRR      & \textbf{0.3344} & 0.1550 & 0.003 & $<$0.001 \\
+    AP       & \textbf{0.1203} & 0.0723 & 0.002 & $<$0.001 \\
+    P@5      & \textbf{0.1733} & 0.0667 & 0.007 & 0.000 \\
+    R@5      & \textbf{0.1425} & 0.0472 & 0.010 & 0.000 \\
+    NDCG@10  & \textbf{0.1219} & 0.0620 & 0.004 & $<$0.001 \\
     \bottomrule
   \end{tabular}
 \end{table*}
@@ -581,15 +581,14 @@ of the Quran.
 
 To measure robustness across diverse query formats, we evaluated on five
 distinct test configurations (Table~\ref{tab:multitest}). SF consistently
-dominates on realistic QA and full-text Arabic queries, while BM25 wins on
-fragment-level retrieval where lexical overlap is decisive. The dense
+dominates on realistic QA and full-text Arabic queries. The dense
 retriever only surpasses both on the gold-only oracle task (query text
 identical to document text), confirming its limitation to near-identity
 matching.
 
 \begin{table*}[t]
   \centering
-  \caption{Performance across five test configurations.}
+  \caption{Performance across five test configurations (MRR).}
   \label{tab:multitest}
   \footnotesize
   \begin{tabular}{lcccc}
@@ -600,10 +599,10 @@ matching.
     \textbf{Dense} &
     \textbf{Winner} \\
     \midrule
-    Original 30 QA (En$\to$Ar) & 0.3454 & 0.1550 & 0.003 & SF \\
+    Original 30 QA (En$\to$Ar) & 0.3344 & 0.1550 & 0.003 & SF \\
     30 random (Ar full$\to$ayah) & 1.0000 & 0.0102 & --- & SF \\
     300 random (Ar full$\to$ayah) & 0.9875 & 0.0102 & --- & SF \\
-    Gold-only 30 (Ar full$\to$ayah) & 0.9500 & 0.0800 & 1.000 & Dense \\
+    Gold-only 30 (Ar full$\to$ayah) & 0.9500 & 0.0785 & 1.000 & Dense \\
     Fragment retrieval (1{,}600 queries) & 0.5400 & 0.7400 & 0.140 & BM25 \\
     \bottomrule
   \end{tabular}
@@ -642,6 +641,34 @@ confirming that the pipeline generalizes well beyond the hand-crafted
 30-query benchmark. BM25's near-zero scores on random queries reflect
 its inability to match full Arabic verses when the query is itself a
 contiguous Arabic passage.
+
+\subsection{Parameter Sensitivity}
+
+We evaluated the impact of two key parameters: spreading steps (Moore
+neighborhood expansion) and evaluation depth (top-$k$).
+Table~\ref{tab:paramsens} shows that spreading has minimal effect on
+aggregate MRR (0.3344 vs.\ 0.3261), while increasing top-$k$ from 5 to
+10 inflates MRR slightly (0.3261$\to$0.3454) by capturing lower-ranked
+relevant documents without changing the actual ranking function.
+
+\begin{table*}[t]
+  \centering
+  \caption{Parameter sensitivity on the 30-query benchmark (SF MRR).}
+  \label{tab:paramsens}
+  \footnotesize
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Configuration} &
+    \textbf{Spreading} &
+    \textbf{top-$k$} &
+    \textbf{MRR} \\
+    \midrule
+    Canonical baseline & 0 & 5 & 0.3344 \\
+    With spreading & 1 & 5 & 0.3261 \\
+    Deeper evaluation & 1 & 10 & 0.3454 \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
 
 \subsection{Per-Query Breakdown}
 
