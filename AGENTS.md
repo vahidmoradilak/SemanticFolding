@@ -21,8 +21,16 @@
 - Test queries: `data/qa-sample.md`
 - Evaluation reports: `outputs/run_<timestamp>/query_metrics/qa_evaluation_report.md`
 - Benchmarking framework: `semantic_folding/dataset_benchmark/`
+  - Generic multi-dataset runner: `semantic_folding/dataset_benchmark/generic_benchmark.py`
+  - Orchestrator: `semantic_folding/dataset_benchmark/run_all_benchmarks.py`
+  - BM25 baseline: `semantic_folding/dataset_benchmark/bm25_benchmark.py`
+  - Dataset adapters: `semantic_folding/dataset_benchmark/adapters/`
+    - Supported: pubmedqa, belebele, popqa, nq_rear, narrativeqa, hotpotqa, 2wikimultihopqa, bioasq, beir (nfcorpus, scifact, quora, trec-covid, dbpedia)
+  - Prepared datasets: `data/datasets/<name>/converted/`
+  - Quran benchmark: `semantic_folding/dataset_benchmark/quran/run_benchmark.py`
   - MuSiQue benchmark: `semantic_folding/dataset_benchmark/musique/run_benchmark.py`
   - Analysis: `semantic_folding/dataset_benchmark/musique/benchmark_analyzer.py`
+  - Run registry: `semantic_folding/dataset_benchmark/runs_registry.yml`
 - Benchmark overview: `semantic_folding/benchmarks.md`
 
 ## Python Environment
@@ -44,6 +52,22 @@
 - Query weighting: IDF (best; uniform drops C17 ranking and loses C00)
 - Normalization: L2 for query, `sqrt(nnz)` for document fingerprints
 - Geometric scoring: optional `--geometric` flag (Step 7) applies a 3×3 spatial adjacency kernel before scoring, rewarding nearby (not just exact) cell overlap on the 2D grid. See `semantic_folding/parameters_tuning.md` for evaluation.
+
+## Benchmarking (Generic Multi-Dataset)
+
+- **Framework**: `semantic_folding/dataset_benchmark/`
+  - Generic runner: `semantic_folding/dataset_benchmark/generic_benchmark.py`
+  - BM25 baseline: `semantic_folding/dataset_benchmark/bm25_benchmark.py`
+  - Orchestrator: `semantic_folding/dataset_benchmark/run_all_benchmarks.py`
+- **Three-phase design**:
+  - Phase 1 (index): Build combined corpus from unique paragraphs, run Steps 1-5 once
+  - Phase 2 (benchmark): Run Step 7 per query against pre-built fingerprints, post-filter to 20 candidates
+  - Phase 3 (report): Auto-generate `benchmark_report.md`
+- **Key params**: `grid_size=64`, `spreading_steps=1`, `top_percent=0.10`, `weighting=idf`, `method=umap`
+- **Key commands**:
+  - Run all datasets: `.venv\scripts\python -m semantic_folding.dataset_benchmark.run_all_benchmarks`
+  - Single dataset: use `GenericBenchmarkRunner` from `semantic_folding.dataset_benchmark.generic_benchmark`
+- **Prepared datasets**: `data/datasets/<name>/converted/`
 
 ## Benchmarking (MuSiQue)
 
@@ -92,11 +116,15 @@ Key changes from old approach:
 
 ## Evaluation
 
-- Benchmark framework: `semantic_folding/dataset_benchmark/musique/run_benchmark.py`
-- Key command: `.venv\scripts\python semantic_folding\dataset_benchmark\musique\run_benchmark.py`
+- Benchmark framework: `semantic_folding/dataset_benchmark/`
+  - Generic multi-dataset: `semantic_folding/dataset_benchmark/generic_benchmark.py`
+  - BM25 baseline: `semantic_folding/dataset_benchmark/bm25_benchmark.py`
+  - Orchestrator: `semantic_folding/dataset_benchmark/run_all_benchmarks.py`
+- Key commands:
+  - Run all datasets: `.venv\scripts\python -m semantic_folding.dataset_benchmark.run_all_benchmarks`
+  - Single dataset benchmark: use `GenericBenchmarkRunner` from `semantic_folding.dataset_benchmark.generic_benchmark`
 - Key metrics (from benchmark): P@K, R@K, MRR, NDCG@K, AP
-- Baseline comparison: run `compare_baselines.py` after SF benchmark
-- BM25 baseline: `bm25_baseline.py`
+- Baseline comparison: BM25 via `bm25_benchmark.py`
 
 ## Quran Benchmark (30 QA pairs, 6,236 ayahs)
 

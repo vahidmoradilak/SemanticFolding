@@ -49,7 +49,7 @@ logger = get_logger("generic_bench")
 # Paths
 # ============================================================================
 SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parents[1]  # dataset_benchmark -> semantic_folding
+PROJECT_ROOT = SCRIPT_DIR.parents[2]  # dataset_benchmark -> semantic_folding -> project root
 SEMANTIC_FOLDING = PROJECT_ROOT / "semantic_folding"
 DATA_DIR = PROJECT_ROOT / "data"
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
@@ -87,6 +87,8 @@ PIPELINE_DEFAULTS = {
     "short_query_max_words": 10,
     "spreading_steps_long": 1,
     "doc_norm": "l2",
+    "splade": False,
+    "hybrid_alpha": 0.3,
     # New feature defaults
     "spreading_decay": 0.5,
     "normalize_after_spreading": False,

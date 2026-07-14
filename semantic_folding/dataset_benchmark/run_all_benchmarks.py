@@ -10,9 +10,11 @@ For each dataset:
   6. Phase 3: Generate reports
 
 Usage:
-    .venv\\Scripts\\python semantic_folding\\dataset_benchmark\\run_all_benchmarks.py
-    .venv\\Scripts\\python semantic_folding\\dataset_benchmark\\run_all_benchmarks.py --datasets belebele bioasq
-    .venv\\Scripts\\python semantic_folding\\dataset_benchmark\\run_all_benchmarks.py --max-queries 100
+    .venv\\Scripts\\python -m semantic_folding.dataset_benchmark.run_all_benchmarks
+    .venv\\Scripts\\python -m semantic_folding.dataset_benchmark.run_all_benchmarks --datasets belebele popqa
+    .venv\\Scripts\\python -m semantic_folding.dataset_benchmark.run_all_benchmarks --max-queries 100
+
+Datasets are expected at: data/datasets/<name>/converted/<name>.jsonl
 """
 
 import argparse
@@ -50,8 +52,9 @@ def run_single_dataset(dataset_name: str, max_queries: int = None,
     logger.info(f"{separator}")
 
     adapter = get_adapter(dataset_name)
-    raw_dir = DATA_DIR / dataset_name / "raw"
-    converted_dir = DATA_DIR / dataset_name / "converted"
+    datasets_dir = DATA_DIR / "datasets"
+    raw_dir = datasets_dir / dataset_name / "raw"
+    converted_dir = datasets_dir / dataset_name / "converted"
 
     t_start = time.time()
 
