@@ -80,4 +80,3 @@ data/HippoRAG2/dataset
 
 # Dataset benchmark
 data/dataset_benchmark/datasets/
-data/dataset_benchmark/datasets/*
