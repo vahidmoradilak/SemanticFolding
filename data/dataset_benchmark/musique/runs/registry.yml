@@ -1,0 +1,538 @@
+runs:
+  benchmark_20260617_023346:
+    created_at: '2026-06-17T02:33:46.303518'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260617_023346
+    status: running
+    type: benchmark
+  benchmark_20260617_025659:
+    created_at: '2026-06-17T02:56:59.468791'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260617_025659
+    status: completed
+    type: benchmark
+  benchmark_20260628_115615:
+    created_at: '2026-06-28T11:56:15.447467'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'True'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_115615
+    status: completed
+    type: benchmark
+  benchmark_20260628_115711:
+    created_at: '2026-06-28T11:57:11.434042'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'True'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_115711
+    status: completed
+    type: benchmark
+  benchmark_20260628_120832:
+    created_at: '2026-06-28T12:08:32.946803'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_120832
+    status: completed
+    type: benchmark
+  benchmark_20260628_122605:
+    created_at: '2026-06-28T12:26:05.917733'
+    params:
+      doc_norm: l2
+      grid_size: '32'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_122605
+    status: completed
+    type: benchmark
+  benchmark_20260628_122732:
+    created_at: '2026-06-28T12:27:32.758632'
+    params:
+      doc_norm: l2
+      grid_size: '32'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_122732
+    status: completed
+    type: benchmark
+  benchmark_20260628_123233:
+    created_at: '2026-06-28T12:32:33.961033'
+    params:
+      doc_norm: l2
+      grid_size: '32'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_123233
+    status: completed
+    type: benchmark
+  benchmark_20260628_124657:
+    created_at: '2026-06-28T12:46:57.651623'
+    params:
+      doc_norm: l2
+      grid_size: '32'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_124657
+    status: completed
+    type: benchmark
+  benchmark_20260628_125702:
+    created_at: '2026-06-28T12:57:02.825235'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_125702
+    status: completed
+    type: benchmark
+  benchmark_20260628_131241:
+    created_at: '2026-06-28T13:12:42.053067'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_131241
+    status: failed
+    type: benchmark
+  benchmark_20260628_132132:
+    created_at: '2026-06-28T13:21:33.145077'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_132132
+    status: running
+    type: benchmark
+  benchmark_20260628_133152:
+    created_at: '2026-06-28T13:31:52.280703'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_133152
+    status: completed
+    type: benchmark
+  benchmark_20260628_133254:
+    created_at: '2026-06-28T13:32:54.633976'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_133254
+    status: completed
+    type: benchmark
+  benchmark_20260628_134311:
+    created_at: '2026-06-28T13:43:11.833669'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_134311
+    status: completed
+    type: benchmark
+  benchmark_20260628_142645:
+    created_at: '2026-06-28T14:26:45.854812'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'True'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_142645
+    status: completed
+    type: benchmark
+  benchmark_20260628_145242:
+    created_at: '2026-06-28T14:52:42.350281'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'True'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_145242
+    status: failed
+    type: benchmark
+  benchmark_20260628_151300:
+    created_at: '2026-06-28T15:13:00.483487'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'True'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\benchmarks\benchmark_20260628_151300
+    status: completed
+    type: benchmark
+  run_20260617_022257:
+    created_at: '2026-06-17T02:22:58.033385'
+    params:
+      grid_size: '64'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260617_022257
+    status: completed
+    type: index
+  run_20260628_112742:
+    created_at: '2026-06-28T11:27:42.428926'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'True'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260628_112742
+    status: failed_step5
+    type: index
+  run_20260628_113005:
+    created_at: '2026-06-28T11:30:05.780739'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'True'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260628_113005
+    status: failed_step5
+    type: index
+  run_20260628_114516:
+    created_at: '2026-06-28T11:45:16.778488'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'True'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260628_114516
+    status: completed
+    type: index
+  run_20260628_114712:
+    created_at: '2026-06-28T11:47:12.318476'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'True'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260628_114712
+    status: completed
+    type: index
+  run_20260628_115707:
+    created_at: '2026-06-28T11:57:08.039475'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260628_115707
+    status: completed
+    type: index
+  run_20260628_120715:
+    created_at: '2026-06-28T12:07:15.384370'
+    params:
+      doc_norm: l2
+      grid_size: '32'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260628_120715
+    status: completed
+    type: index
+  run_20260628_133804:
+    created_at: '2026-06-28T13:38:04.881352'
+    params:
+      doc_norm: l2
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      smoothing_sigma: '1.5'
+      splade: 'False'
+      spreading_steps: '1'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '30'
+      weighting: idf
+    path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\musique_benchmark\runs\run_20260628_133804
+    status: completed
+    type: index

@@ -77,3 +77,6 @@ __pycache__/
 # large file
 v1_050130_050302
 data/HippoRAG2/dataset
+
+# Dataset benchmark
+data/dataset_benchmark/datasets/
