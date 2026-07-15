@@ -82,13 +82,14 @@ PIPELINE_DEFAULTS = {
     "umap_n_neighbors": 15,
     "umap_min_dist": 0.0,
     "umap_metric": "cosine",
+    "random_seed": 42,
     # Dynamic spreading: if True, picks spread=2 for short queries (≤ short_query_max_words)
     # and spread=1 for longer ones. Otherwise uses spreading_steps for all.
     "dynamic_spreading": False,
     "short_query_max_words": 10,
     "spreading_steps_long": 1,
     "doc_norm": "l2",
-    "splade": True,
+    "splade": False,
     "hybrid_alpha": 0.5,
     # New feature defaults
     "spreading_decay": 0.5,
@@ -513,6 +514,7 @@ class GenericBenchmarkRunner:
             "--output", str(out),
             "--grid-size", str(self.params["grid_size"]),
             "--method", self.params["method"],
+            "--random-seed", str(self.params["random_seed"]),
         ]
         if self.params["method"] == "tsne":
             step3_args.extend([
@@ -692,9 +694,9 @@ class GenericBenchmarkRunner:
             except Exception as exc:
                 logger.warning(f"  [LLM] query phrase extraction failed: {exc} — proceeding without")
 
-        # ── Build step6 args (shared across all queries) ──────────────────
+        # ── Build step7 args (shared across all queries) ──────────────────
         batch_output = bench_dir / "all_results.json"
-        step6_args = [
+        step7_args = [
             "--query-file", str(query_file),
             "--fingerprints", str(run_dir / "phrase_fingerprints"),
             "--doc-fingerprints", str(run_dir / "doc_fingerprints"),
@@ -707,94 +709,94 @@ class GenericBenchmarkRunner:
             "--keep-verbs", "--min-word-length", str(self.params["min_word_length"]),
         ]
         if self.params.get("geometric", False):
-            step6_args.append("--geometric")
+            step7_args.append("--geometric")
         if self.params.get("hybrid", False):
-            step6_args.extend(["--hybrid", "--hybrid-alpha", str(self.params.get("hybrid_alpha", 0.5))])
+            step7_args.extend(["--hybrid", "--hybrid-alpha", str(self.params.get("hybrid_alpha", 0.5))])
             if self.params.get("corpus_path"):
-                step6_args.extend(["--corpus", self.params["corpus_path"]])
+                step7_args.extend(["--corpus", self.params["corpus_path"]])
         if self.params.get("splade", False):
-            step6_args.extend(["--splade", "--splade-model", self.params.get("splade_model", "naver/splade-cocondenser-ensembledistil")])
+            step7_args.extend(["--splade", "--splade-model", self.params.get("splade_model", "naver/splade-cocondenser-ensembledistil")])
             if self.params.get("hybrid_alpha") is not None:
-                step6_args.extend(["--hybrid-alpha", str(self.params["hybrid_alpha"])])
+                step7_args.extend(["--hybrid-alpha", str(self.params["hybrid_alpha"])])
             if self.params.get("corpus_path"):
-                step6_args.extend(["--corpus", self.params["corpus_path"]])
+                step7_args.extend(["--corpus", self.params["corpus_path"]])
             fusion_method = self.params.get("fusion_method", "linear")
             if fusion_method == "rrf":
-                step6_args.extend(["--fusion-method", "rrf"])
-                step6_args.extend(["--rrf-k", str(self.params.get("rrf_k", 60))])
+                step7_args.extend(["--fusion-method", "rrf"])
+                step7_args.extend(["--rrf-k", str(self.params.get("rrf_k", 60))])
         if self.params.get("sim_metric", "cosine") != "cosine":
-            step6_args.extend(["--sim-metric", self.params["sim_metric"]])
+            step7_args.extend(["--sim-metric", self.params["sim_metric"]])
         if self.params.get("asymmetric", False):
-            step6_args.append("--asymmetric")
-            step6_args.extend(["--asym-alpha", str(self.params.get("asym_alpha", 0.7))])
+            step7_args.append("--asymmetric")
+            step7_args.extend(["--asym-alpha", str(self.params.get("asym_alpha", 0.7))])
         if self.params.get("score_norm", "none") != "none":
-            step6_args.extend(["--score-norm", self.params["score_norm"]])
+            step7_args.extend(["--score-norm", self.params["score_norm"]])
         if self.params.get("rerank", False):
-            step6_args.append("--rerank")
+            step7_args.append("--rerank")
             if self.params.get("rerank_model"):
-                step6_args.extend(["--rerank-model", str(self.params["rerank_model"])])
-            step6_args.extend(["--rerank-top-k", str(self.params.get("rerank_top_k", 100))])
+                step7_args.extend(["--rerank-model", str(self.params["rerank_model"])])
+            step7_args.extend(["--rerank-top-k", str(self.params.get("rerank_top_k", 100))])
         if self.params.get("negation_aware", False):
-            step6_args.append("--negation-aware")
-            step6_args.extend(["--negation-penalty", str(self.params.get("negation_penalty", 0.5))])
-            step6_args.extend(["--negation-boost", str(self.params.get("negation_boost", 0.3))])
+            step7_args.append("--negation-aware")
+            step7_args.extend(["--negation-penalty", str(self.params.get("negation_penalty", 0.5))])
+            step7_args.extend(["--negation-boost", str(self.params.get("negation_boost", 0.3))])
         if self.params.get("expand_synonyms", False):
-            step6_args.append("--expand-synonyms")
+            step7_args.append("--expand-synonyms")
             if self.params.get("glossary_path"):
-                step6_args.extend(["--glossary", self.params["glossary_path"]])
+                step7_args.extend(["--glossary", self.params["glossary_path"]])
         if self.params.get("tfidf_rerank", False):
-            step6_args.extend(["--tfidf-rerank", "--tfidf-alpha", str(self.params.get("tfidf_alpha", 0.3))])
+            step7_args.extend(["--tfidf-rerank", "--tfidf-alpha", str(self.params.get("tfidf_alpha", 0.3))])
             if self.params.get("corpus_path"):
-                step6_args.extend(["--corpus", self.params["corpus_path"]])
+                step7_args.extend(["--corpus", self.params["corpus_path"]])
         if self.params.get("decompose", False):
-            step6_args.append("--decompose")
+            step7_args.append("--decompose")
         if self.params.get("multi_resolution", False):
-            step6_args.append("--multi-resolution")
+            step7_args.append("--multi-resolution")
         if self.params.get("storage", "file") == "faiss":
-            step6_args.extend(["--storage", "faiss"])
+            step7_args.extend(["--storage", "faiss"])
             if self.params.get("faiss_path"):
-                step6_args.extend(["--faiss-path", str(self.params["faiss_path"])])
+                step7_args.extend(["--faiss-path", str(self.params["faiss_path"])])
 
         # ── Cross-attention scoring (P2.2) ────────────────────────────────────
         if self.params.get("cross_attention", False):
-            step6_args.append("--cross-attention")
-            step6_args.extend(["--block-size", str(self.params.get("block_size", 8))])
-            step6_args.extend(["--attention-temperature", str(self.params.get("attention_temperature", 1.0))])
+            step7_args.append("--cross-attention")
+            step7_args.extend(["--block-size", str(self.params.get("block_size", 8))])
+            step7_args.extend(["--attention-temperature", str(self.params.get("attention_temperature", 1.0))])
 
         # ── Snippet ranking (P2.4) ────────────────────────────────────────────
         if self.params.get("snippet_ranking", False):
-            step6_args.append("--snippet-ranking")
-            step6_args.extend(["--snippet-window", str(self.params.get("snippet_window", 3))])
-            step6_args.extend(["--snippet-stride", str(self.params.get("snippet_stride", 2))])
+            step7_args.append("--snippet-ranking")
+            step7_args.extend(["--snippet-window", str(self.params.get("snippet_window", 3))])
+            step7_args.extend(["--snippet-stride", str(self.params.get("snippet_stride", 2))])
             if self.params.get("snippet_dir"):
-                step6_args.extend(["--snippet-dir", self.params["snippet_dir"]])
+                step7_args.extend(["--snippet-dir", self.params["snippet_dir"]])
 
         # ── Adaptive spreading ─────────────────────────────────────────────────
         if self.params.get("adaptive_spreading", False):
-            step6_args.append("--adaptive-spreading")
+            step7_args.append("--adaptive-spreading")
 
         # ── Normalize after spreading ──────────────────────────────────────────
         if self.params.get("normalize_after_spreading", False):
-            step6_args.append("--normalize-after-spreading")
+            step7_args.append("--normalize-after-spreading")
 
         # ── Spreading decay ────────────────────────────────────────────────────
         if self.params.get("spreading_decay", 0.5) != 0.5:
-            step6_args.extend(["--spreading-decay", str(self.params["spreading_decay"])])
+            step7_args.extend(["--spreading-decay", str(self.params["spreading_decay"])])
 
         # ── Query normalisation ────────────────────────────────────────────────
         if self.params.get("normalization", "l2") != "l2":
-            step6_args.extend(["--normalization", self.params["normalization"]])
+            step7_args.extend(["--normalization", self.params["normalization"]])
 
         # ── Synonym weight ─────────────────────────────────────────────────────
         if self.params.get("synonym_weight", 0.5) != 0.5:
-            step6_args.extend(["--synonym-weight", str(self.params["synonym_weight"])])
+            step7_args.extend(["--synonym-weight", str(self.params["synonym_weight"])])
 
         if llm_query_phrases_path:
-            step6_args.extend(["--llm-query-phrases", str(llm_query_phrases_path)])
+            step7_args.extend(["--llm-query-phrases", str(llm_query_phrases_path)])
 
         # ── Single subprocess call for ALL queries ────────────────────────
         t0 = time.time()
-        ok = run_step(STEP_SCRIPTS[6], step6_args, PROJECT_ROOT, "Step 6 query_processor (batch)", timeout=3600)
+        ok = run_step(STEP_SCRIPTS[6], step7_args, PROJECT_ROOT, "Step 6 query_processor (batch)", timeout=3600)
         batch_elapsed = time.time() - t0
 
         if not ok:
@@ -1212,7 +1214,7 @@ def cli_main():
                       help="Apply 3x3 spatial adjacency kernel to query fingerprint before scoring")
     p_bm.add_argument("--hybrid", action="store_true", help="Enable hybrid SF+BM25 scoring")
     p_bm.add_argument("--hybrid-alpha", type=float, default=0.5, help="SF weight in hybrid mode")
-    p_bm.add_argument("--splade", action="store_true", default=True, help="Enable hybrid SF+SPLADE scoring (default: True)")
+    p_bm.add_argument("--splade", action="store_true", default=None, help="Enable hybrid SF+SPLADE scoring")
     p_bm.add_argument("--no-splade", dest="splade", action="store_false", help="Disable SPLADE hybrid scoring")
     p_bm.add_argument("--min-freq", type=int, default=1,
                        help="Min document frequency to keep a phrase (default: 1)")
@@ -1334,7 +1336,7 @@ def cli_main():
                        help="Apply 3x3 spatial adjacency kernel to query fingerprint before scoring")
     p_all.add_argument("--hybrid", action="store_true", help="Enable hybrid SF+BM25 scoring")
     p_all.add_argument("--hybrid-alpha", type=float, default=0.5, help="SF weight in hybrid mode")
-    p_all.add_argument("--splade", action="store_true", default=True, help="Enable hybrid SF+SPLADE scoring (default: True)")
+    p_all.add_argument("--splade", action="store_true", default=None, help="Enable hybrid SF+SPLADE scoring")
     p_all.add_argument("--no-splade", dest="splade", action="store_false", help="Disable SPLADE hybrid scoring")
     p_all.add_argument("--min-freq", type=int, default=1,
                        help="Min document frequency to keep a phrase (default: 1)")
@@ -1468,7 +1470,7 @@ def cli_main():
         params["hybrid_alpha"] = args.hybrid_alpha
     if "hybrid_alpha" not in params:
         params["hybrid_alpha"] = registry_params.get("splade_alpha", params.get("hybrid_alpha", 0.3))
-    if hasattr(args, "splade"):
+    if hasattr(args, "splade") and args.splade is not None:
         # CLI always wins; registry is merely a base default
         params["splade"] = args.splade
         params["splade_model"] = args.splade_model
