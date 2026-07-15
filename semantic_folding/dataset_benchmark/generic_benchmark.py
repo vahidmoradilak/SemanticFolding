@@ -292,7 +292,7 @@ def build_combined_corpus(entries: List[dict]):
         doc_ids = []
         gold_ids = []
         for p in entry["paragraphs"]:
-            key = (p.get("title", ""), p.get("paragraph_text", ""))
+            key = p.get("paragraph_text", "")
             if key not in seen:
                 gid = f"doc_{next_id:06d}"
                 seen[key] = gid
