@@ -334,6 +334,105 @@ runs:
     path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\belebele_benchmark\benchmarks\benchmark_20260707_163308
     status: completed
     type: benchmark
+  belebele__benchmark_20260714_153743:
+    created_at: '2026-07-14T15:37:44.122297'
+    dataset: belebele
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\runs\run_20260714_153302\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\benchmarks\benchmark_20260714_153743
+    status: failed_batch
+    type: benchmark
+  belebele__benchmark_20260714_154356:
+    created_at: '2026-07-14T15:43:56.539672'
+    dataset: belebele
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\runs\run_20260714_153932\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\benchmarks\benchmark_20260714_154356
+    status: completed
+    type: benchmark
+  belebele__benchmark_20260714_154522:
+    created_at: '2026-07-14T15:45:23.351389'
+    dataset: belebele
+    params:
+      grid_size: '0'
+      keep_verbs: 'False'
+      min_freq: '1'
+      min_word_length: '0'
+      smoothing_sigma: '0'
+      spreading_steps: '0'
+      top_k: '5'
+      weighting: bm25
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\benchmarks\benchmark_20260714_154522
+    status: completed
+    type: bm25_benchmark
   belebele__run_20260707_163143:
     created_at: '2026-07-07T16:31:43.482467'
     dataset: belebele
@@ -399,6 +498,216 @@ runs:
       use_morton: 'True'
       weighting: idf
     path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\belebele_benchmark\runs\run_20260707_163143
+    status: completed
+    type: index
+  belebele__run_20260714_152511:
+    created_at: '2026-07-14T15:25:12.082749'
+    dataset: belebele
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\outputs\belebele_benchmark\runs\run_20260714_152511\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\outputs\belebele_benchmark\runs\run_20260714_152511
+    status: failed_step1
+    type: index
+  belebele__run_20260714_152711:
+    created_at: '2026-07-14T15:27:12.320328'
+    dataset: belebele
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\outputs\belebele_benchmark\runs\run_20260714_152711\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\outputs\belebele_benchmark\runs\run_20260714_152711
+    status: failed_step1
+    type: index
+  belebele__run_20260714_153144:
+    created_at: '2026-07-14T15:31:44.732851'
+    dataset: belebele
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\runs\run_20260714_153144\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\runs\run_20260714_153144
+    status: failed_step1
+    type: index
+  belebele__run_20260714_153302:
+    created_at: '2026-07-14T15:33:02.427073'
+    dataset: belebele
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\runs\run_20260714_153302\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\runs\run_20260714_153302
+    status: completed
+    type: index
+  belebele__run_20260714_153932:
+    created_at: '2026-07-14T15:39:32.457334'
+    dataset: belebele
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\runs\run_20260714_153932\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\belebele_benchmark\runs\run_20260714_153932
     status: completed
     type: index
   hotpotqa__benchmark_20260707_145440:
@@ -870,6 +1179,63 @@ runs:
     path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\narrativeqa_benchmark\benchmarks\benchmark_20260708_001629
     status: completed
     type: benchmark
+  narrativeqa__benchmark_20260714_161526:
+    created_at: '2026-07-14T16:15:26.200581'
+    dataset: narrativeqa
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\narrativeqa_benchmark\runs\run_20260714_161340\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\narrativeqa_benchmark\benchmarks\benchmark_20260714_161526
+    status: completed
+    type: benchmark
+  narrativeqa__benchmark_20260714_161549:
+    created_at: '2026-07-14T16:15:49.248680'
+    dataset: narrativeqa
+    params:
+      grid_size: '0'
+      keep_verbs: 'False'
+      min_freq: '1'
+      min_word_length: '0'
+      smoothing_sigma: '0'
+      spreading_steps: '0'
+      top_k: '5'
+      weighting: bm25
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\narrativeqa_benchmark\benchmarks\benchmark_20260714_161549
+    status: completed
+    type: bm25_benchmark
   narrativeqa__run_20260707_142719:
     created_at: '2026-07-07T14:27:19.976460'
     dataset: narrativeqa
@@ -1069,6 +1435,48 @@ runs:
       use_morton: 'True'
       weighting: idf
     path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\narrativeqa_benchmark\runs\run_20260708_001443
+    status: completed
+    type: index
+  narrativeqa__run_20260714_161340:
+    created_at: '2026-07-14T16:13:40.737544'
+    dataset: narrativeqa
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\narrativeqa_benchmark\runs\run_20260714_161340\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\narrativeqa_benchmark\runs\run_20260714_161340
     status: completed
     type: index
   nq_rear__benchmark_20260707_154015:
@@ -1473,6 +1881,105 @@ runs:
     path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\popqa_benchmark\benchmarks\benchmark_20260707_142134
     status: completed
     type: benchmark
+  popqa__benchmark_20260714_162809:
+    created_at: '2026-07-14T16:28:09.567832'
+    dataset: popqa
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\popqa_benchmark\runs\run_20260714_161603\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\popqa_benchmark\benchmarks\benchmark_20260714_162809
+    status: failed_batch
+    type: benchmark
+  popqa__benchmark_20260714_164743:
+    created_at: '2026-07-14T16:47:43.931033'
+    dataset: popqa
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\popqa_benchmark\runs\run_20260714_163450\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\popqa_benchmark\benchmarks\benchmark_20260714_164743
+    status: completed
+    type: benchmark
+  popqa__benchmark_20260714_171629:
+    created_at: '2026-07-14T17:16:30.197145'
+    dataset: popqa
+    params:
+      grid_size: '0'
+      keep_verbs: 'False'
+      min_freq: '1'
+      min_word_length: '0'
+      smoothing_sigma: '0'
+      spreading_steps: '0'
+      top_k: '5'
+      weighting: bm25
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\popqa_benchmark\benchmarks\benchmark_20260714_171629
+    status: completed
+    type: bm25_benchmark
   popqa__run_20260707_141057:
     created_at: '2026-07-07T14:10:57.228517'
     dataset: popqa
@@ -1605,5 +2112,188 @@ runs:
       use_morton: 'True'
       weighting: idf
     path: E:\PHD\GraphRag-Implementations\YaALI\knowledge-graph-builder\outputs\popqa_benchmark\runs\run_20260707_141956
+    status: completed
+    type: index
+  popqa__run_20260714_161603:
+    created_at: '2026-07-14T16:16:03.771865'
+    dataset: popqa
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\popqa_benchmark\runs\run_20260714_161603\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\popqa_benchmark\runs\run_20260714_161603
+    status: completed
+    type: index
+  popqa__run_20260714_163450:
+    created_at: '2026-07-14T16:34:50.739676'
+    dataset: popqa
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\popqa_benchmark\runs\run_20260714_163450\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\popqa_benchmark\runs\run_20260714_163450
+    status: completed
+    type: index
+  pubmedqa__benchmark_20260714_155733:
+    created_at: '2026-07-14T15:57:33.396684'
+    dataset: pubmedqa
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\pubmedqa_benchmark\runs\run_20260714_154610\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\pubmedqa_benchmark\benchmarks\benchmark_20260714_155733
+    status: completed
+    type: benchmark
+  pubmedqa__benchmark_20260714_161222:
+    created_at: '2026-07-14T16:12:22.804339'
+    dataset: pubmedqa
+    params:
+      grid_size: '0'
+      keep_verbs: 'False'
+      min_freq: '1'
+      min_word_length: '0'
+      smoothing_sigma: '0'
+      spreading_steps: '0'
+      top_k: '5'
+      weighting: bm25
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\pubmedqa_benchmark\benchmarks\benchmark_20260714_161222
+    status: completed
+    type: bm25_benchmark
+  pubmedqa__run_20260714_154610:
+    created_at: '2026-07-14T15:46:10.320043'
+    dataset: pubmedqa
+    params:
+      attention_temperature: '1.0'
+      block_size: '8'
+      corpus_path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\pubmedqa_benchmark\runs\run_20260714_154610\corpus.txt
+      cross_attention: 'False'
+      doc_norm: l2
+      dynamic_spreading: 'False'
+      grid_size: '64'
+      hybrid_alpha: '0.3'
+      keep_verbs: 'True'
+      max_doc_freq: '20'
+      method: umap
+      min_freq: '1'
+      min_word_length: '3'
+      morton: 'True'
+      normalization: l2
+      normalize_after_spreading: 'False'
+      oov_expansion: 'False'
+      short_query_max_words: '10'
+      smoothing_sigma: '1.5'
+      snippet_ranking: 'False'
+      snippet_stride: '2'
+      snippet_window: '3'
+      splade: 'False'
+      spreading_decay: '0.5'
+      spreading_steps: '1'
+      spreading_steps_long: '1'
+      synonym_weight: '0.5'
+      top_k: '5'
+      top_percent: '0.1'
+      tsne_iter: '1000'
+      tsne_perplexity: '50'
+      umap_metric: cosine
+      umap_min_dist: '0.0'
+      umap_n_neighbors: '15'
+      weighting: idf
+    path: D:\darsi\ms\Thesis\Dr.Banaie\code050302\SemanticFolding\outputs\pubmedqa_benchmark\runs\run_20260714_154610
     status: completed
     type: index

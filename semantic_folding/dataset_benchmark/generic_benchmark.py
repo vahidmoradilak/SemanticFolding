@@ -6,7 +6,7 @@ has been converted to MuSiQue-like JSONL format.
 
 Three phases:
   Phase 1 (index)    — Build combined corpus from unique paragraphs, run Steps 1-5
-  Phase 2 (benchmark)— Run Step 6 per query against pre-built fingerprints
+  Phase 2 (benchmark)— Run Step 7 per query against pre-built fingerprints
   Phase 3 (report)   — Generate markdown report + deep analysis
 
 Usage:
@@ -26,6 +26,7 @@ Usage:
 import argparse
 import csv
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -49,7 +50,7 @@ logger = get_logger("generic_bench")
 # Paths
 # ============================================================================
 SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parents[2]  # dataset_benchmark -> semantic_folding -> project root
+PROJECT_ROOT = SCRIPT_DIR.parents[1]  # dataset_benchmark -> semantic_folding -> project root
 SEMANTIC_FOLDING = PROJECT_ROOT / "semantic_folding"
 DATA_DIR = PROJECT_ROOT / "data"
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
@@ -73,10 +74,10 @@ PIPELINE_DEFAULTS = {
     "keep_verbs": True,
     "min_word_length": 3,
     "min_freq": 1,
-    "max_doc_freq": 20,
+    "max_doc_freq": 0,
     "morton": True,
     "method": "umap",
-    "tsne_perplexity": 50,
+    "perplexity": 50,
     "tsne_iter": 1000,
     "umap_n_neighbors": 15,
     "umap_min_dist": 0.0,
@@ -87,8 +88,8 @@ PIPELINE_DEFAULTS = {
     "short_query_max_words": 10,
     "spreading_steps_long": 1,
     "doc_norm": "l2",
-    "splade": False,
-    "hybrid_alpha": 0.3,
+    "splade": True,
+    "hybrid_alpha": 0.5,
     # New feature defaults
     "spreading_decay": 0.5,
     "normalize_after_spreading": False,
@@ -101,6 +102,30 @@ PIPELINE_DEFAULTS = {
     "cross_attention": False,
     "oov_expansion": False,
     "synonym_weight": 0.5,
+    # === Advanced pipeline parameters ===
+    "adaptive_spreading": False,
+    "asymmetric": False,
+    "asym_alpha": 0.7,
+    "decompose": False,
+    "fusion_method": "rrf",
+    "geometric": False,
+    "hybrid": False,
+    "llm_batch_size": 4,
+    "multi_resolution": False,
+    "negation_aware": False,
+    "negation_boost": 0.3,
+    "negation_penalty": 0.5,
+    "rerank": False,
+    "rerank_model": None,
+    "rerank_top_k": 100,
+    "rrf_k": 60,
+    "score_norm": "none",
+    "sim_metric": "cosine",
+    "splade_alpha": 0.3,
+    "splade_model": "naver/splade-cocondenser-ensembledistil",
+    "storage": "file",
+    "tfidf_alpha": 0.3,
+    "tfidf_rerank": False,
 }
 
 # ============================================================================
@@ -233,9 +258,11 @@ def run_step(script: Path, args: List[str], workdir: Path, step_name: str,
     cmd = [sys.executable, str(script)] + args
     logger.info(f"  [{step_name}] starting...")
     try:
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
         result = subprocess.run(
             cmd, cwd=str(workdir), capture_output=True, text=True,
-            timeout=timeout, encoding="utf-8", errors="replace",
+            timeout=timeout, encoding="utf-8", errors="replace", env=env,
         )
         if result.returncode != 0:
             stderr_tail = result.stderr[-800:].replace("\n", " | ")
@@ -439,7 +466,6 @@ class GenericBenchmarkRunner:
                 "--corpus", str(corpus_path), "--output", str(out),
                 "--keep-verbs", "--min-word-length", str(self.params["min_word_length"]),
                 "--min-freq", str(self.params["min_freq"]),
-                "--max-doc-freq", str(self.params.get("max_doc_freq", 0)),
             ], PROJECT_ROOT, "Step 1 phrase_extractor")
             if not ok:
                 update_run_status(run_dir, self.adapter.dataset_name, "failed_step1")
@@ -490,7 +516,7 @@ class GenericBenchmarkRunner:
         ]
         if self.params["method"] == "tsne":
             step3_args.extend([
-                "--perplexity", str(self.params["tsne_perplexity"]),
+                "--perplexity", str(self.params["perplexity"]),
                 "--tsne-iter", str(self.params["tsne_iter"]),
             ])
         elif self.params["method"] == "umap":
@@ -696,8 +722,6 @@ class GenericBenchmarkRunner:
             if fusion_method == "rrf":
                 step6_args.extend(["--fusion-method", "rrf"])
                 step6_args.extend(["--rrf-k", str(self.params.get("rrf_k", 60))])
-        if self.params.get("doc_norm", "sqrt_nnz") != "sqrt_nnz":
-            step6_args.extend(["--doc-norm", self.params["doc_norm"]])
         if self.params.get("sim_metric", "cosine") != "cosine":
             step6_args.extend(["--sim-metric", self.params["sim_metric"]])
         if self.params.get("asymmetric", False):
@@ -760,10 +784,6 @@ class GenericBenchmarkRunner:
         # ── Query normalisation ────────────────────────────────────────────────
         if self.params.get("normalization", "l2") != "l2":
             step6_args.extend(["--normalization", self.params["normalization"]])
-
-        # ── OOV expansion ──────────────────────────────────────────────────────
-        if not self.params.get("oov_expansion", True):
-            step6_args.append("--no-oov-expansion")
 
         # ── Synonym weight ─────────────────────────────────────────────────────
         if self.params.get("synonym_weight", 0.5) != 0.5:
@@ -1430,7 +1450,7 @@ def cli_main():
         params["weighting"] = args.weighting
         params["smoothing_sigma"] = args.smoothing_sigma
         params["morton"] = not args.no_morton
-        params["tsne_perplexity"] = args.tsne_perplexity if hasattr(args, "tsne_perplexity") else PIPELINE_DEFAULTS["tsne_perplexity"]
+        params["perplexity"] = args.perplexity if hasattr(args, "perplexity") else PIPELINE_DEFAULTS["perplexity"]
         params["min_freq"] = args.min_freq if hasattr(args, "min_freq") else PIPELINE_DEFAULTS["min_freq"]
         # Only override max_doc_freq if user explicitly passed --max-doc-freq
         # (otherwise preserve registry value which may be > 0)
