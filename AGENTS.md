@@ -151,6 +151,52 @@ Key changes from old approach:
 - Config keys: snake_case (e.g., `grid_size`, `no_smooth`)
 - Output dirs: `snake_case` (e.g., `phrase_fingerprints`, `query_results`)
 
+## SF + SPLADE Fusion Results (Final, 2026-07-16)
+
+All results with `grid_size=64, spreading_steps=1, top_percent=0.10, weighting=idf`.
+
+### Belebele (100 queries)
+| Method | MRR | AP |
+|---|---|---|
+| Pure SF | 0.92 | 0.92 |
+| RRF | 0.94 | 0.94 |
+| **Linear α=0.3** | **0.98** | **0.98** |
+| Linear α=0.5 | 0.94 | 0.94 |
+| Linear α=0.7 | 0.92 | 0.92 |
+| BM25 | 0.995 | 0.995 |
+
+### NarrativeQA (50 queries)
+| Method | MRR | AP |
+|---|---|---|
+| Pure SF | 0.85 | 0.015 |
+| RRF | 0.95 | 0.015 |
+| **Linear α=0.3** | **0.96** | 0.0157 |
+| Linear α=0.5 | 0.86 | 0.0151 |
+| Linear α=0.7 | 0.86 | 0.0150 |
+
+### PubMedQA (311 queries)
+| Method | MRR | AP |
+|---|---|---|
+| Pure SF | 0.939 | 0.640 |
+| RRF | 0.939 | 0.654 |
+| **Linear α=0.3** | **0.961** | **0.698** |
+| Linear α=0.5 | 0.939 | 0.640 |
+| Linear α=0.7 | 0.939 | 0.640 |
+
+### PopQA (1,000 queries)
+| Method | MRR | AP |
+|---|---|---|
+| **Pure SF** | **0.84** | **0.43** |
+| Linear α=0.3 | 0.749 | 0.381 |
+| Linear α=0.5 | 0.817 | 0.416 |
+| Linear α=0.7 | 0.826 | 0.420 |
+| RRF | ~0.50 | — |
+
+### Key Takeaway
+- **Linear α=0.3** best on 3/4 datasets (Belebele, NarrativeQA, PubMedQA)
+- PopQA: SPLADE hurts regardless of method — stay pure SF
+- Full report: `outputs/fusion_comparison_report.md`
+
 ## Git Conventions
 
 - Tags follow `v<major>.<minor>` pattern (current: v3.2)

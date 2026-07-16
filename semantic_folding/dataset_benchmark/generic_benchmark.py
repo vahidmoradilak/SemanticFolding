@@ -90,7 +90,7 @@ PIPELINE_DEFAULTS = {
     "spreading_steps_long": 1,
     "doc_norm": "l2",
     "splade": False,
-    "hybrid_alpha": 0.5,
+    "hybrid_alpha": 0.3,
     # New feature defaults
     "spreading_decay": 0.5,
     "normalize_after_spreading": False,
@@ -207,7 +207,20 @@ def load_registry() -> dict:
             yaml.dump(empty, f, default_flow_style=False)
         return empty
     with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f) or {"runs": {}}
+        try:
+            data = yaml.safe_load(f)
+            if data is None or not isinstance(data, dict):
+                return {"runs": {}}
+            return data
+        except yaml.YAMLError:
+            import shutil
+            backup = REGISTRY_PATH.with_suffix(".yml.bak")
+            shutil.copy2(REGISTRY_PATH, backup)
+            print(f"  [REGISTRY] Corrupt, backed up to {backup}, starting fresh.")
+            empty = {"runs": {}}
+            with open(REGISTRY_PATH, "w") as f:
+                yaml.dump(empty, f, default_flow_style=False)
+            return empty
 
 
 def save_registry(registry: dict):
