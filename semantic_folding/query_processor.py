@@ -113,6 +113,17 @@ if not SPACY_AVAILABLE:
     from nltk.tokenize import word_tokenize as nltk_word_tokenize
     from nltk import pos_tag
 
+# ── SPLADE bootstrap ──────────────────────────────────────────────────────────
+try:
+    import torch
+    import transformers
+    SPLADE_AVAILABLE = True
+    logger.debug("torch/transformers imported for SPLADE")
+except ImportError as _e:
+    SPLADE_AVAILABLE = False
+    logger.debug(f"SPLADE unavailable: {_e}")
+    logger.warning("SPLADE not available — install torch + transformers for SPLADE scoring")
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # QUERY EXPANSION: Map OOV query terms to nearest in-vocabulary phrases
@@ -845,6 +856,172 @@ def merge_expanded_phrases(
     )
     return phrase_weights
 
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SPLADE scoring & fusion
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class SPLADEScorer:
+    """
+    SPLADE sparse vector scorer for query–document retrieval.
+
+    Encodes the corpus once at initialisation, then per-query for scoring.
+    Scores are cosine similarities between SPLADE sparse vectors.
+    """
+
+    def __init__(
+        self,
+        model_name: str = "naver/splade-cocondenser-ensembledistil",
+        corpus_path: Optional[str] = None,
+        device: str = "cpu",
+        batch_size: int = 32,
+        max_length: int = 512,
+        cache_dir: Optional[str] = None,
+    ):
+        self.device = device
+        self.batch_size = batch_size
+        self.max_length = max_length
+        self.doc_ids: List[str] = []
+        self.doc_vectors: Optional[np.ndarray] = None
+        self.doc_norms: Optional[np.ndarray] = None
+        self.cache_dir = cache_dir
+
+        logger.info(f"Loading SPLADE model: {model_name}")
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
+        self.model = transformers.AutoModelForMaskedLM.from_pretrained(model_name)
+        self.model.eval()
+        self.model.to(self.device)
+        logger.success("SPLADE model loaded")
+
+        if corpus_path:
+            self._load_corpus(corpus_path)
+            if self.cache_dir is None:
+                self.cache_dir = os.path.dirname(os.path.abspath(corpus_path))
+            self._encode_documents()
+
+    def _load_corpus(self, corpus_path: str) -> None:
+        with open(corpus_path, "r", encoding="utf-8") as f:
+            lines = [ln.rstrip("\n") for ln in f]
+        # Assign doc_ids as "doc_{i:04d}" matching Step 5 convention
+        self.doc_ids = [f"doc_{i:06d}" for i in range(len(lines))]
+        self.doc_texts = lines
+        logger.info(f"Loaded {len(self.doc_texts)} documents from {corpus_path}")
+
+    def _encode_batch(self, texts: List[str]) -> np.ndarray:
+        inp = self.tokenizer(
+            texts, return_tensors="pt", padding=True,
+            truncation=True, max_length=self.max_length,
+        )
+        inp = {k: v.to(self.device) for k, v in inp.items()}
+        with torch.no_grad():
+            out = self.model(**inp)
+            logits = out.logits if hasattr(out, "logits") else out[0]
+            # SPLADE: ReLU → max over tokens → sparse vector
+            vec, _ = torch.max(torch.relu(logits), dim=1)
+        return vec.cpu().numpy()
+
+    def _encode_documents(self) -> None:
+        if self.cache_dir:
+            cache_vec = os.path.join(self.cache_dir, "splade_doc_vectors.npy")
+            cache_nrm = os.path.join(self.cache_dir, "splade_doc_norms.npy")
+            cache_ids = os.path.join(self.cache_dir, "splade_doc_ids.txt")
+            if all(os.path.exists(p) for p in [cache_vec, cache_nrm, cache_ids]):
+                self.doc_vectors = np.load(cache_vec)
+                self.doc_norms = np.load(cache_nrm)
+                with open(cache_ids, "r") as f:
+                    self.doc_ids = [ln.strip() for ln in f]
+                logger.info(f"Loaded cached SPLADE embeddings ({self.doc_vectors.shape[0]} docs)")
+                return
+        n = len(self.doc_texts)
+        all_vecs: List[np.ndarray] = []
+        for start in range(0, n, self.batch_size):
+            batch = self.doc_texts[start:start + self.batch_size]
+            vecs = self._encode_batch(batch)
+            all_vecs.append(vecs)
+            logger.debug(f"  [SPLADE DOC] encoded {min(start + self.batch_size, n)}/{n}")
+        self.doc_vectors = np.concatenate(all_vecs, axis=0)
+        norms = np.linalg.norm(self.doc_vectors, axis=1, keepdims=True)
+        norms = np.where(norms == 0, 1e-9, norms)
+        self.doc_norms = norms
+        nnz_per_doc = (self.doc_vectors > 0).sum(axis=1)
+        logger.info(
+            f"SPLADE document vectors: {self.doc_vectors.shape}, "
+            f"mean nnz={nnz_per_doc.mean():.1f}"
+        )
+        if self.cache_dir:
+            os.makedirs(self.cache_dir, exist_ok=True)
+            np.save(cache_vec, self.doc_vectors)
+            np.save(cache_nrm, self.doc_norms)
+            with open(cache_ids, "w") as f:
+                for did in self.doc_ids:
+                    f.write(did + "\n")
+            logger.info(f"Cached SPLADE embeddings to {self.cache_dir}")
+
+    def encode_query(self, query_text: str) -> np.ndarray:
+        vec = self._encode_batch([query_text])
+        return vec[0]
+
+    def score(self, query_text: str) -> Dict[str, float]:
+        qvec = self.encode_query(query_text)
+        qnorm = np.linalg.norm(qvec)
+        if qnorm < 1e-9:
+            return {did: 0.0 for did in self.doc_ids}
+        sims = (self.doc_vectors @ qvec) / (self.doc_norms.squeeze() * qnorm)
+        return {did: float(s) for did, s in zip(self.doc_ids, sims)}
+
+
+def fuse_scores(
+    sf_scores: Dict[str, float],
+    splade_scores: Dict[str, float],
+    method: str = "rrf",
+    rrf_k: int = 60,
+    alpha: float = 0.3,
+) -> Dict[str, float]:
+    """
+    Fuse SF and SPLADE scores into a single ranking.
+
+    Parameters
+    ----------
+    sf_scores : Dict[str, float]
+        doc_id → SF cosine similarity.
+    splade_scores : Dict[str, float]
+        doc_id → SPLADE cosine similarity.
+    method : str
+        ``"linear"`` → alpha * sf + (1-alpha) * splade
+        ``"rrf"`` → 1/(k + sf_rank) + 1/(k + splade_rank)
+    rrf_k : int
+        Rank constant for RRF.
+    alpha : float
+        SF weight for linear fusion.
+
+    Returns
+    -------
+    Dict[str, float]
+        Fused score per doc_id.
+    """
+    if not sf_scores or not splade_scores:
+        return sf_scores or splade_scores
+
+    if method == "linear":
+        fused = {}
+        for doc_id in sf_scores:
+            s = alpha * sf_scores.get(doc_id, 0.0) + (1 - alpha) * splade_scores.get(doc_id, 0.0)
+            fused[doc_id] = s
+        return fused
+
+    # RRF
+    sf_ranked = [d for d, _ in sorted(sf_scores.items(), key=lambda x: -x[1])]
+    splade_ranked = [d for d, _ in sorted(splade_scores.items(), key=lambda x: -x[1])]
+    sf_rank = {d: i for i, d in enumerate(sf_ranked)}
+    splade_rank = {d: i for i, d in enumerate(splade_ranked)}
+    fused = {}
+    for doc_id in set(list(sf_scores.keys()) + list(splade_scores.keys())):
+        sr = sf_rank.get(doc_id, len(sf_ranked))
+        pr = splade_rank.get(doc_id, len(splade_ranked))
+        fused[doc_id] = 1.0 / (rrf_k + sr) + 1.0 / (rrf_k + pr)
+    return fused
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1782,6 +1959,7 @@ def process_query(
     use_morton          : bool  = True,
     phrase_fp_matrix    : Optional[np.ndarray] = None,
     phrase_to_row       : Optional[Dict[str, int]] = None,
+    splade_scorer       : Optional[SPLADEScorer] = None,
 ) -> Tuple[List[Tuple[str, float]], Dict]:
     r"""
     Process a single query through the full retrieval pipeline.
@@ -2230,6 +2408,36 @@ def process_query(
         use_morton=use_morton,
     )
 
+    # ── Stage 5: SPLADE fusion (optional) ──────────────────────────────────────
+    splade_meta: Dict = {}
+    if splade_scorer is not None:
+        logger.debug("  [STAGE 5] SPLADE fusion")
+        sf_scores = {doc_id: score for doc_id, score in results} if results else {}
+        # Also include docs that had zero SF score but are in doc_fingerprints
+        if not sf_scores:
+            sf_scores = {did: 0.0 for did in doc_fingerprints}
+        else:
+            for did in doc_fingerprints:
+                if did not in sf_scores:
+                    sf_scores[did] = 0.0
+
+        splade_scores = splade_scorer.score(query)
+        fusion_method = getattr(args, "fusion_method", "linear")
+        rrf_k = getattr(args, "rrf_k", 60)
+        alpha = getattr(args, "hybrid_alpha", 0.3)
+        fused = fuse_scores(sf_scores, splade_scores, method=fusion_method, rrf_k=rrf_k, alpha=alpha)
+
+        ranked = sorted(fused.items(), key=lambda x: -x[1])
+        top_k = getattr(args, "top_k", 10)
+        results = ranked[:top_k]
+
+        top_score = f"{results[0][1]:.4f}" if results else "n/a"
+        logger.info(
+            f"  [STAGE 5] SPLADE fusion ({fusion_method}): "
+            f"returned {len(results)} results, top_score={top_score}"
+        )
+        splade_meta = {"fusion_method": fusion_method, "rrf_k": rrf_k, "alpha": alpha}
+
     top_score = f"{results[0][1]:.4f}" if results else "n/a"
     logger.debug(
         f"  [STAGE 4] returned {len(results)} results, "
@@ -2245,6 +2453,7 @@ def process_query(
         "query_construction": query_metadata,
         "spreading"         : spreading_metadata,
         "ranking"           : ranking_metadata,
+        "splade"            : splade_meta,
     }
 
 
@@ -2374,6 +2583,32 @@ def parse_args() -> argparse.Namespace:
         help="Apply 3×3 spatial adjacency kernel before scoring. Rewards "
              "documents whose active cells are adjacent (not just overlapping) "
              "the query's active cells on the semantic grid.",
+    )
+
+    # ── SPLADE scoring & fusion ───────────────────────────────────────────────
+    parser.add_argument(
+        "--splade", action="store_true", default=False,
+        help="Enable SPLADE hybrid scoring. Requires --corpus.",
+    )
+    parser.add_argument(
+        "--splade-model", type=str, default="naver/splade-cocondenser-ensembledistil",
+        help="SPLADE model name or path.",
+    )
+    parser.add_argument(
+        "--fusion-method", type=str, default="linear", choices=["linear", "rrf"],
+        help="Fusion method for combining SF and SPLADE scores.",
+    )
+    parser.add_argument(
+        "--rrf-k", type=int, default=60,
+        help="Rank constant for RRF fusion.",
+    )
+    parser.add_argument(
+        "--hybrid-alpha", type=float, default=0.3,
+        help="Weight for SF in linear fusion: score = alpha*SF + (1-alpha)*SPLADE.",
+    )
+    parser.add_argument(
+        "--corpus", type=str, default=None,
+        help="Corpus text file (one doc per line). Required when --splade is set.",
     )
 
     # ── Output ────────────────────────────────────────────────────────────────
@@ -2578,6 +2813,24 @@ def main() -> None:
         logger.error("No queries to process.")
         sys.exit(1)
 
+    # ── Initialise SPLADE scorer if requested ──────────────────────────────────
+    splade_scorer: Optional[SPLADEScorer] = None
+    if getattr(args, "splade", False):
+        if not SPLADE_AVAILABLE:
+            logger.error("SPLADE requested but torch/transformers not installed.")
+            sys.exit(1)
+        corpus_path = getattr(args, "corpus", None)
+        if not corpus_path:
+            logger.error("--splade requires --corpus <path to corpus.txt>")
+            sys.exit(1)
+        splade_model = getattr(args, "splade_model", "naver/splade-cocondenser-ensembledistil")
+        logger.info(f"Initialising SPLADE scorer (model={splade_model})...")
+        splade_scorer = SPLADEScorer(
+            model_name=splade_model,
+            corpus_path=corpus_path,
+        )
+        logger.success("SPLADE scorer ready")
+
     logger.info(f"Processing {len(queries)} quer{'y' if len(queries) == 1 else 'ies'}.")
 
     # ── Process queries ────────────────────────────────────────────────────────
@@ -2590,6 +2843,7 @@ def main() -> None:
         pq_kwargs = dict(
             idf_weights=idf_weights,
             use_morton=use_morton,
+            splade_scorer=splade_scorer,
         )
         if not getattr(args, "simple_query", False):
             pq_kwargs["phrase_fp_matrix"] = phrase_fp_matrix
