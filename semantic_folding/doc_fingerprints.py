@@ -72,7 +72,7 @@ def main():
 
     args = parser.parse_args()
 
-    fp_matrix, doc_index_map, stats = build_doc_fingerprints(
+    fp_matrix, doc_index_map, stats, doc_norms = build_doc_fingerprints(
         corpus_path=args.corpus,
         fingerprints_path=args.fingerprints,
         idf_weights_path=args.idf_weights,
@@ -99,6 +99,7 @@ def main():
         use_morton=args.morton_encoded,
         grid_size=args.grid_size,
         file_prefix="doc",
+        doc_norms=doc_norms,
     )
 
     logger.info("Check: Step 5 complete")
