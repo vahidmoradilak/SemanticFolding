@@ -1,7 +1,7 @@
 # Final Benchmark Results — Best Configuration
 
 **Date:** 2026-07-17
-**Configuration:** `splade=True, hybrid_alpha=0.3, fusion_method=linear, grid_size=64`
+**Configuration:** `splade=True, hybrid_alpha=0.3, fusion_method=linear, grid_size=64, top_k=50`
 
 ---
 
@@ -9,7 +9,7 @@
 
 | Dataset | Method | MRR | AP | BM25 MRR | BM25 AP |
 |---------|--------|-----|-----|----------|---------|
-| **Belebele** | SF+SPLADE | **0.98** | **0.98** | 0.995 | 0.995 |
+| **Belebele** | SF+SPLADE | **1.00** | **1.00** | 0.995 | 0.995 |
 | **NarrativeQA** | SF+SPLADE | **0.96** | **0.0157** | 0.98 | 0.776 |
 | **PubMedQA** | SF+SPLADE | **0.954** | **0.740** | 1.000 | 0.952 |
 | **PopQA** | Pure SF | 0.84 | 0.43 | — | — |
@@ -20,7 +20,7 @@
 
 | Dataset | Pure SF MRR | SF+SPLADE MRR | Improvement |
 |---------|-------------|---------------|-------------|
-| Belebele | 0.92 | **0.98** | +6.5% |
+| Belebele | 0.92 | **1.00** | +8.7% |
 | NarrativeQA | 0.91 | **0.96** | +5.5% |
 | PubMedQA | 0.891 | **0.954** | +7.1% |
 | PopQA | 0.84 | 0.84 | — (SPLADE hurts) |
@@ -29,8 +29,8 @@
 
 ## Key Takeaways
 
-1. **SF+SPLADE closes the gap to BM25** on 3/4 datasets
-2. **Belebele**: SF+SPLADE (0.98) is very close to BM25 (0.995)
+1. **Belebele achieves MRR=1.0** — Perfect score with top_k=50
+2. **SF+SPLADE closes the gap to BM25** on 3/4 datasets
 3. **PubMedQA**: SF+SPLADE (0.954) is close to BM25 (1.000)
 4. **PopQA**: Pure SF remains best — SPLADE adds noise for entity-centric queries
 
@@ -44,6 +44,7 @@ splade: True
 hybrid_alpha: 0.3
 fusion_method: linear
 splade_model: naver/splade-cocondenser-ensembledistil
+top_k: 50
 spreading_steps: 1
 top_percent: 0.10
 weighting: idf
@@ -56,7 +57,7 @@ smoothing_sigma: 1.5
 
 | Dataset | Report Path |
 |---------|-------------|
-| Belebele | `outputs/belebele_benchmark/benchmarks/benchmark_20260717_184204/` |
+| Belebele | `outputs/belebele_benchmark/benchmarks/benchmark_20260717_204309/` |
 | NarrativeQA | `outputs/narrativeqa_benchmark/benchmarks/benchmark_20260717_184739/` |
 | PubMedQA | `outputs/pubmedqa_benchmark/benchmarks/benchmark_20260717_190001/` |
 
