@@ -10,7 +10,7 @@
 | Dataset | Method | MRR | AP | BM25 MRR | BM25 AP |
 |---------|--------|-----|-----|----------|---------|
 | **Belebele** | SF+SPLADE | **1.00** | **1.00** | 0.995 | 0.995 |
-| **NarrativeQA** | SF+SPLADE | **0.96** | **0.0157** | 0.98 | 0.776 |
+| **NarrativeQA** | SF+SPLADE | **1.00** | **0.1609** | 0.98 | 0.776 |
 | **PubMedQA** | SF+SPLADE | **0.954** | **0.740** | 1.000 | 0.952 |
 | **PopQA** | Pure SF | 0.84 | 0.43 | — | — |
 
@@ -21,7 +21,7 @@
 | Dataset | Pure SF MRR | SF+SPLADE MRR | Improvement |
 |---------|-------------|---------------|-------------|
 | Belebele | 0.92 | **1.00** | +8.7% |
-| NarrativeQA | 0.91 | **0.96** | +5.5% |
+| NarrativeQA | 0.91 | **1.00** | +9.9% |
 | PubMedQA | 0.891 | **0.954** | +7.1% |
 | PopQA | 0.84 | 0.84 | — (SPLADE hurts) |
 
@@ -29,7 +29,7 @@
 
 ## Key Takeaways
 
-1. **Belebele achieves MRR=1.0** — Perfect score with top_k=50
+1. **Belebele and NarrativeQA achieve MRR=1.0** — Perfect scores with top_k=50
 2. **SF+SPLADE closes the gap to BM25** on 3/4 datasets
 3. **PubMedQA**: SF+SPLADE (0.954) is close to BM25 (1.000)
 4. **PopQA**: Pure SF remains best — SPLADE adds noise for entity-centric queries
@@ -58,7 +58,7 @@ smoothing_sigma: 1.5
 | Dataset | Report Path |
 |---------|-------------|
 | Belebele | `outputs/belebele_benchmark/benchmarks/benchmark_20260717_204309/` |
-| NarrativeQA | `outputs/narrativeqa_benchmark/benchmarks/benchmark_20260717_184739/` |
+| NarrativeQA | `outputs/narrativeqa_benchmark/benchmarks/benchmark_20260717_205718/` |
 | PubMedQA | `outputs/pubmedqa_benchmark/benchmarks/benchmark_20260717_190001/` |
 
 ---
