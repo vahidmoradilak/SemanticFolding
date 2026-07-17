@@ -151,7 +151,7 @@ Key changes from old approach:
 - Config keys: snake_case (e.g., `grid_size`, `no_smooth`)
 - Output dirs: `snake_case` (e.g., `phrase_fingerprints`, `query_results`)
 
-## SF + SPLADE Fusion Results (Final, 2026-07-16)
+## SF + SPLADE Fusion Results (Verified, 2026-07-17)
 
 All results with `grid_size=64, spreading_steps=1, top_percent=0.10, weighting=idf`.
 
@@ -168,7 +168,7 @@ All results with `grid_size=64, spreading_steps=1, top_percent=0.10, weighting=i
 ### NarrativeQA (50 queries)
 | Method | MRR | AP |
 |---|---|---|
-| Pure SF | 0.85 | 0.015 |
+| Pure SF | 0.91 | 0.015 |
 | RRF | 0.95 | 0.015 |
 | **Linear α=0.3** | **0.96** | 0.0157 |
 | Linear α=0.5 | 0.86 | 0.0151 |
@@ -177,9 +177,9 @@ All results with `grid_size=64, spreading_steps=1, top_percent=0.10, weighting=i
 ### PubMedQA (311 queries)
 | Method | MRR | AP |
 |---|---|---|
-| Pure SF | 0.939 | 0.640 |
+| Pure SF | 0.891 | 0.537 |
 | RRF | 0.939 | 0.654 |
-| **Linear α=0.3** | **0.961** | **0.698** |
+| **Linear α=0.3** | **0.954** | **0.740** |
 | Linear α=0.5 | 0.939 | 0.640 |
 | Linear α=0.7 | 0.939 | 0.640 |
 
@@ -195,7 +195,7 @@ All results with `grid_size=64, spreading_steps=1, top_percent=0.10, weighting=i
 ### Key Takeaway
 - **Linear α=0.3** best on 3/4 datasets (Belebele, NarrativeQA, PubMedQA)
 - PopQA: SPLADE hurts regardless of method — stay pure SF
-- Full report: `outputs/fusion_comparison_report.md`
+- Full report: `outputs/SPLADE_FUSION_RESULTS.md`
 
 ## Git Conventions
 
