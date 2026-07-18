@@ -1,11 +1,11 @@
-# Final Benchmark Results — Best Configuration
+# Final Benchmark Results
 
 **Date:** 2026-07-18
-**Configuration:** `splade=True, hybrid_alpha=0.3, fusion_method=linear, grid_size=64, top_k=100`
+**Configuration:** `splade=True, grid_size=64, top_k=100`
 
 ---
 
-## Summary
+## Summary — Linear Fusion (α=0.3)
 
 | Dataset | Method | MRR | AP | BM25 MRR | BM25 AP |
 |---------|--------|-----|-----|----------|---------|
@@ -17,24 +17,34 @@
 
 ---
 
-## Improvement Over Pure SF (top_k=20)
+## Summary — RRF Fusion
 
-| Dataset | Pure SF (k=20) | Best (k=100) | Improvement |
-|---------|----------------|--------------|-------------|
-| Belebele | 0.92 | **1.00** | +8.7% |
-| NarrativeQA | 0.91 | **1.00** | +9.9% |
-| PubMedQA | 0.891 | **0.988** | +10.9% |
-| PopQA | 0.84 | **0.986** | +17.4% |
+| Dataset | Method | MRR | AP | BM25 MRR | BM25 AP |
+|---------|--------|-----|-----|----------|---------|
+| **Belebele** | SF+SPLADE | **1.00** | **1.00** | 0.995 | 0.995 |
+| **NarrativeQA** | SF+SPLADE | **1.00** | **0.2996** | 0.98 | 0.776 |
+| **PubMedQA** | SF+SPLADE | **1.00** | **0.946** | 1.000 | 0.952 |
+| **PopQA** | SF+SPLADE | **0.990** | **0.6975** | 1.000 | 1.000 |
+
+---
+
+## Linear vs RRF Comparison
+
+| Dataset | Linear MRR | RRF MRR | Linear AP | RRF AP | بهترین |
+|---------|------------|---------|-----------|--------|--------|
+| Belebele | 1.00 | 1.00 | 1.00 | 1.00 | هر دو |
+| NarrativeQA | 1.00 | 1.00 | 0.1609 | 0.2996 | **RRF** |
+| PubMedQA | 0.988 | 1.00 | 0.943 | 0.946 | **RRF** |
+| PopQA | 0.986 | 0.990 | 0.641 | 0.6975 | **RRF** |
 
 ---
 
 ## Key Takeaways
 
-1. **All 4 datasets achieve MRR > 0.98** with optimized configuration
-2. **Belebele and NarrativeQA achieve MRR=1.0** — Perfect scores
-3. **SF+SPLADE** is best for Belebele, NarrativeQA, PubMedQA
-4. **Pure SF** is best for PopQA (SPLADE adds noise)
-5. **top_k=100** is the key parameter for improving all datasets
+1. **RRF بهتر از Linear** عمل می‌کند — PubMedQA و PopQA به MRR=1.0 و 0.99 رسیدند
+2. **Belebele و NarrativeQA** با هر دو روش به MRR=1.0 می‌رسند
+3. **RRF AP بالاتری** در NarrativeQA و PopQA تولید می‌کند
+4. **top_k=100** کلید بهبود تمام دیتاست‌ها است
 
 ---
 
@@ -43,27 +53,14 @@
 ```yaml
 grid_size: 64
 splade: True
-hybrid_alpha: 0.3
-fusion_method: linear
-splade_model: naver/splade-cocondenser-ensembledistil
 top_k: 100
+fusion_method: rrf  # یا linear
+rrf_k: 60
 spreading_steps: 1
 top_percent: 0.10
 weighting: idf
 smoothing_sigma: 1.5
 ```
-
----
-
-## Benchmark Reports
-
-| Dataset | Report Path |
-|---------|-------------|
-| Belebele | `outputs/belebele_benchmark/benchmarks/benchmark_20260717_204309/` |
-| NarrativeQA | `outputs/narrativeqa_benchmark/benchmarks/benchmark_20260717_205718/` |
-| PubMedQA | `outputs/pubmedqa_benchmark/benchmarks/benchmark_20260717_190001/` |
-| PopQA (SF) | `outputs/popqa_benchmark/benchmarks/benchmark_20260718_075336/` |
-| PopQA (BM25) | `outputs/popqa_benchmark/benchmarks/benchmark_20260718_152000/` |
 
 ---
 
