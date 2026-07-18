@@ -40,7 +40,7 @@ axes[0].set_ylabel('MRR', fontsize=12)
 axes[0].set_title('MRR Comparison Across Datasets', fontsize=14, fontweight='bold')
 axes[0].set_xticks(x)
 axes[0].set_xticklabels(datasets, fontsize=10)
-axes[0].legend(loc='lower right', fontsize=9)
+axes[0].legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=4, fontsize=9)
 axes[0].set_ylim(0.7, 1.05)
 
 # Add value labels
@@ -67,7 +67,7 @@ axes[1].set_ylabel('AP', fontsize=12)
 axes[1].set_title('AP Comparison Across Datasets', fontsize=14, fontweight='bold')
 axes[1].set_xticks(x)
 axes[1].set_xticklabels(datasets, fontsize=10)
-axes[1].legend(loc='lower right', fontsize=9)
+axes[1].legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, fontsize=9)
 axes[1].set_ylim(0, 1.1)
 
 # Add value labels
