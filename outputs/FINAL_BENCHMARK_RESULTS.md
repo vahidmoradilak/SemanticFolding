@@ -1,6 +1,6 @@
 # Final Benchmark Results — Best Configuration
 
-**Date:** 2026-07-17
+**Date:** 2026-07-18
 **Configuration:** `splade=True, hybrid_alpha=0.3, fusion_method=linear, grid_size=64, top_k=100`
 
 ---
@@ -12,27 +12,28 @@
 | **Belebele** | SF+SPLADE | **1.00** | **1.00** | 0.995 | 0.995 |
 | **NarrativeQA** | SF+SPLADE | **1.00** | **0.1609** | 0.98 | 0.776 |
 | **PubMedQA** | SF+SPLADE | **0.988** | **0.943** | 1.000 | 0.952 |
-| **PopQA** | Pure SF | 0.84 | 0.43 | — | — |
+| **PopQA** | Pure SF | **0.986** | **0.641** | — | — |
 
 ---
 
-## Improvement Over Pure SF
+## Improvement Over Pure SF (top_k=20)
 
-| Dataset | Pure SF MRR | SF+SPLADE MRR | Improvement |
-|---------|-------------|---------------|-------------|
+| Dataset | Pure SF (k=20) | Best (k=100) | Improvement |
+|---------|----------------|--------------|-------------|
 | Belebele | 0.92 | **1.00** | +8.7% |
 | NarrativeQA | 0.91 | **1.00** | +9.9% |
 | PubMedQA | 0.891 | **0.988** | +10.9% |
-| PopQA | 0.84 | 0.84 | — (SPLADE hurts) |
+| PopQA | 0.84 | **0.986** | +17.4% |
 
 ---
 
 ## Key Takeaways
 
-1. **Belebele and NarrativeQA achieve MRR=1.0** — Perfect scores
-2. **PubMedQA MRR=0.988** — 2 queries remain failing (fundamental semantic mismatch)
-3. **SF+SPLADE closes the gap to BM25** on 3/4 datasets
-4. **PopQA**: Pure SF remains best — SPLADE adds noise for entity-centric queries
+1. **All 4 datasets achieve MRR > 0.98** with optimized configuration
+2. **Belebele and NarrativeQA achieve MRR=1.0** — Perfect scores
+3. **SF+SPLADE** is best for Belebele, NarrativeQA, PubMedQA
+4. **Pure SF** is best for PopQA (SPLADE adds noise)
+5. **top_k=100** is the key parameter for improving all datasets
 
 ---
 
