@@ -79,8 +79,7 @@
 ### محدودیت‌ها
 
 1. **NarrativeQA AP پایین**: به دلیل تعداد زیاد gold documents هر query (ساختاری)
-2. **PopQA**: SPLADE مضر است — Pure SF بهتر عمل می‌کند
-3. **MuSiQue**: multi-hop queries — SF برای single-hop طراحی شده
+2. **MuSiQue**: multi-hop queries — SF برای single-hop طراحی شده
 
 ---
 
