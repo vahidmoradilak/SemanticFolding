@@ -12,7 +12,7 @@
 | **Belebele** | SF+SPLADE | **1.00** | **1.00** | 0.995 | 0.995 |
 | **NarrativeQA** | SF+SPLADE | **1.00** | **0.1609** | 0.98 | 0.776 |
 | **PubMedQA** | SF+SPLADE | **0.988** | **0.943** | 1.000 | 0.952 |
-| **PopQA** | Pure SF | **0.986** | **0.641** | — | — |
+| **PopQA** | Pure SF | **0.986** | **0.641** | 1.000 | 1.000 |
 
 ---
 
@@ -61,6 +61,8 @@ smoothing_sigma: 1.5
 | Belebele | `outputs/belebele_benchmark/benchmarks/benchmark_20260717_204309/` |
 | NarrativeQA | `outputs/narrativeqa_benchmark/benchmarks/benchmark_20260717_205718/` |
 | PubMedQA | `outputs/pubmedqa_benchmark/benchmarks/benchmark_20260717_190001/` |
+| PopQA (SF) | `outputs/popqa_benchmark/benchmarks/benchmark_20260718_075336/` |
+| PopQA (BM25) | `outputs/popqa_benchmark/benchmarks/benchmark_20260718_152000/` |
 
 ---
 
