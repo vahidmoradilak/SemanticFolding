@@ -14,7 +14,7 @@ from .hotpotqa_adapter import HotpotQAAdapter
 from .twowiki_adapter import TwoWikiMultihopQAAdapter
 from .beir_adapter import (
     NFCorpusAdapter, SciFactAdapter, QuoraAdapter,
-    TRECCOVIDAdapter, DBPediaAdapter,
+    TRECCOVIDAdapter, DBPediaAdapter, SciDocsAdapter,
 )
 from ._stubs import (
     SciDQAAdapter,
@@ -48,6 +48,7 @@ ADAPTER_REGISTRY = {
     "trec_covid": TRECCOVIDAdapter,
     "dbpedia-entity": DBPediaAdapter,
     "dbpedia": DBPediaAdapter,
+    "scidocs": SciDocsAdapter,
     "sf_custom": lambda **kwargs: type('SFCustomAdapter', (object,), {
         'dataset_name': 'sf_custom',
         'display_name': 'SF Custom Corpus',
