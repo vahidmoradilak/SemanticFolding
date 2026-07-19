@@ -33,6 +33,7 @@ if SPACY_AVAILABLE:
 
 from lib import (
     xy_to_morton,
+    xy_to_morton_vectorized,
     morton_to_xy,
     compute_fingerprint_diversity,
     expand_phrases,
@@ -77,6 +78,7 @@ def write_outputs(
     use_morton    : bool,
     grid_size     : int,
     file_prefix   : str = "doc",
+    doc_norms     : Optional[np.ndarray] = None,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -84,7 +86,11 @@ def write_outputs(
     meta_path  = output_dir / f"{file_prefix}_fingerprints_meta.json"
     stats_path = output_dir / f"{file_prefix}_fingerprints_stats.json"
 
-    np.savez_compressed(str(npz_path), fingerprints=fingerprints)
+    # Save fingerprints and optional precomputed norms
+    save_dict = {"fingerprints": fingerprints}
+    if doc_norms is not None:
+        save_dict["doc_norms"] = doc_norms
+    np.savez_compressed(str(npz_path), **save_dict)
     logger.info(f"Fingerprint matrix written -> {npz_path}  shape={fingerprints.shape}")
 
     meta_dict = {
@@ -259,7 +265,13 @@ def build_document_fingerprint_2d(
         weight = term_freq * idf
         total_weight += weight
 
-        np.add.at(grid_2d, (index_to_xy[:, 0], index_to_xy[:, 1]), weight * vec_1d)
+        # Vectorized scatter: only process non-zero elements
+        nz_mask = vec_1d != 0
+        if np.any(nz_mask):
+            nz_indices = np.where(nz_mask)[0]
+            nz_coords = index_to_xy[nz_indices]  # shape: (nnz, 2)
+            nz_values = weight * vec_1d[nz_indices]
+            np.add.at(grid_2d, (nz_coords[:, 0], nz_coords[:, 1]), nz_values)
 
         logger.debug(
             f"    + '{phrase[:40]}': TF={term_freq}, IDF={idf:.3f}, "
@@ -408,11 +420,11 @@ def sparsify_to_sdr_topological(
 
     result_1d = np.zeros(grid_size * grid_size, dtype=np.float32)
 
-    for y in range(grid_size):
-        for x in range(grid_size):
-            if result_2d[y, x] > 0:
-                morton_idx = xy_to_morton(x, y, grid_size)
-                result_1d[morton_idx] = result_2d[y, x]
+    # Vectorized Morton encoding
+    nz_y, nz_x = np.nonzero(result_2d)
+    if nz_y.size > 0:
+        morton_indices = xy_to_morton_vectorized(nz_x, nz_y)
+        result_1d[morton_indices] = result_2d[nz_y, nz_x]
 
     final_nnz_1d = np.count_nonzero(result_1d)
     logger.debug(f"  -> Flattened to 1D (Morton): nnz={final_nnz_1d}")
@@ -583,6 +595,10 @@ def build_fingerprints(
     fp_matrix = np.vstack([fp.toarray() for fp in fp_list]).astype(np.float32)
     logger.info(f"  -> Final shape: {fp_matrix.shape}")
 
+    logger.info("Precomputing document L2 norms...")
+    doc_norms = np.sqrt(np.sum(fp_matrix ** 2, axis=1)).astype(np.float32)
+    logger.info(f"  -> Computed norms for {len(doc_norms)} documents")
+
     logger.info("Computing statistics...")
 
     sparsity_per_doc = [np.count_nonzero(row) / total_bits for row in fp_matrix]
@@ -629,4 +645,4 @@ def build_fingerprints(
 
     logger.info("=" * 70)
 
-    return fp_matrix, doc_index_map, stats
+    return fp_matrix, doc_index_map, stats, doc_norms

@@ -157,7 +157,7 @@ def get_wordnet_pos(treebank_tag):
     else:
         return wordnet.NOUN
 
-@lru_cache(maxsize=10000)
+@lru_cache(maxsize=50000)
 def lemmatize_token(word: str, pos_tag: str) -> str:
     """
     Lemmatize a single token with POS-aware processing and caching.
@@ -263,7 +263,7 @@ def _is_functional_verb(word: str, tag: str, next_tag: Optional[str] = None) -> 
         return True
     return False
 
-@lru_cache(maxsize=2048)
+@lru_cache(maxsize=32768)
 def normalize_phrase(text: str, remove_verbs: bool = True) -> Optional[str]:
     """
     Normalize a raw phrase string into a canonical form suitable for indexing.
@@ -1522,6 +1522,28 @@ def xy_to_morton(x: int, y: int, grid_size: int = None) -> int:
         39
     """
     return _spread_bits(x) | (_spread_bits(y) << 1)
+
+
+def xy_to_morton_vectorized(xs: np.ndarray, ys: np.ndarray) -> np.ndarray:
+    """
+    Vectorized Morton encoding for arrays of coordinates.
+
+    Args:
+        xs: 1D array of X coordinates (non-negative integers)
+        ys: 1D array of Y coordinates (non-negative integers)
+
+    Returns:
+        1D array of Morton codes (same length as input)
+    """
+    def _spread_bits_vec(v: np.ndarray) -> np.ndarray:
+        v = v.astype(np.uint32) & 0x0000FFFF
+        v = (v | (v << 8)) & 0x00FF00FF
+        v = (v | (v << 4)) & 0x0F0F0F0F
+        v = (v | (v << 2)) & 0x33333333
+        v = (v | (v << 1)) & 0x55555555
+        return v
+
+    return _spread_bits_vec(xs) | (_spread_bits_vec(ys) << 1)
 
 
 def morton_to_xy(index: int, grid_size: int = None) -> Tuple[int, int]:

@@ -67,6 +67,7 @@ from phrase_extractor import (
 )
 from lib import (
     xy_to_morton,
+    xy_to_morton_vectorized,
     morton_to_xy,
     expand_phrases,
     get_zorder_neighbors,
@@ -1527,12 +1528,10 @@ def _flatten_grid(grid: np.ndarray, use_morton: bool) -> np.ndarray:
         return grid.flatten()
     grid_size = grid.shape[0]
     flat = np.zeros(grid_size * grid_size, dtype=grid.dtype)
-    for y in range(grid_size):
-        for x in range(grid_size):
-            val = grid[y, x]
-            if val != 0:
-                idx = xy_to_morton(x, y, grid_size)
-                flat[idx] = val
+    nz_y, nz_x = np.nonzero(grid)
+    if nz_y.size > 0:
+        indices = xy_to_morton_vectorized(nz_x, nz_y)
+        flat[indices] = grid[nz_y, nz_x]
     return flat
 
 
@@ -1802,25 +1801,39 @@ def rank_documents(
     all_scores: List[Tuple[str, float]] = []
     skipped_empty = 0
 
+    # Batch scoring: stack all doc fingerprints and compute scores in one pass
+    doc_ids = []
+    doc_fps = []
     for doc_id, doc_fp in doc_fingerprints.items():
         if doc_fp.nnz == 0:
             skipped_empty += 1
             logger.debug(f"  [RANK SKIP] '{doc_id}' has zero active bits")
             continue
+        doc_ids.append(doc_id)
+        doc_fps.append(doc_fp)
 
-        raw_dot = float(query_fp.dot(doc_fp.T).toarray()[0, 0])
-        # Proper cosine: actual L2 norm for both query and document
-        doc_norm = np.sqrt(doc_fp.power(2).sum())
-        score    = raw_dot / (query_norm * doc_norm) if doc_norm > 1e-9 else 0.0
+    if doc_fps:
+        from scipy.sparse import vstack
+        doc_matrix = vstack(doc_fps, format='csr')
+
+        # Single batch matrix-vector product: (1, D) @ (D, N) = (1, N)
+        all_dots = query_fp.dot(doc_matrix.T).toarray().ravel()
+
+        # Batch document norms
+        doc_norms = np.sqrt(doc_matrix.power(2).sum(axis=1)).A1
+
+        # Cosine similarity for all documents at once
+        valid_mask = doc_norms > 1e-9
+        scores = np.zeros(len(doc_ids))
+        scores[valid_mask] = all_dots[valid_mask] / (query_norm * doc_norms[valid_mask])
+
+        all_scores = [(doc_ids[i], float(scores[i])) for i in range(len(doc_ids))]
 
         logger.debug(
-            f"  [RANK SCORE] '{doc_id}' raw_dot={raw_dot:.4f}, "
-            f"doc_nnz={doc_fp.nnz}, doc_norm={doc_norm:.4f}, "
-            f"query_norm={query_norm:.4f}, score={score:.4f}"
+            f"  [RANK BATCH] scored {len(doc_ids)} documents in one pass, "
+            f"skipped {skipped_empty} empty"
         )
-        all_scores.append((doc_id, score))
-
-    if skipped_empty:
+    elif skipped_empty:
         logger.debug(f"  [RANK] skipped {skipped_empty} empty document fingerprints")
 
     if not all_scores:

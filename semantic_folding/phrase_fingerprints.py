@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 import numpy as np
 
-from lib import get_logger, xy_to_morton
+from lib import get_logger, xy_to_morton, xy_to_morton_vectorized
 logger = get_logger("phrase_fingerprints")
 
 """
@@ -328,12 +328,14 @@ def build_and_smooth_fingerprint(
     vector_size = grid_size * grid_size
     fp = np.zeros(vector_size, dtype=np.float32)
 
-    for y in range(grid_size):
-        for x in range(grid_size):
-            val = grid_2d[y, x]
-            if val > 0:
-                idx = xy_to_morton(x, y, grid_size) if use_morton else (y * grid_size + x)
-                fp[idx] = val
+    # Vectorized: find non-zero cells and compute indices directly
+    nz_y, nz_x = np.nonzero(grid_2d)
+    if nz_y.size > 0:
+        if use_morton:
+            indices = xy_to_morton_vectorized(nz_x, nz_y)
+        else:
+            indices = nz_y * grid_size + nz_x
+        fp[indices] = grid_2d[nz_y, nz_x]
 
     return fp
 
