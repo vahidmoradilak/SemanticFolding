@@ -721,7 +721,7 @@ def _pseudo_fingerprint(term: str, grid_size: int = 128) -> np.ndarray:
     return vec
 
 def merge_expanded_phrases(
-    matched_phrases  : List[str],
+    matched_phrases  : Union[List[str], Dict[str, float]],
     oov_expansions   : Dict[str, List[Tuple[str, float]]],
     idf_weights      : Optional[Dict[str, float]] = None,
     expansion_weight : float = 0.6,
@@ -812,10 +812,17 @@ def merge_expanded_phrases(
     # ------------------------------------------------------------------
     # Direct matches — full IDF weight (or 1.0 if no IDF table provided)
     # ------------------------------------------------------------------
-    for phrase in matched_phrases:
-        base_weight = idf_weights.get(phrase, 1.0) if idf_weights else 1.0
-        phrase_weights[phrase] = base_weight
-        logger.debug(f"  [DIRECT] '{phrase}' → weight={base_weight:.4f}")
+    if isinstance(matched_phrases, dict):
+        # matched_phrases is a Dict[str, float] with pre-computed weights
+        for phrase, weight in matched_phrases.items():
+            phrase_weights[phrase] = weight
+            logger.debug(f"  [DIRECT] '{phrase}' → weight={weight:.4f}")
+    else:
+        # matched_phrases is a List[str]
+        for phrase in matched_phrases:
+            base_weight = idf_weights.get(phrase, 1.0) if idf_weights else 1.0
+            phrase_weights[phrase] = base_weight
+            logger.debug(f"  [DIRECT] '{phrase}' → weight={base_weight:.4f}")
 
     # ------------------------------------------------------------------
     # Expanded matches — quadratically discounted by sim² × expansion_weight
@@ -905,9 +912,15 @@ class SPLADEScorer:
     def _load_corpus(self, corpus_path: str) -> None:
         with open(corpus_path, "r", encoding="utf-8") as f:
             lines = [ln.rstrip("\n") for ln in f]
-        # Assign doc_ids as "doc_{i:04d}" matching Step 5 convention
-        self.doc_ids = [f"doc_{i:06d}" for i in range(len(lines))]
-        self.doc_texts = lines
+        # Extract actual doc IDs from first comma field (matches load_contexts_dict)
+        self.doc_ids = []
+        self.doc_texts = []
+        for line in lines:
+            if not line or ',' not in line:
+                continue
+            doc_id, text = line.split(',', 1)
+            self.doc_ids.append(doc_id.strip())
+            self.doc_texts.append(text.strip())
         logger.info(f"Loaded {len(self.doc_texts)} documents from {corpus_path}")
 
     def _encode_batch(self, texts: List[str]) -> np.ndarray:
@@ -1973,6 +1986,7 @@ def process_query(
     phrase_fp_matrix    : Optional[np.ndarray] = None,
     phrase_to_row       : Optional[Dict[str, int]] = None,
     splade_scorer       : Optional[SPLADEScorer] = None,
+    vocab_fp_index      : Optional[Dict[str, np.ndarray]] = None,
 ) -> Tuple[List[Tuple[str, float]], Dict]:
     r"""
     Process a single query through the full retrieval pipeline.
@@ -2199,15 +2213,22 @@ def process_query(
     #
     # Building from phrase_fingerprints avoids redundant disk I/O; the same
     # csr_matrix objects are already loaded in memory.
-    vocab_fp_index = {
-        p: (fp.toarray().ravel() if hasattr(fp, "toarray")
-            else np.asarray(fp).ravel())
-        for p, fp in phrase_fingerprints.items()
-    }
-    logger.debug(
-        f"  [STAGE 1] vocab_fp_index built in memory "
-        f"({len(vocab_fp_index)} entries)"
-    )
+    # If vocab_fp_index is provided (pre-built), use it; otherwise build it.
+    if vocab_fp_index is None:
+        vocab_fp_index = {
+            p: (fp.toarray().ravel() if hasattr(fp, "toarray")
+                else np.asarray(fp).ravel())
+            for p, fp in phrase_fingerprints.items()
+        }
+        logger.debug(
+            f"  [STAGE 1] vocab_fp_index built in memory "
+            f"({len(vocab_fp_index)} entries)"
+        )
+    else:
+        logger.debug(
+            f"  [STAGE 1] vocab_fp_index reused "
+            f"({len(vocab_fp_index)} entries)"
+        )
 
     oov_expansions = expand_oov_query_terms(
         oov_terms=oov_terms,
@@ -2846,6 +2867,14 @@ def main() -> None:
 
     logger.info(f"Processing {len(queries)} quer{'y' if len(queries) == 1 else 'ies'}.")
 
+    # ── Build vocab_fp_index once for OOV expansion (shared across all queries) ──
+    vocab_fp_index = {
+        p: (fp.toarray().ravel() if hasattr(fp, "toarray")
+            else np.asarray(fp).ravel())
+        for p, fp in phrase_fingerprints.items()
+    }
+    logger.info(f"Vocab fingerprint index built: {len(vocab_fp_index)} entries")
+
     # ── Process queries ────────────────────────────────────────────────────────
     all_results = []
 
@@ -2857,6 +2886,7 @@ def main() -> None:
             idf_weights=idf_weights,
             use_morton=use_morton,
             splade_scorer=splade_scorer,
+            vocab_fp_index=vocab_fp_index,
         )
         if not getattr(args, "simple_query", False):
             pq_kwargs["phrase_fp_matrix"] = phrase_fp_matrix

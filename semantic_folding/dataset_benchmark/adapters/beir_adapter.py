@@ -239,3 +239,7 @@ class TRECCOVIDAdapter(BEIRAdapter):
 class DBPediaAdapter(BEIRAdapter):
     def __init__(self, **kwargs):
         super().__init__("dbpedia-entity", "DBPedia", "dbpedia-entity", **kwargs)
+
+class SciDocsAdapter(BEIRAdapter):
+    def __init__(self, **kwargs):
+        super().__init__("scidocs", "SciDocs", "scidocs", **kwargs)

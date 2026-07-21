@@ -455,7 +455,7 @@ def build_fingerprints(
     morton_override   : bool  = True,
     step_label        : str   = "5",
     file_prefix       : str   = "doc",
-) -> Tuple[np.ndarray, Dict[str, int], dict]:
+) -> Tuple[np.ndarray, Dict[str, int], dict, np.ndarray]:
     step_name = f"Step {step_label}"
     total_bits = grid_size * grid_size
     target_active = int(total_bits * top_percent)
@@ -637,9 +637,9 @@ def build_fingerprints(
 
         diversity_metrics = compute_fingerprint_diversity(sample_fps)
 
-        logger.info(f"  Avg pairwise overlap: {diversity_metrics['avg_overlap']*100:.2f}%")
-        logger.info(f"  Avg Jaccard distance: {diversity_metrics['avg_jaccard_dist']:.4f}")
-        logger.info(f"  Avg cosine distance:  {diversity_metrics['avg_cosine_dist']:.4f}")
+        logger.info(f"  Avg similarity: {diversity_metrics['avg_similarity']*100:.2f}%")
+        logger.info(f"  Diversity score: {diversity_metrics['diversity_score']:.4f}")
+        logger.info(f"  Num samples: {diversity_metrics['num_samples']}")
 
         stats["diversity"] = diversity_metrics
 

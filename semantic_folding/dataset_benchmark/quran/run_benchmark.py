@@ -69,7 +69,7 @@ STEP_SCRIPTS = {
 PIPELINE_DEFAULTS = {
     "grid_size": 64,
     "spreading_steps": 1,
-    "top_k": 5,
+    "top_k": 100,
     "weighting": "idf",
     "top_percent": 0.05,
     "smoothing_sigma": 1.5,
@@ -80,6 +80,9 @@ PIPELINE_DEFAULTS = {
     "method": "umap",
     "tsne_perplexity": 30,
     "tsne_iter": 1000,
+    "splade": True,
+    "fusion_method": "rrf",
+    "rrf_k": 60,
 }
 
 
@@ -492,6 +495,13 @@ def _run_step7_query(run_dir: Path, question: str, params: dict) -> List[Tuple[s
             "--keep-verbs", "--min-word-length", str(params.get("min_word_length", 2)),
             "--simple-query",
         ]
+        if params.get("splade"):
+            cmd += [
+                "--splade",
+                "--corpus", str(run_dir / "corpus.txt"),
+                "--fusion-method", params.get("fusion_method", "rrf"),
+                "--rrf-k", str(params.get("rrf_k", 60)),
+            ]
         subprocess.run(cmd, cwd=str(PROJECT_ROOT), check=True,
                        capture_output=False, timeout=300)
 
@@ -654,11 +664,17 @@ def cli_main():
     parser.add_argument("--weighting", choices=["uniform", "frequency", "idf"], default=PIPELINE_DEFAULTS["weighting"])
     parser.add_argument("--top-percent", type=float, default=PIPELINE_DEFAULTS["top_percent"])
     parser.add_argument("--no-morton", action="store_true")
+    parser.add_argument("--splade", action="store_true", default=PIPELINE_DEFAULTS.get("splade", True))
+    parser.add_argument("--fusion-method", choices=["linear", "rrf"], default=PIPELINE_DEFAULTS.get("fusion_method", "rrf"))
+    parser.add_argument("--rrf-k", type=int, default=PIPELINE_DEFAULTS.get("rrf_k", 60))
+    parser.add_argument("--no-splade", action="store_true", dest="no_splade")
 
     args = parser.parse_args()
 
     params = {k: getattr(args, k, v) for k, v in PIPELINE_DEFAULTS.items()}
     params["morton"] = not args.no_morton
+    if args.no_splade:
+        params["splade"] = False
 
     # Interactive mode
     if args.mode is None:

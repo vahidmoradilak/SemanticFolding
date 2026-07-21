@@ -36,6 +36,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 
+import numpy as np
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -367,9 +368,9 @@ def compute_metrics(retrieved: List[Tuple[str, float]], relevant: List[str],
         dcg_k = 0.0
         for rank, doc_id in enumerate(retrieved_ids[:k], 1):
             if doc_id in rel_set:
-                dcg_k += 1.0 / (rank + 1).bit_length()
+                dcg_k += 1.0 / np.log2(rank + 1)
         num_rel = min(len(relevant), k)
-        idcg_k = sum(1.0 / (i + 1).bit_length() for i in range(num_rel))
+        idcg_k = sum(1.0 / np.log2(i + 1) for i in range(1, num_rel + 1))
         metrics[f"ndcg@{k}"] = dcg_k / idcg_k if idcg_k > 0 else 0.0
     return metrics
 
@@ -431,11 +432,11 @@ class GenericBenchmarkRunner:
         # Store corpus path in params for Step 6 hybrid/SPLADE scoring
         self.params["corpus_path"] = str(corpus_path)
 
-        with open(run_dir / "query_doc_map.json", "w") as f:
+        with open(run_dir / "query_doc_map.json", "w", encoding="utf-8") as f:
             json.dump(query_doc_map, f, indent=2)
-        with open(run_dir / "query_gold.json", "w") as f:
+        with open(run_dir / "query_gold.json", "w", encoding="utf-8") as f:
             json.dump(query_gold, f, indent=2)
-        with open(run_dir / "metadata.json", "w") as f:
+        with open(run_dir / "metadata.json", "w", encoding="utf-8") as f:
             json.dump({
                 "dataset": self.adapter.dataset_name,
                 "display_name": self.adapter.display_name,
@@ -455,7 +456,7 @@ class GenericBenchmarkRunner:
             },
             "pipeline": {k: v for k, v in self.params.items()},
         }
-        with open(run_dir / "config.yml", "w") as f:
+        with open(run_dir / "config.yml", "w", encoding="utf-8") as f:
             yaml.dump(run_config, f, default_flow_style=False)
 
         register_run(run_dir, self.adapter.dataset_name, "index", self.params, "indexing")
@@ -614,7 +615,7 @@ class GenericBenchmarkRunner:
             },
             "pipeline": {k: v for k, v in self.params.items()},
         }
-        with open(bench_dir / "config.yml", "w") as f:
+        with open(bench_dir / "config.yml", "w", encoding="utf-8") as f:
             yaml.dump(bench_config, f, default_flow_style=False)
 
         register_run(bench_dir, self.adapter.dataset_name, "benchmark", self.params, "running")
@@ -659,7 +660,7 @@ class GenericBenchmarkRunner:
             query_out_dir = per_query_dir / f"{q_idx:04d}"
             query_out_dir.mkdir(exist_ok=True)
 
-            with open(query_out_dir / "candidate_docs.json", "w") as f:
+            with open(query_out_dir / "candidate_docs.json", "w", encoding="utf-8") as f:
                 json.dump({"candidate_ids": candidate_ids, "gold_ids": gold_ids}, f, indent=2)
 
             batch_entries.append({
@@ -841,12 +842,12 @@ class GenericBenchmarkRunner:
             full_results = raw.get("results", [])
 
             # Save raw per-query result
-            with open(result_json, "w") as f:
+            with open(result_json, "w", encoding="utf-8") as f:
                 json.dump([raw], f, indent=2)
 
             candidate_results = filter_results_to_candidates(full_results, candidate_ids)
 
-            with open(query_out_dir / "filtered_results.json", "w") as f:
+            with open(query_out_dir / "filtered_results.json", "w", encoding="utf-8") as f:
                 json.dump({
                     "query_idx": q_idx,
                     "query": query_text,
@@ -903,7 +904,7 @@ class GenericBenchmarkRunner:
                 summary[f"min_{k}"] = min(vals)
                 summary[f"max_{k}"] = max(vals)
 
-            with open(bench_dir / "summary.json", "w") as f:
+            with open(bench_dir / "summary.json", "w", encoding="utf-8") as f:
                 json.dump(summary, f, indent=2)
 
             # Per-spreading breakdown (only meaningful when dynamic_spreading is on)
@@ -922,7 +923,7 @@ class GenericBenchmarkRunner:
                     "n": len(ms),
                     **{f"mean_{k}": sum(vs) / len(vs) for k, vs in sub_agg.items()},
                 }
-            with open(bench_dir / "summary_by_spreading.json", "w") as f:
+            with open(bench_dir / "summary_by_spreading.json", "w", encoding="utf-8") as f:
                 json.dump(by_spread_summary, f, indent=2)
 
             # Clean, focused params file (for at-a-glance review)
@@ -949,7 +950,7 @@ class GenericBenchmarkRunner:
                 },
                 "generated": datetime.now().isoformat(timespec="seconds"),
             }
-            with open(bench_dir / "params.json", "w") as f:
+            with open(bench_dir / "params.json", "w", encoding="utf-8") as f:
                 json.dump(params_snapshot, f, indent=2)
 
             update_run_status(bench_dir, self.adapter.dataset_name, "completed")
@@ -984,7 +985,7 @@ class GenericBenchmarkRunner:
         for qd in per_query:
             fpath = qd / "filtered_results.json"
             if fpath.exists():
-                with open(fpath) as f:
+                with open(fpath, encoding="utf-8") as f:
                     queries_data.append(json.load(f))
 
         pipe = config.get("pipeline", {})
@@ -1071,7 +1072,7 @@ class GenericBenchmarkRunner:
         for qd in per_query:
             fpath = qd / "filtered_results.json"
             if fpath.exists():
-                with open(fpath) as f:
+                with open(fpath, encoding="utf-8") as f:
                     results.append(json.load(f))
         if not results:
             logger.error("No per-query results found")
@@ -1160,7 +1161,7 @@ class GenericBenchmarkRunner:
                 }
 
         out_path = bench_dir / "analysis.json"
-        with open(out_path, "w") as f:
+        with open(out_path, "w", encoding="utf-8") as f:
             json.dump(analysis, f, indent=2, default=str)
         logger.success(f"Analysis saved -> {out_path}")
         return analysis
@@ -1567,7 +1568,7 @@ def cli_main():
         run_config_path = Path(args.run_dir) / "config.yml"
         if run_config_path.exists():
             import yaml as _yaml
-            with open(run_config_path) as f:
+            with open(run_config_path, encoding="utf-8") as f:
                 run_cfg = _yaml.safe_load(f)
             run_pipeline = run_cfg.get("pipeline", {})
             if "corpus_path" in run_pipeline:
