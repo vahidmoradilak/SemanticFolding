@@ -131,14 +131,19 @@ Key changes from old approach:
 - **Framework**: `semantic_folding/dataset_benchmark/quran/run_benchmark.py`
 - **Index command**: `.venv\scripts\python semantic_folding\dataset_benchmark\quran\run_benchmark.py --mode index`
 - **Evaluate command**: `.venv\scripts\python semantic_folding\dataset_benchmark\quran\run_benchmark.py --mode evaluate --run-dir outputs\quran_benchmark\runs\run_<ts>`
-- **Best results (simplified queries, 2D pipeline)**:
-  - SF: MRR=0.3344, AP=0.1203, P@5=0.1733, R@5=0.1425, NDCG@10=0.1219
+- **Best results (simplified queries, 2D pipeline, top_k=100)**:
+  - Pure SF: MRR=0.3344, AP=0.1203, P@5=0.1733, R@5=0.1425, NDCG@10=0.1219
+  - **SF+SPLADE RRF**: MRR=**0.3579**, AP=**0.2181**, P@5=**0.2133**, R@5=**0.1719**, NDCG@10=**0.1841**
   - BM25: MRR=0.1550, AP=0.0723, P@5=0.0667, R@5=0.0472, NDCG@10=0.0620
-  - SF wins all metrics, 2.15x MRR improvement over BM25
+  - SF+SPLADE beats BM25 on all metrics (2.31× MRR, 3.02× AP over BM25)
+  - +7% MRR, +81% AP over Pure SF
 - **Key decisions**:
+  - `top_k=100` (was 5) — more gold docs in candidate pool
+  - SPLADE fusion with RRF (k=60) — combines semantic + lexical signals
+  - SPLADE doc vectors pre-computed once (28 min encode, 761 MB cache) — avoids per-query 300s timeout
   - Simplified queries (`_extract_key_query_terms`) beat full queries: only rare proper nouns (joseph, solomon, cave) benefit from single-term simplification; thematic queries (justice, kindness, creation) use 2-3 key terms
   - Fixed charmap errors: `open()` calls in Step 7 reader now use `encoding="utf8"`; subprocess calls use `encoding="utf8", errors="replace"` or `capture_output=False`
-  - 11/30 queries succeed (MRR>0), 19/30 fail (MRR=0.0000)
+  - 11/30 queries succeed (MRR>0), 19/30 fail (MRR=0.0000) — same as before; fusion helps AP but doesn't turn failures into successes
 - **Common failure patterns**:
   - Thematic queries (justice, mercy, patience, punishement, etc.) — simplified terms too broad
   - Plural/singular mismatch (angels→angel, believers→believer) — no stemming in `_extract_key_query_terms`

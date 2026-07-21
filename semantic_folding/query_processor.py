@@ -912,9 +912,15 @@ class SPLADEScorer:
     def _load_corpus(self, corpus_path: str) -> None:
         with open(corpus_path, "r", encoding="utf-8") as f:
             lines = [ln.rstrip("\n") for ln in f]
-        # Assign doc_ids as "doc_{i:04d}" matching Step 5 convention
-        self.doc_ids = [f"doc_{i:06d}" for i in range(len(lines))]
-        self.doc_texts = lines
+        # Extract actual doc IDs from first comma field (matches load_contexts_dict)
+        self.doc_ids = []
+        self.doc_texts = []
+        for line in lines:
+            if not line or ',' not in line:
+                continue
+            doc_id, text = line.split(',', 1)
+            self.doc_ids.append(doc_id.strip())
+            self.doc_texts.append(text.strip())
         logger.info(f"Loaded {len(self.doc_texts)} documents from {corpus_path}")
 
     def _encode_batch(self, texts: List[str]) -> np.ndarray:

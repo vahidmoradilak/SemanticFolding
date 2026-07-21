@@ -199,6 +199,7 @@ flowchart TD
         R6["SciDocs: Linear\nMRR=0.947, AP=0.644\n(ties BM25: 0.946)"]
         R7["MuSiQue: Pure SF\nMRR=0.507, AP=0.306\n(BM25: 0.622)"]
         R8["nfcorpus: RRF\nMRR=0.647, AP=0.419\n(BM25: 0.686)"]
+        R9["Quran: RRF\nMRR=0.358, AP=0.218\n(+7% MRR, +81% AP over Pure SF)"]
     end
 
     subgraph VARS["Key Variables"]
@@ -369,7 +370,8 @@ v3.2 ─── Current (Final)
   ├── SF+SPLADE fusion (RRF > Linear)
   ├── RRF MRR=1.00 on Belebele, NarrativeQA, PubMedQA
   ├── PopQA RRF MRR=0.990 (+17.9% over Pure SF)
-  ├── SciDocs, SciFact, nfcorpus, MuSiQue benchmarks
+  ├── Quran RRF MRR=0.358, AP=0.218 (+81% AP)
+  ├── SciDocs, SciFact, nfcorpus, MuSiQue, Quran benchmarks
   ├── Vectorized ops (5-50× speedup)
   ├── Belebele α sweep: best α=0.25–0.30
   ├── PopQA failure analysis
