@@ -1,8 +1,12 @@
 """
 Belebele Adapter
 
-Source: HuggingFace facebook/belebele (english split)
+Source: HuggingFace facebook/belebele
 Paper:  Malayi et al., 2023 (arXiv:2308.16884)
+
+Supports multiple languages via `language` parameter.
+Language codes map to FLORES-200 file names:
+  eng_Latn, fra_Latn, arb_Arab, pes_Arab, ...
 
 Format conversion:
   Input row:  { flores_passage, question, mc_answer1..4, correct_answer_num, ... }
@@ -37,31 +41,71 @@ except Exception:
     pass
 
 
+LANGUAGE_FILE_MAP = {
+    "eng_Latn": "eng_Latn.jsonl",
+    "fra_Latn": "fra_Latn.jsonl",
+    "arb_Arab": "arb_Arab.jsonl",
+    "pes_Arab": "pes_Arab.jsonl",
+}
+
+
 class BelebeleAdapter(BaseDatasetAdapter):
     dataset_name = "belebele"
     display_name = "Belebele"
-    default_subset = "english"
+
+    def __init__(self, language="eng_Latn", **kwargs):
+        super().__init__(**kwargs)
+        self._language = language
+
+    @property
+    def default_subset(self) -> str:
+        return self._language
+
+    @property
+    def display_name(self) -> str:
+        name_map = {
+            "eng_Latn": "Belebele (English)",
+            "fra_Latn": "Belebele (French)",
+            "arb_Arab": "Belebele (Arabic)",
+            "pes_Arab": "Belebele (Persian)",
+        }
+        return name_map.get(self._language, f"Belebele ({self._language})")
+
+    def _get_source_path(self, raw_path: Path) -> Path:
+        """Find the right language file in any of the known directories."""
+        fname = LANGUAGE_FILE_MAP.get(self._language, f"{self._language}.jsonl")
+        candidates = [
+            raw_path / "all" / fname,
+            raw_path / "extracted" / fname,
+            raw_path / fname,
+        ]
+        for p in candidates:
+            if p.exists():
+                return p
+        return candidates[0]
 
     def download(self, output_dir: Path) -> Path:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        cache_path = output_dir / "belebele_cache.jsonl"
+        cache_path = output_dir / f"belebele_{self._language}_cache.jsonl"
         if cache_path.exists() and cache_path.stat().st_size > 100:
-            print(f"  Belebele data already cached at {cache_path}")
+            print(f"  Belebele ({self._language}) already cached at {cache_path.name}")
             return output_dir
 
-        extracted = output_dir / "extracted" / "eng_Latn.jsonl"
-        if extracted.exists():
+        # Try pre-downloaded files in raw/all/
+        src = self._get_source_path(output_dir)
+        if src.exists():
             import shutil
-            shutil.copy2(extracted, cache_path)
-            print(f"  Copied extracted data -> {cache_path}")
+            shutil.copy2(src, cache_path)
+            print(f"  Copied {src.name} -> {cache_path.name}")
             return output_dir
 
+        # Fallback: download from HuggingFace
         try:
             from datasets import load_dataset
-            print("  Downloading facebook/belebele (english) from HuggingFace...")
-            ds = load_dataset("facebook/belebele", self.default_subset, split="test")
+            print(f"  Downloading facebook/belebele ({self._language}) from HuggingFace...")
+            ds = load_dataset("facebook/belebele", self._language, split="test")
             with open(cache_path, "w", encoding="utf-8") as f:
                 for row in ds:
                     f.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -69,9 +113,9 @@ class BelebeleAdapter(BaseDatasetAdapter):
             return output_dir
         except Exception as e:
             raise FileNotFoundError(
-                f"Failed to download Belebele: {e}\n"
+                f"Failed to load Belebele ({self._language}): {e}\n"
                 f"Either:\n"
-                f"  1. Place eng_Latn.jsonl in {output_dir}/extracted/\n"
+                f"  1. Place {LANGUAGE_FILE_MAP.get(self._language, self._language + '.jsonl')} in {output_dir}/all/\n"
                 f"  2. Or download from https://huggingface.co/datasets/facebook/belebele"
             )
 
@@ -80,16 +124,16 @@ class BelebeleAdapter(BaseDatasetAdapter):
     ) -> Path:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
-        out_path = output_dir / "belebele.jsonl"
+        out_path = output_dir / f"belebele_{self._language}.jsonl"
 
-        cache_path = raw_path / "belebele_cache.jsonl"
+        cache_path = raw_path / f"belebele_{self._language}_cache.jsonl"
         if not cache_path.exists():
-            extracted = raw_path / "extracted" / "eng_Latn.jsonl"
-            if extracted.exists():
-                cache_path = extracted
+            src = self._get_source_path(raw_path)
+            if src.exists():
+                cache_path = src
             else:
                 raise FileNotFoundError(
-                    f"Belebele data not found. Run download first."
+                    f"Belebele ({self._language}) data not found at {raw_path}. Run download first."
                 )
 
         rows = []
@@ -152,6 +196,7 @@ class BelebeleAdapter(BaseDatasetAdapter):
                 "answer": mc_answer,
                 "answer_num": correct_num,
                 "dialect": row.get("dialect", ""),
+                "language": self._language,
                 "paragraphs": paragraphs,
             })
             n_written += 1
@@ -160,8 +205,8 @@ class BelebeleAdapter(BaseDatasetAdapter):
             for e in entries:
                 f.write(json.dumps(e, ensure_ascii=False) + "\n")
 
-        stats = {"num_queries": n_written, "num_skipped": n_skipped, "total_rows": len(rows)}
+        stats = {"num_queries": n_written, "num_skipped": n_skipped, "total_rows": len(rows), "language": self._language}
         with open(out_path.with_suffix(".stats.json"), "w") as f:
             json.dump(stats, f, indent=2)
-        print(f"  Belebele: wrote {n_written} queries -> {out_path} (skipped {n_skipped})")
+        print(f"  Belebele ({self._language}): wrote {n_written} queries -> {out_path} (skipped {n_skipped})")
         return out_path
