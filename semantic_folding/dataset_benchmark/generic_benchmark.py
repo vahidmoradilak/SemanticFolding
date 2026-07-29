@@ -724,14 +724,10 @@ class GenericBenchmarkRunner:
         ]
         if self.params.get("geometric", False):
             step7_args.append("--geometric")
-        if self.params.get("hybrid", False):
-            step7_args.extend(["--hybrid", "--hybrid-alpha", str(self.params.get("hybrid_alpha", 0.5))])
-            if self.params.get("corpus_path"):
-                step7_args.extend(["--corpus", self.params["corpus_path"]])
-        if self.params.get("splade", False):
+        if self.params.get("hybrid", False) or self.params.get("splade", False):
             step7_args.extend(["--splade", "--splade-model", self.params.get("splade_model", "naver/splade-cocondenser-ensembledistil")])
-            if self.params.get("hybrid_alpha") is not None:
-                step7_args.extend(["--hybrid-alpha", str(self.params["hybrid_alpha"])])
+            hybrid_alpha = self.params.get("hybrid_alpha", 0.3)
+            step7_args.extend(["--hybrid-alpha", str(hybrid_alpha)])
             if self.params.get("corpus_path"):
                 step7_args.extend(["--corpus", self.params["corpus_path"]])
             fusion_method = self.params.get("fusion_method", "linear")
