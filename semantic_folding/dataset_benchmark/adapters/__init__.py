@@ -16,6 +16,7 @@ from .beir_adapter import (
     NFCorpusAdapter, SciFactAdapter, QuoraAdapter,
     TRECCOVIDAdapter, DBPediaAdapter, SciDocsAdapter,
 )
+from .mixed_ar_en_adapter import MixedArEnAdapter
 from ._stubs import (
     SciDQAAdapter,
     DropAdapter,
@@ -49,6 +50,7 @@ ADAPTER_REGISTRY = {
     "dbpedia-entity": DBPediaAdapter,
     "dbpedia": DBPediaAdapter,
     "scidocs": SciDocsAdapter,
+    "mixed_ar_en": MixedArEnAdapter,
     "sf_custom": lambda **kwargs: type('SFCustomAdapter', (object,), {
         'dataset_name': 'sf_custom',
         'display_name': 'SF Custom Corpus',

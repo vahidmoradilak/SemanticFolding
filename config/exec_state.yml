@@ -1,4 +1,4 @@
-last_run_id: run_20260712_233533_6236_umap
+last_run_id: run_20260729_115049_belebele_ar_en
 last_step: 7
 runs:
   run_20260526_101313_38_fr_en:
@@ -695,6 +695,113 @@ runs:
           idf_weights: outputs\run_20260712_233533_6236_umap\term_context_matrix\idf_weights.json
           output: outputs/run_20260712_233533_6236_umap/query_results
           query: يسٓ
+          spreading_steps: '1'
+          top_k: '5'
+          weighting: idf
+  run_20260729_115049_belebele_ar_en:
+    corpus: data\datasets\belebele\raw\all\corpus_unique_ar_en.txt
+    created_at: '2026-07-29T11:50:49.877921'
+    steps:
+      1:
+        completed_at: '2026-07-29T11:51:33.440928'
+        mapping: outputs\run_20260729_115049_belebele_ar_en\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260729_115049_belebele_ar_en/extracted_phrases
+        params:
+          corpus: data\datasets\belebele\raw\all\corpus_unique_ar_en.txt
+          keep_verbs: 'true'
+          min_freq: '1'
+          min_word_length: '2'
+          no_filter_generic: 'false'
+          no_spacy: 'false'
+          output: outputs/run_20260729_115049_belebele_ar_en/extracted_phrases
+          stats: 'false'
+        vocab: outputs\run_20260729_115049_belebele_ar_en\extracted_phrases\vocabulary.csv
+      2:
+        completed_at: '2026-07-29T11:52:29.193116'
+        idf_weights: outputs\run_20260729_115049_belebele_ar_en\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260729_115049_belebele_ar_en\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260729_115049_belebele_ar_en\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260729_115049_belebele_ar_en/term_context_matrix
+        params:
+          corpus: data\datasets\belebele\raw\all\corpus_unique_ar_en.txt
+          mapping: outputs\run_20260729_115049_belebele_ar_en\extracted_phrases\phrase_to_contexts.json
+          no_tfidf: 'false'
+          output: outputs/run_20260729_115049_belebele_ar_en/term_context_matrix
+          vocab: outputs\run_20260729_115049_belebele_ar_en\extracted_phrases\vocabulary.csv
+      3:
+        completed_at: '2026-07-29T11:53:25.569922'
+        coordinates: outputs\run_20260729_115049_belebele_ar_en\semantic_space\context_coordinates.json
+        output: outputs/run_20260729_115049_belebele_ar_en/semantic_space
+        params:
+          grid_size: '64'
+          matrix_npz: outputs\run_20260729_115049_belebele_ar_en\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260729_115049_belebele_ar_en\term_context_matrix\term_context_matrix.json
+          method: tsne
+          output: outputs/run_20260729_115049_belebele_ar_en/semantic_space
+          show_density: 'false'
+          visualize: 'true'
+      4:
+        completed_at: '2026-07-29T11:57:07.984381'
+        output: outputs/run_20260729_115049_belebele_ar_en/phrase_fingerprints
+        params:
+          coordinates: outputs\run_20260729_115049_belebele_ar_en\semantic_space\context_coordinates.json
+          grid_size: '64'
+          metadata: outputs\run_20260729_115049_belebele_ar_en\term_context_matrix\term_context_matrix.json
+          morton: 'true'
+          no_smooth: 'false'
+          output: outputs/run_20260729_115049_belebele_ar_en/phrase_fingerprints
+          smoothing_sigma: '1.5'
+      5:
+        completed_at: '2026-07-29T11:59:57.751122'
+        output: outputs/run_20260729_115049_belebele_ar_en/doc_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: data\datasets\belebele\raw\all\corpus_unique_ar_en.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs/run_20260729_115049_belebele_ar_en/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260729_115049_belebele_ar_en\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '2'
+          morton: 'true'
+          no_normalize: 'false'
+          normalize_method: l2
+          output: outputs/run_20260729_115049_belebele_ar_en/doc_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.05'
+      6:
+        completed_at: '2026-07-29T12:06:50.343038'
+        output: outputs/run_20260729_115049_belebele_ar_en/customtext_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: data\customtexts.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs/run_20260729_115049_belebele_ar_en/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260729_115049_belebele_ar_en\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '2'
+          morton: 'true'
+          no_normalize: 'false'
+          normalize_method: l2
+          output: outputs/run_20260729_115049_belebele_ar_en/customtext_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.05'
+      7:
+        completed_at: '2026-07-29T12:11:45.887262'
+        output: outputs/run_20260729_115049_belebele_ar_en/query_results
+        params:
+          doc_fingerprints: outputs/run_20260729_115049_belebele_ar_en/doc_fingerprints
+          fingerprints: outputs/run_20260729_115049_belebele_ar_en/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260729_115049_belebele_ar_en\term_context_matrix\idf_weights.json
+          output: outputs/run_20260729_115049_belebele_ar_en/query_results
+          query: ن، للحصول على صوت أعلى إضافي، يمكنك استخدام المنفاخ بمزيد من الضغط
+            أو السرعة. | Make sure your hand is as relaxed as possible while
           spreading_steps: '1'
           top_k: '5'
           weighting: idf
