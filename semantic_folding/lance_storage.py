@@ -79,7 +79,7 @@ class LanceStorage:
         """Create table for phrase fingerprints."""
         schema = pa.schema([
             ('phrase', pa.string()),
-            ('fingerprint_vector', pa.list_(pa.float32())),  # Flattened 16x16 = 256 dims
+            ('fingerprint_vector', pa.list_(pa.float32())),  # Flattened grid_size*grid_size dims
             ('grid_size', pa.int32()),
             ('frequency', pa.int32()),
             ('context_count', pa.int32()),  # How many contexts this phrase appears in
@@ -98,7 +98,7 @@ class LanceStorage:
             ('context_id', pa.string()),
             ('title', pa.string()),
             ('text', pa.string()),
-            ('fingerprint_vector', pa.list_(pa.float32())),  # Flattened 16x16 = 256 dims
+            ('fingerprint_vector', pa.list_(pa.float32())),  # Flattened grid_size*grid_size dims
             ('grid_size', pa.int32()),
             ('matched_phrases', pa.int32()),
             ('total_phrases', pa.int32()),
@@ -398,6 +398,188 @@ class LanceStorage:
             logger.error(f"Failed to get database stats: {e}")
             stats['error'] = str(e)
 
+        return stats
+
+    # ------------------------------------------------------------------
+    # ANN document index (WS-A: LanceDB-backed retrieval)
+    # ------------------------------------------------------------------
+    #
+    # The base `document_fingerprints` table stores vectors as variable-length
+    # `list<float32>`, which LanceDB cannot use for vector search.  ANN search
+    # requires a fixed-length vector column, so the document index is kept in a
+    # dedicated table (`doc_fingerprints_ann`) whose `fingerprint_vector` is a
+    # `FixedSizeList<float32, grid_size**2>`.  Building the table happens once at
+    # index time (Phase 1); queries only ever read from it.
+    # ------------------------------------------------------------------
+
+    DOC_ANN_TABLE = "doc_fingerprints_ann"
+
+    def build_document_index(
+        self,
+        doc_fp_dir: Union[str, Path],
+        table_name: str = None,
+    ) -> Dict[str, Any]:
+        """
+        Build (or rebuild) the ANN document index from Step-5 outputs.
+
+        Reads ``doc_fingerprints.npz``, ``doc_fingerprints_meta.json`` and
+        ``doc_fingerprints_stats.json`` and stores every document fingerprint
+        (flattened float32, Morton order as stored) in a dedicated ANN table
+        with a fixed-length vector column.  An HNSW (IVF_HNSW_FLAT) index with
+        cosine metric is created on top so queries can use approximate nearest
+        neighbour search.
+
+        Parameters
+        ----------
+        doc_fp_dir : Path
+            Step-5 output directory containing the doc fingerprint files.
+        table_name : str, optional
+            Table name override (defaults to ``doc_fingerprints_ann``).
+
+        Returns
+        -------
+        Dict[str, Any]
+            Summary with ``num_docs``, ``dim``, ``grid_size``,
+            ``build_seconds``, ``table_name``, ``use_morton``.
+        """
+        import time
+
+        doc_fp_dir = Path(doc_fp_dir)
+        npz_path = doc_fp_dir / "doc_fingerprints.npz"
+        meta_path = doc_fp_dir / "doc_fingerprints_meta.json"
+
+        if not npz_path.exists() or not meta_path.exists():
+            raise FileNotFoundError(
+                f"Document fingerprint files missing in {doc_fp_dir} "
+                f"(need doc_fingerprints.npz + doc_fingerprints_meta.json)"
+            )
+
+        with open(meta_path, "r", encoding="utf-8") as fh:
+            meta = json.load(fh)
+
+        archive = np.load(str(npz_path))
+        matrix = archive["fingerprints"].astype(np.float32)  # (N, grid_size²)
+        n_docs, dim = matrix.shape
+        grid_size = int(meta.get("grid_size", int(np.sqrt(dim))))
+        use_morton = bool(meta.get("use_morton", True))
+
+        doc_to_row: Dict[str, int] = meta.get("doc_to_row", {})
+        doc_ids = [None] * n_docs
+        for doc_id, row_idx in doc_to_row.items():
+            if 0 <= row_idx < n_docs:
+                doc_ids[row_idx] = doc_id
+        # Fall back to positional ids if meta mapping is missing rows
+        for i in range(n_docs):
+            if doc_ids[i] is None:
+                doc_ids[i] = f"doc_{i:06d}"
+
+        table_name = table_name or self.DOC_ANN_TABLE
+        try:
+            self.db.drop_table(table_name)
+        except Exception:
+            pass
+
+        schema = pa.schema([
+            ("context_id", pa.string()),
+            ("text", pa.string()),
+            ("grid_size", pa.int32()),
+            ("fingerprint_vector", pa.list_(pa.float32(), dim)),  # FixedSizeList
+        ])
+
+        data = [
+            {
+                "context_id": doc_ids[i],
+                "text": "",
+                "grid_size": grid_size,
+                "fingerprint_vector": matrix[i].tolist(),
+            }
+            for i in range(n_docs)
+        ]
+
+        t0 = time.perf_counter()
+        table = self.db.create_table(table_name, data=data, schema=schema)
+        table.create_index(
+            metric="cosine",
+            vector_column_name="fingerprint_vector",
+            index_type="IVF_HNSW_FLAT",
+        )
+        build_seconds = time.perf_counter() - t0
+
+        logger.success(
+            f"ANN document index built: {n_docs} docs, dim={dim}, "
+            f"grid_size={grid_size} ({build_seconds:.2f}s)"
+        )
+
+        return {
+            "num_docs": n_docs,
+            "dim": dim,
+            "grid_size": grid_size,
+            "use_morton": use_morton,
+            "build_seconds": round(build_seconds, 4),
+            "table_name": table_name,
+        }
+
+    def search_documents(
+        self,
+        query_vector: np.ndarray,
+        top_k: int = 10,
+        metric: str = "cosine",
+        table_name: str = None,
+        exact: bool = False,
+        nprobes: int = 64,
+    ) -> List[Tuple[str, float]]:
+        """
+        Approximate (or exact) nearest-neighbour search over the ANN doc index.
+
+        Parameters
+        ----------
+        query_vector : np.ndarray
+            Flattened float32 query fingerprint ``(grid_size²,)``.
+        top_k : int
+            Maximum number of neighbours to return.
+        metric : str
+            Distance metric used at query time (default ``"cosine"``).
+        table_name : str, optional
+            ANN table name (defaults to ``doc_fingerprints_ann``).
+        exact : bool
+            When True, run a full scan instead of using the ANN index.
+        nprobes : int
+            Number of IVF partitions to probe during ANN search (default 64).
+
+        Returns
+        -------
+        List[Tuple[str, float]]
+            ``[(context_id, similarity)]`` sorted descending by similarity.
+            Distance is converted to similarity (``1 - distance`` for cosine) at
+            this boundary so downstream ranking code stays distance-agnostic.
+        """
+        table = self.db.open_table(table_name or self.DOC_ANN_TABLE)
+
+        qvec = np.asarray(query_vector, dtype=np.float32).ravel().tolist()
+
+        builder = table.search(qvec, vector_column_name="fingerprint_vector")
+        builder = builder.select(["context_id"])  # avoid transferring the full vector column
+        builder = builder.nprobes(0 if exact else nprobes)
+        results = builder.metric(metric).limit(top_k).to_list()
+
+        out: List[Tuple[str, float]] = []
+        for row in results:
+            context_id = row.get("context_id", "")
+            distance = float(row.get("_distance", 0.0))
+            similarity = 1.0 - distance  # cosine distance → similarity
+            out.append((context_id, similarity))
+
+        out.sort(key=lambda x: x[1], reverse=True)
+        return out
+
+    def get_ann_index_stats(self, table_name: str = None) -> Dict[str, Any]:
+        """Return row count and rough on-disk size for the ANN doc table."""
+        stats: Dict[str, Any] = {}
+        try:
+            table = self.db.open_table(table_name or self.DOC_ANN_TABLE)
+            stats["num_docs"] = table.count_rows()
+        except Exception as e:
+            stats["error"] = str(e)
         return stats
 
     def close(self):

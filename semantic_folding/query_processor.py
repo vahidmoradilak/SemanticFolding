@@ -80,6 +80,7 @@ from lib import (
     split_arabic_english,
     normalize_arabic_phrase,
     sparsify_fingerprint,
+    timed,
 )
 from fingerprint_builder import (
     build_document_fingerprint_2d,
@@ -1893,6 +1894,63 @@ def rank_documents(
     return filtered[:top_k], metadata
 
 
+def rank_documents_lancedb(
+    query_fp    : csr_matrix,
+    storage     : Any,
+    args        : argparse.Namespace,
+) -> Tuple[List[Tuple[str, float]], Dict]:
+    """
+    Rank documents using the LanceDB ANN document index.
+
+    This is the retrieval-layer swap for the ``lancedb`` backend: the query
+    fingerprint is flattened to a dense vector and handed to the ANN index,
+    which returns ``(context_id, similarity)`` pairs sorted descending.
+
+    Parameters
+    ----------
+    query_fp : csr_matrix
+        Query fingerprint (already built + spread upstream).
+    storage : LanceStorage
+        Open LanceStorage handle whose ANN table was built at index time.
+    args : argparse.Namespace
+        CLI args (uses ``top_k``, ``lancedb_limit``, ``lancedb_exact``).
+
+    Returns
+    -------
+    results : List[Tuple[str, float]]
+        Ranked ``(doc_id, similarity)`` list truncated to ``top_k``.
+    metadata : Dict
+        Same shape as :func:`rank_documents` metadata plus backend info.
+    """
+    qvec = query_fp.toarray().ravel()
+    top_k = getattr(args, "top_k", 10)
+    limit = max(top_k, getattr(args, "lancedb_limit", 200))
+    exact = getattr(args, "lancedb_exact", False)
+
+    hits = storage.search_documents(
+        qvec,
+        top_k=limit,
+        metric="cosine",
+        exact=exact,
+    )
+
+    filtered = [(doc_id, sim) for doc_id, sim in hits if sim >= getattr(args, "min_similarity", 0.0)]
+    filtered.sort(key=lambda x: x[1], reverse=True)
+
+    scores = [s for _, s in hits]
+    metadata = {
+        "total_documents":           storage.get_ann_index_stats().get("num_docs", len(hits)),
+        "documents_above_threshold": len(filtered),
+        "mean_similarity":           float(np.mean(scores)) if scores else 0.0,
+        "max_similarity":            float(np.max(scores)) if scores else 0.0,
+        "retrieval_backend":         "lancedb",
+        "lancedb_exact":             exact,
+        "lancedb_ann_candidates":    limit,
+    }
+    logger.debug(f"  [RANK LANCEDB] {len(hits)} ANN hits (exact={exact}), returning top {top_k}")
+    return filtered[:top_k], metadata
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Display
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1987,6 +2045,7 @@ def process_query(
     phrase_to_row       : Optional[Dict[str, int]] = None,
     splade_scorer       : Optional[SPLADEScorer] = None,
     vocab_fp_index      : Optional[Dict[str, np.ndarray]] = None,
+    lancedb_storage     : Optional[Any] = None,
 ) -> Tuple[List[Tuple[str, float]], Dict]:
     r"""
     Process a single query through the full retrieval pipeline.
@@ -2432,15 +2491,24 @@ def process_query(
 
     grid_size = int(np.sqrt(query_fp.shape[1]))
 
-    results, ranking_metadata = rank_documents(
-        query_fp, doc_fingerprints,
-        top_k=getattr(args, "top_k", 10),
-        min_similarity=getattr(args, "min_similarity", 0.0),
-        use_batch=getattr(args, "use_batch", True),
-        geometric=getattr(args, "geometric", False),
-        grid_size=grid_size,
-        use_morton=use_morton,
-    )
+    with timed() as retrieval_timer:
+        if lancedb_storage is not None:
+            results, ranking_metadata = rank_documents_lancedb(
+                query_fp, lancedb_storage, args,
+            )
+        else:
+            results, ranking_metadata = rank_documents(
+                query_fp, doc_fingerprints,
+                top_k=getattr(args, "top_k", 10),
+                min_similarity=getattr(args, "min_similarity", 0.0),
+                use_batch=getattr(args, "use_batch", True),
+                geometric=getattr(args, "geometric", False),
+                grid_size=grid_size,
+                use_morton=use_morton,
+            )
+    retrieval_ms = retrieval_timer.seconds * 1000.0
+    logger.debug(f"  [STAGE 4] retrieval took {retrieval_ms:.2f} ms")
+
 
     # ── Stage 5: SPLADE fusion (optional) ──────────────────────────────────────
     splade_meta: Dict = {}
@@ -2488,6 +2556,9 @@ def process_query(
         "spreading"         : spreading_metadata,
         "ranking"           : ranking_metadata,
         "splade"            : splade_meta,
+        "timing"            : {
+            "retrieval_ms": float(retrieval_ms),
+        },
     }
 
 
@@ -2609,6 +2680,27 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--min-similarity", dest="min_similarity", type=float, default=0.0,
         help="Minimum score threshold for results.",
+    )
+
+    # ── Retrieval backend ──────────────────────────────────────────────────────
+    parser.add_argument(
+        "--retrieval-backend", dest="retrieval_backend", type=str, default="numpy",
+        choices=["numpy", "lancedb"],
+        help="Storage/retrieval backend used for document scoring. 'numpy' is the "
+             "exact in-RAM CSR cosine baseline; 'lancedb' queries a LanceDB ANN "
+             "index built by Step 5+ (requires --lancedb-path).",
+    )
+    parser.add_argument(
+        "--lancedb-path", dest="lancedb_path", type=Path, default=None,
+        help="LanceDB database directory (required when --retrieval-backend lancedb).",
+    )
+    parser.add_argument(
+        "--lancedb-exact", dest="lancedb_exact", action="store_true", default=False,
+        help="Use exact (full-scan) search inside LanceDB instead of the ANN index.",
+    )
+    parser.add_argument(
+        "--lancedb-limit", dest="lancedb_limit", type=int, default=200,
+        help="Maximum ANN candidates returned per query (must be >= --top-k).",
     )
 
     # ── Geometric scoring ─────────────────────────────────────────────────────
@@ -2796,27 +2888,56 @@ def main() -> None:
             args.weighting = "uniform"
 
     # ── Load document fingerprints ─────────────────────────────────────────────
-    logger.debug(
-        f"  [MAIN LOAD] loading document fingerprints from {args.doc_fp_dir}"
-    )
-    try:
-        doc_fingerprints, doc_metadata = load_document_fingerprints(args.doc_fp_dir)
-    except (FileNotFoundError, ValueError) as exc:
-        logger.error(f"Failed to load document fingerprints: {exc}")
-        sys.exit(1)
-
-    if not doc_fingerprints:
-        logger.error(
-            "Document fingerprints dict is empty — check Step 5 output."
+    lancedb_storage: Optional[Any] = None
+    if args.retrieval_backend == "lancedb":
+        if not args.lancedb_path:
+            logger.error("--retrieval-backend lancedb requires --lancedb-path.")
+            sys.exit(1)
+        from lance_storage import LanceStorage
+        logger.info(f"Opening LanceDB storage at {args.lancedb_path}")
+        lancedb_storage = LanceStorage(args.lancedb_path)
+        # Load only metadata (grid size / morton flag); fingerprints live in ANN table.
+        meta_path = args.doc_fp_dir / "doc_fingerprints_meta.json"
+        if meta_path.exists():
+            with open(meta_path, "r", encoding="utf-8") as fh:
+                _doc_meta = json.load(fh)
+            use_morton = _doc_meta.get("use_morton", True)
+            meta_grid_size = _doc_meta.get("grid_size", args.grid_size)
+            if meta_grid_size != args.grid_size:
+                logger.warning(
+                    f"doc meta grid_size={meta_grid_size} differs from --grid-size={args.grid_size}; "
+                    f"using meta value."
+                )
+                args.grid_size = meta_grid_size
+        else:
+            use_morton = True
+        doc_fingerprints: Dict[str, csr_matrix] = {}
+        doc_metadata: Dict = {"use_morton": use_morton, "grid_size": args.grid_size}
+        logger.info(
+            f"LanceDB backend active — skipping numpy document fingerprint load."
         )
-        sys.exit(1)
-    
-    use_morton = doc_metadata.get("use_morton", True)  # default safe row‑major
-    logger.info(f"Loaded {len(doc_fingerprints)} document fingerprints.")
-    logger.debug(
-        f"  [MAIN LOAD] doc_metadata keys: {list(doc_metadata.keys())[:5]}..."
-        if doc_metadata else "  [MAIN LOAD] no doc_metadata"
-    )
+    else:
+        logger.debug(
+            f"  [MAIN LOAD] loading document fingerprints from {args.doc_fp_dir}"
+        )
+        try:
+            doc_fingerprints, doc_metadata = load_document_fingerprints(args.doc_fp_dir)
+        except (FileNotFoundError, ValueError) as exc:
+            logger.error(f"Failed to load document fingerprints: {exc}")
+            sys.exit(1)
+
+        if not doc_fingerprints:
+            logger.error(
+                "Document fingerprints dict is empty — check Step 5 output."
+            )
+            sys.exit(1)
+
+        use_morton = doc_metadata.get("use_morton", True)  # default safe row‑major
+        logger.info(f"Loaded {len(doc_fingerprints)} document fingerprints.")
+        logger.debug(
+            f"  [MAIN LOAD] doc_metadata keys: {list(doc_metadata.keys())[:5]}..."
+            if doc_metadata else "  [MAIN LOAD] no doc_metadata"
+        )
 
     # ── Collect queries ────────────────────────────────────────────────────────
     queries: List[str] = []
@@ -2887,18 +3008,23 @@ def main() -> None:
             use_morton=use_morton,
             splade_scorer=splade_scorer,
             vocab_fp_index=vocab_fp_index,
+            lancedb_storage=lancedb_storage,
         )
         if not getattr(args, "simple_query", False):
             pq_kwargs["phrase_fp_matrix"] = phrase_fp_matrix
             pq_kwargs["phrase_to_row"] = phrase_to_row
 
-        results, metadata = process_query(
-            query,
-            phrase_fingerprints,
-            doc_fingerprints,
-            args,
-            **pq_kwargs,
-        )
+        with timed() as e2e_timer:
+            results, metadata = process_query(
+                query,
+                phrase_fingerprints,
+                doc_fingerprints,
+                args,
+                **pq_kwargs,
+            )
+        e2e_ms = e2e_timer.seconds * 1000.0
+        metadata.setdefault("timing", {})["e2e_ms"] = float(e2e_ms)
+        logger.debug(f"  [MAIN E2E] query [{i}] took {e2e_ms:.2f} ms")
 
         if "error" in metadata:
             logger.error(

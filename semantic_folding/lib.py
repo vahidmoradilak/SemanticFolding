@@ -87,6 +87,40 @@ def get_logger(name: str):
 
     return _base_logger.bind(step=name)
 
+
+# ---------------------------------------------------------
+# Shared timing helper (retrieval-backend instrumentation)
+# ---------------------------------------------------------
+import contextlib
+import time as _time
+
+
+@contextlib.contextmanager
+def timed():
+    """
+    Measure wall time of a code block with ``time.perf_counter``.
+
+    Usage::
+
+        with timed() as t:
+            results = backend.search(...)
+        logger.info(f"search took {t.seconds*1000:.1f} ms")
+
+    The elapsed wall time in seconds is available as ``t.seconds``
+    after the block exits.
+    """
+    class _Timer:
+        def __init__(self) -> None:
+            self.seconds = 0.0
+
+    timer = _Timer()
+    t0 = _time.perf_counter()
+    try:
+        yield timer
+    finally:
+        timer.seconds = _time.perf_counter() - t0
+
+
 # ---------------------------------------------------------
 # Domain-Aware Stopwords
 # ---------------------------------------------------------
