@@ -80,3 +80,7 @@ data/HippoRAG2/dataset
 
 # Dataset benchmark
 data/datasets/
+
+# Temporary scratch (agent ad-hoc scripts/tests)
+temp/
+
