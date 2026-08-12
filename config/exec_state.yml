@@ -1,4 +1,4 @@
-last_run_id: run_20260729_115049_belebele_ar_en
+last_run_id: run_20260812_183752_belebele_ar_en_488
 last_step: 7
 runs:
   run_20260526_101313_38_fr_en:
@@ -802,6 +802,223 @@ runs:
           output: outputs/run_20260729_115049_belebele_ar_en/query_results
           query: ن، للحصول على صوت أعلى إضافي، يمكنك استخدام المنفاخ بمزيد من الضغط
             أو السرعة. | Make sure your hand is as relaxed as possible while
+          spreading_steps: '1'
+          top_k: '5'
+          weighting: idf
+  run_20260811_104154:
+    corpus: outputs\mixed_ar_en_benchmark\runs\run_20260729_123620\corpus.txt
+    created_at: '2026-08-11T10:41:54.025160'
+    steps:
+      1:
+        completed_at: '2026-08-11T10:44:31.961381'
+        mapping: outputs\mixed_ar_en_benchmark\phrase_to_contexts.json
+        output: outputs\mixed_ar_en_benchmark\
+        params:
+          corpus: outputs\mixed_ar_en_benchmark\runs\run_20260729_123620\corpus.txt
+          keep_verbs: 'true'
+          min_freq: '1'
+          min_word_length: '2'
+          no_filter_generic: 'false'
+          no_spacy: 'false'
+          output: outputs\mixed_ar_en_benchmark\
+          stats: 'false'
+        vocab: outputs\mixed_ar_en_benchmark\vocabulary.csv
+      2:
+        completed_at: '2026-08-11T11:17:09.008384'
+        idf_weights: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix\term_context_matrix.json
+        output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix
+        params:
+          corpus: outputs\mixed_ar_en_benchmark\runs\run_20260729_123620\corpus.txt
+          mapping: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\extracted_phrases\phrase_to_contexts.json
+          no_tfidf: 'false'
+          output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix
+          vocab: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\extracted_phrases\vocabulary.csv
+      3:
+        completed_at: '2026-08-11T11:19:10.818354'
+        coordinates: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\semantic_space\context_coordinates.json
+        output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\semantic_space
+        params:
+          grid_size: '64'
+          matrix_npz: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix\term_context_matrix.json
+          method: umap
+          output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\semantic_space
+          show_density: 'false'
+          visualize: 'true'
+      4:
+        completed_at: '2026-08-11T11:20:16.801214'
+        output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\phrase_fingerprints
+        params:
+          coordinates: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\semantic_space\context_coordinates.json
+          grid_size: '64'
+          metadata: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix\term_context_matrix.json
+          morton: 'true'
+          no_smooth: 'false'
+          output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\phrase_fingerprints
+          smoothing_sigma: '1.5'
+      5:
+        completed_at: '2026-08-11T11:27:10.487356'
+        output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\doc_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: outputs\mixed_ar_en_benchmark\runs\run_20260729_123620\corpus.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '2'
+          morton: 'true'
+          no_normalize: 'false'
+          normalize_method: l2
+          output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\doc_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.05'
+      6:
+        completed_at: '2026-08-11T11:28:15.711473'
+        output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\customtext_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: data\customtexts.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '2'
+          morton: 'true'
+          no_normalize: 'false'
+          normalize_method: l2
+          output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\customtext_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.05'
+      7:
+        completed_at: '2026-08-11T11:31:49.014704'
+        output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\query_results
+        params:
+          doc_fingerprints: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\doc_fingerprints
+          fingerprints: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\term_context_matrix\idf_weights.json
+          output: outputs\mixed_ar_en_benchmark\runs\run_14050520_111010\query_results
+          query: قوات عقيد موقع موقع قوات عقيد عقيد تارك؟ موقع قوات قوات قوات عقيد
+            تارك؟ تارك؟ عقيد Colonel Stark’s troops Stark Stark ’s troops Colonel
+            Stark troops colonel stark situated
+          spreading_steps: '1'
+          top_k: '5'
+          weighting: idf
+  run_20260812_183752_belebele_ar_en_488:
+    corpus: data\datasets\belebele\corpus_ar_en_488.txt
+    created_at: '2026-08-12T18:37:52.683296'
+    steps:
+      1:
+        completed_at: '2026-08-12T18:38:39.573672'
+        mapping: outputs\run_20260812_183752_belebele_ar_en_488\extracted_phrases\phrase_to_contexts.json
+        output: outputs/run_20260812_183752_belebele_ar_en_488/extracted_phrases
+        params:
+          corpus: data\datasets\belebele\corpus_ar_en_488.txt
+          keep_verbs: 'true'
+          min_freq: '1'
+          min_word_length: '2'
+          no_filter_generic: 'false'
+          no_spacy: 'false'
+          output: outputs/run_20260812_183752_belebele_ar_en_488/extracted_phrases
+          stats: 'false'
+        vocab: outputs\run_20260812_183752_belebele_ar_en_488\extracted_phrases\vocabulary.csv
+      2:
+        completed_at: '2026-08-12T18:39:02.766169'
+        idf_weights: outputs\run_20260812_183752_belebele_ar_en_488\term_context_matrix\idf_weights.json
+        matrix_npz: outputs\run_20260812_183752_belebele_ar_en_488\term_context_matrix\term_context_matrix.npz
+        metadata: outputs\run_20260812_183752_belebele_ar_en_488\term_context_matrix\term_context_matrix.json
+        output: outputs/run_20260812_183752_belebele_ar_en_488/term_context_matrix
+        params:
+          corpus: data\datasets\belebele\corpus_ar_en_488.txt
+          mapping: outputs\run_20260812_183752_belebele_ar_en_488\extracted_phrases\phrase_to_contexts.json
+          no_tfidf: 'false'
+          output: outputs/run_20260812_183752_belebele_ar_en_488/term_context_matrix
+          vocab: outputs\run_20260812_183752_belebele_ar_en_488\extracted_phrases\vocabulary.csv
+      3:
+        completed_at: '2026-08-12T18:40:20.164034'
+        coordinates: outputs\run_20260812_183752_belebele_ar_en_488\semantic_space\context_coordinates.json
+        output: outputs/run_20260812_183752_belebele_ar_en_488/semantic_space
+        params:
+          grid_size: '64'
+          matrix_npz: outputs\run_20260812_183752_belebele_ar_en_488\term_context_matrix\term_context_matrix.npz
+          metadata: outputs\run_20260812_183752_belebele_ar_en_488\term_context_matrix\term_context_matrix.json
+          method: umap
+          output: outputs/run_20260812_183752_belebele_ar_en_488/semantic_space
+          show_density: 'false'
+          visualize: 'true'
+      4:
+        completed_at: '2026-08-12T18:40:55.339481'
+        output: outputs/run_20260812_183752_belebele_ar_en_488/phrase_fingerprints
+        params:
+          coordinates: outputs\run_20260812_183752_belebele_ar_en_488\semantic_space\context_coordinates.json
+          grid_size: '64'
+          metadata: outputs\run_20260812_183752_belebele_ar_en_488\term_context_matrix\term_context_matrix.json
+          morton: 'true'
+          no_smooth: 'false'
+          output: outputs/run_20260812_183752_belebele_ar_en_488/phrase_fingerprints
+          smoothing_sigma: '1.5'
+      5:
+        completed_at: '2026-08-12T18:42:25.927579'
+        output: outputs/run_20260812_183752_belebele_ar_en_488/doc_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: data\datasets\belebele\corpus_ar_en_488.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs/run_20260812_183752_belebele_ar_en_488/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260812_183752_belebele_ar_en_488\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '2'
+          morton: 'true'
+          no_normalize: 'false'
+          normalize_method: l2
+          output: outputs/run_20260812_183752_belebele_ar_en_488/doc_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.05'
+      6:
+        completed_at: '2026-08-12T18:43:20.353598'
+        output: outputs/run_20260812_183752_belebele_ar_en_488/customtext_fingerprints
+        params:
+          compute_diversity: 'false'
+          corpus: data\customtexts.txt
+          diversity_sample: '100'
+          filter_generic: 'true'
+          fingerprints: outputs/run_20260812_183752_belebele_ar_en_488/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260812_183752_belebele_ar_en_488\term_context_matrix\idf_weights.json
+          keep_verbs: 'true'
+          min_peak_distance: '2'
+          min_word_length: '2'
+          morton: 'true'
+          no_normalize: 'false'
+          normalize_method: l2
+          output: outputs/run_20260812_183752_belebele_ar_en_488/customtext_fingerprints
+          smoothing_sigma: '1.5'
+          top_percent: '0.05'
+      7:
+        completed_at: '2026-08-12T18:44:49.194228'
+        output: outputs/run_20260812_183752_belebele_ar_en_488/query_results
+        params:
+          doc_fingerprints: outputs/run_20260812_183752_belebele_ar_en_488/doc_fingerprints
+          fingerprints: outputs/run_20260812_183752_belebele_ar_en_488/phrase_fingerprints
+          grid_size: '64'
+          idf_weights: outputs\run_20260812_183752_belebele_ar_en_488\term_context_matrix\idf_weights.json
+          output: outputs/run_20260812_183752_belebele_ar_en_488/query_results
+          query: نصيحه دقيقه لعزف دقيقه لعزف ناجح يعتبر نصيحه دقيقه فقا اكورديون؟
+            يعتبر فقا لفقره، دقيقه لعزف دقيقه ناجح نصيحه دقيقه لعزف لفقره، نصيحه لعزف
+            ناجح يعتبر نصيحه the passage an accurate tip the accordion playing tip
+            accordion passage according considered accurate successfully
           spreading_steps: '1'
           top_k: '5'
           weighting: idf
