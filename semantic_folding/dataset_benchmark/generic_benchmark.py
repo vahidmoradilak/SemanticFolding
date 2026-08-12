@@ -584,6 +584,33 @@ class GenericBenchmarkRunner:
             update_run_status(run_dir, self.adapter.dataset_name, "failed_step5")
             return None
 
+        # ── Retrieval backend index (WS-A) ──────────────────────────────────
+        if self.params.get("retrieval_backend", "numpy") == "lancedb":
+            try:
+                from lance_storage import LanceStorage
+                lancedb_path = self.params.get("lancedb_path") or str(run_dir / "lancedb")
+                # Persist the resolved path so a later --mode benchmark run can find it
+                self.params["lancedb_path"] = lancedb_path
+                logger.info(f"  [BACKEND] building LanceDB ANN index at {lancedb_path}")
+                storage = LanceStorage(lancedb_path)
+                idx_info = storage.build_document_index(str(out))
+                idx_info["backend"] = "lancedb"
+                idx_info["index_mode"] = self.params.get("index_mode", "pool")
+                idx_info["path"] = lancedb_path
+                with open(run_dir / "retrieval_backend.json", "w", encoding="utf-8") as f:
+                    json.dump(idx_info, f, indent=2)
+                logger.success(
+                    f"  [BACKEND] LanceDB ANN index built ({idx_info['num_docs']} docs, "
+                    f"{idx_info['build_seconds']}s)"
+                )
+                run_config["pipeline"] = {k: v for k, v in self.params.items()}
+                with open(run_dir / "config.yml", "w", encoding="utf-8") as f:
+                    yaml.dump(run_config, f, default_flow_style=False)
+            except Exception as exc:
+                logger.error(f"  [BACKEND] LanceDB index build FAILED: {exc}")
+                update_run_status(run_dir, self.adapter.dataset_name, "failed_backend_index")
+                return None
+
         update_run_status(run_dir, self.adapter.dataset_name, "completed")
         logger.success(f"Index phase complete -> {run_dir}")
         return run_dir
@@ -767,6 +794,16 @@ class GenericBenchmarkRunner:
             if self.params.get("faiss_path"):
                 step7_args.extend(["--faiss-path", str(self.params["faiss_path"])])
 
+        # ── Retrieval backend (WS-A) ────────────────────────────────────────
+        if self.params.get("retrieval_backend", "numpy") == "lancedb":
+            step7_args.extend(["--retrieval-backend", "lancedb"])
+            if self.params.get("lancedb_path"):
+                step7_args.extend(["--lancedb-path", str(self.params["lancedb_path"])])
+            if self.params.get("lancedb_exact"):
+                step7_args.append("--lancedb-exact")
+            if self.params.get("lancedb_limit", 200) != 200:
+                step7_args.extend(["--lancedb-limit", str(self.params["lancedb_limit"])])
+
         # ── Cross-attention scoring (P2.2) ────────────────────────────────────
         if self.params.get("cross_attention", False):
             step7_args.append("--cross-attention")
@@ -837,6 +874,12 @@ class GenericBenchmarkRunner:
             raw = all_query_results[i] if i < len(all_query_results) else {"results": []}
             full_results = raw.get("results", [])
 
+            # Retrieve backend timing from Step 6 output metadata
+            raw_meta = raw.get("metadata", {})
+            raw_timing = raw_meta.get("timing", {})
+            retrieval_ms = float(raw_timing.get("retrieval_ms", 0.0))
+            e2e_ms = float(raw_timing.get("e2e_ms", 0.0))
+
             # Save raw per-query result
             with open(result_json, "w", encoding="utf-8") as f:
                 json.dump([raw], f, indent=2)
@@ -855,22 +898,27 @@ class GenericBenchmarkRunner:
                     "filtered_ranked": [(doc_id, float(score)) for doc_id, score in candidate_results],
                     "full_top10": [(doc_id, float(score)) for doc_id, score in full_results[:10]],
                     "elapsed_s": round(batch_elapsed / len(batch_entries), 1),
+                    "retrieval_ms": round(retrieval_ms, 2),
+                    "e2e_ms": round(e2e_ms, 2),
                 }, f, indent=2)
 
             metrics = compute_metrics(candidate_results, gold_ids,
                                       top_k_list=[1, 2, 3, 5, self.params["top_k"]])
             metrics["spreading_steps"] = spread
+            metrics["retrieval_ms"] = retrieval_ms
+            metrics["e2e_ms"] = e2e_ms
             all_metrics.append(metrics)
 
             logger.info(f"  [{q_idx:04d}/{query_end - 1}] MRR={metrics['mrr']:.3f} AP={metrics['ap']:.3f} "
-                        f"P@2={metrics['p@2']:.3f} spread={spread}[{spread_reason[:5]}]  ({i+1}/{len(batch_entries)})")
+                        f"P@2={metrics['p@2']:.3f} spread={spread}[{spread_reason[:5]}] "
+                        f"retrieval={retrieval_ms:.0f}ms  ({i+1}/{len(batch_entries)})")
 
         # ── Write CSV ────────────────────────────────────────────────────
         with open(results_log, "w", newline="", encoding="utf-8") as csv_f:
             writer = csv.writer(csv_f)
             header = ["query_idx", "query", "n_words", "spread", "spread_reason",
                       "mrr", "ap", "p@1", "p@2", "p@3", "p@5", "r@2", "ndcg@2",
-                      "found_at", "elapsed_s"]
+                      "found_at", "elapsed_s", "retrieval_ms", "e2e_ms"]
             writer.writerow(header)
             for be, metrics in zip(batch_entries, all_metrics):
                 writer.writerow([
@@ -880,6 +928,7 @@ class GenericBenchmarkRunner:
                     f"{metrics['p@3']:.4f}", f"{metrics['p@5']:.4f}",
                     f"{metrics['r@2']:.4f}", f"{metrics['ndcg@2']:.4f}",
                     metrics.get("found_at", "none"), f"{batch_elapsed / len(batch_entries):.1f}",
+                    f"{metrics['retrieval_ms']:.2f}", f"{metrics['e2e_ms']:.2f}",
                 ])
 
         if all_metrics:
@@ -1001,7 +1050,8 @@ class GenericBenchmarkRunner:
         report_lines += [
             f"\n| Query range | {config['phase2']['query_start']}-{config['phase2']['query_end'] - 1 if config['phase2']['query_end'] is not None else 'N/A'} |",
             f"| Run docs    | {run_config.get('phase1', {}).get('num_docs', '?')} |",
-            f"| Queries     | {summary.get('num_queries', '?')} |\n",
+            f"| Queries     | {summary.get('num_queries', '?')} |",
+            f"| Backend     | {pipe.get('retrieval_backend', 'numpy')} |\n",
             f"---\n",
             f"## Aggregate Results\n",
             f"| Metric | Mean | Min | Max |",
@@ -1018,23 +1068,42 @@ class GenericBenchmarkRunner:
             f"\n**Queries evaluated:** {summary.get('num_queries', '?')}",
             f"\n**Failed:** {summary.get('failed', 0)}\n",
             f"---\n",
+            f"## Retrieval Latency\n",
+            f"| Metric | Mean | Min | Max |",
+            f"|--------|------|-----|-----|",
+        ]
+        for metric in ["retrieval_ms", "e2e_ms"]:
+            mean_k = f"mean_{metric}"; min_k = f"min_{metric}"; max_k = f"max_{metric}"
+            if mean_k in summary:
+                report_lines.append(
+                    f"| **{metric}** | {summary[mean_k]:.1f} | "
+                    f"{summary[min_k]:.1f} | {summary[max_k]:.1f} |"
+                )
+        report_lines += [
+            f"\n**Warm/cold note:** first-query retrieval includes index/table warm-up; "
+            f"steady-state p50/p95 reported below.\n",
+            f"---\n",
             f"## Per-Query Results\n",
             f"| # | Query | MRR | AP | P@1 | P@2 | R@2 | NDCG@2 | Time |",
             f"|---|-------|-----|-----|-----|-----|-----|--------|------|",
         ]
 
         not_found = found_r1 = found_r2 = 0
+        ret_ms_vals = []
+        e2e_ms_vals = []
         for qd in queries_data:
             q_idx = qd["query_idx"]
             query_short = qd["query"][:50]
             gold = qd["gold"]
             ranked = qd.get("filtered_ranked", [])
             m = compute_metrics(ranked, gold, [1, 2, 3, 5])
+            ret_ms_vals.append(qd.get("retrieval_ms", 0.0))
+            e2e_ms_vals.append(qd.get("e2e_ms", 0.0))
             report_lines.append(
                 f"| {q_idx:04d} | {query_short}... | "
                 f"{m['mrr']:.3f} | {m['ap']:.3f} | {m['p@1']:.3f} | "
                 f"{m['p@2']:.3f} | {m['r@2']:.3f} | {m['ndcg@2']:.3f} | "
-                f"{qd.get('elapsed_s', '?'):>5}s |"
+                f"{qd.get('retrieval_ms', '?'):>6.1f}ms |"
             )
             fa = m.get("found_at", 0)
             if fa == 0:
@@ -1044,11 +1113,25 @@ class GenericBenchmarkRunner:
             if fa == 1:
                 found_r1 += 1
 
+        def _percentile(vals, p):
+            if not vals:
+                return 0.0
+            s = sorted(vals)
+            k = max(0, min(len(s) - 1, int(round(p / 100.0 * (len(s) - 1)))))
+            return s[k]
+
         report_lines += [
             f"\n### Distribution\n",
             f"\n**Found at rank 1:** {found_r1}/{len(queries_data)}",
-            f"\n**Found at rank <= 2:** {found_r1 + found_r2}/{len(queries_data)}",
+            f"\n**Found at rank <= 2:** {found_r2}/{len(queries_data)}",
             f"\n**Not found:** {not_found}/{len(queries_data)}\n",
+            f"\n### Latency Percentiles\n",
+            f"\n| Metric | p50 | p95 | min | max |",
+            f"\n|--------|-----|-----|-----|-----|",
+            f"\n| retrieval_ms | {_percentile(ret_ms_vals, 50):.1f} | {_percentile(ret_ms_vals, 95):.1f} | "
+            f"{min(ret_ms_vals) if ret_ms_vals else 0.0:.1f} | {max(ret_ms_vals) if ret_ms_vals else 0.0:.1f} |",
+            f"\n| e2e_ms | {_percentile(e2e_ms_vals, 50):.1f} | {_percentile(e2e_ms_vals, 95):.1f} | "
+            f"{min(e2e_ms_vals) if e2e_ms_vals else 0.0:.1f} | {max(e2e_ms_vals) if e2e_ms_vals else 0.0:.1f} |\n",
             f"---\n",
             f"*Report generated by `generic_benchmark.py --mode report`*",
         ]
@@ -1204,6 +1287,19 @@ def cli_main():
     p_idx.add_argument("--prebuilt-vocab", type=Path, default=None,
                        help="Path to a pre-built extracted_phrases/ dir to skip Steps 1 + 0.5")
 
+    # Retrieval backend (WS-A)
+    p_idx.add_argument("--retrieval-backend", type=str, default="numpy",
+                       choices=["numpy", "lancedb"],
+                       help="Document scoring backend used at query time (default: numpy)")
+    p_idx.add_argument("--lancedb-path", type=Path, default=None,
+                       help="LanceDB database dir; built in phase 1 and used by step 6")
+    p_idx.add_argument("--lancedb-exact", action="store_true", default=False,
+                       help="Use exact scan inside LanceDB instead of ANN index")
+    p_idx.add_argument("--lancedb-limit", type=int, default=200,
+                       help="Max ANN candidates returned per query")
+    p_idx.add_argument("--index-mode", type=str, default="pool", choices=["pool", "corpus"],
+                       help="Index scope: pool (combined query candidate corpus) or corpus (full dataset corpus)")
+
     # benchmark
     p_bm = sub.add_parser("benchmark", help="Phase 2: run Step 6 per query")
     p_bm.add_argument("--dataset", required=True)
@@ -1269,6 +1365,20 @@ def cli_main():
                         help="Storage backend for fingerprints (default: file)")
     p_bm.add_argument("--faiss-path", type=Path, default=None,
                         help="Path to FAISS index directory (required when --storage faiss)")
+
+    # Retrieval backend (WS-A)
+    p_bm.add_argument("--retrieval-backend", type=str, default=None,
+                      choices=["numpy", "lancedb"],
+                      help="Document scoring backend used at query time "
+                           "(default: taken from the index run's config.yml)")
+    p_bm.add_argument("--lancedb-path", type=Path, default=None,
+                      help="LanceDB database dir (built in phase 1 index run)")
+    p_bm.add_argument("--lancedb-exact", action="store_true", default=False,
+                      help="Use exact scan inside LanceDB instead of ANN index")
+    p_bm.add_argument("--lancedb-limit", type=int, default=200,
+                      help="Max ANN candidates returned per query")
+    p_bm.add_argument("--index-mode", type=str, default="pool", choices=["pool", "corpus"],
+                      help="Index scope used during phase 1 (must match the index run)")
 
     # ── Cross-attention scoring (P2.2) ────────────────────────────────
     p_bm.add_argument("--cross-attention", dest="cross_attention", action="store_true", default=False,
@@ -1386,6 +1496,18 @@ def cli_main():
                         help="Storage backend for fingerprints (default: file)")
     p_all.add_argument("--faiss-path", type=Path, default=None,
                         help="Path to FAISS index directory (required when --storage faiss)")
+    p_all.add_argument("--retrieval-backend", type=str, default=None,
+                      choices=["numpy", "lancedb"],
+                      help="Document scoring backend used at query time "
+                           "(default: numpy for index/all; index config for benchmark)")
+    p_all.add_argument("--lancedb-path", type=Path, default=None,
+                      help="LanceDB database dir; built in phase 1 and used by step 6")
+    p_all.add_argument("--lancedb-exact", action="store_true", default=False,
+                      help="Use exact scan inside LanceDB instead of ANN index")
+    p_all.add_argument("--lancedb-limit", type=int, default=200,
+                      help="Max ANN candidates returned per query")
+    p_all.add_argument("--index-mode", type=str, default="pool", choices=["pool", "corpus"],
+                      help="Index scope: pool (combined query candidate corpus) or corpus (full dataset corpus)")
     p_all.add_argument("--asymmetric", action="store_true", help="Use asymmetric containment/coverage scoring")
     p_all.add_argument("--asym-alpha", type=float, default=0.7, help="Containment weight in asymmetric mode")
     p_all.add_argument("--score-norm", type=str, default="none",
@@ -1559,8 +1681,34 @@ def cli_main():
         params["synonym_weight"] = args.synonym_weight
     if hasattr(args, "corpus") and args.corpus:
         params["corpus_path"] = str(args.corpus)
-    elif args.command == "benchmark" and hasattr(args, "run_dir"):
-        # Load corpus_path from run config for benchmark subcommand
+    if hasattr(args, "retrieval_backend"):
+        explicit_backend = args.retrieval_backend
+        if explicit_backend is not None:
+            params["retrieval_backend"] = explicit_backend
+            params["lancedb_path"] = str(args.lancedb_path) if getattr(args, "lancedb_path", None) else None
+            params["lancedb_exact"] = args.lancedb_exact
+            params["lancedb_limit"] = args.lancedb_limit
+            params["index_mode"] = args.index_mode
+        elif args.command == "benchmark":
+            # Fall back to the index run's backend config
+            run_config_path = Path(args.run_dir) / "config.yml"
+            if run_config_path.exists():
+                import yaml as _yaml
+                with open(run_config_path, encoding="utf-8") as f:
+                    run_cfg = _yaml.safe_load(f)
+                run_pipeline = run_cfg.get("pipeline", {})
+                params.setdefault("retrieval_backend", run_pipeline.get("retrieval_backend", "numpy"))
+                params.setdefault("lancedb_path", run_pipeline.get("lancedb_path"))
+                params.setdefault("lancedb_exact", run_pipeline.get("lancedb_exact", False))
+                params.setdefault("lancedb_limit", run_pipeline.get("lancedb_limit", 200))
+                params.setdefault("index_mode", run_pipeline.get("index_mode", "pool"))
+            else:
+                params.setdefault("retrieval_backend", "numpy")
+        else:
+            # index / all without an explicit choice
+            params.setdefault("retrieval_backend", "numpy")
+    # Benchmark subcommand always inherits corpus_path from its index run config
+    if args.command == "benchmark" and hasattr(args, "run_dir"):
         run_config_path = Path(args.run_dir) / "config.yml"
         if run_config_path.exists():
             import yaml as _yaml
