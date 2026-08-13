@@ -53,6 +53,9 @@ benchmark_ar_en file by corpus.txt, query.jsonl and guery_gold.json
 useing lanceDB:
 .venv\scripts\python semantic_folding\dataset_benchmark\custom_ar_en\run_benchmark.py --corpus data\datasets\belebele\corpus_ar_en_488.txt --queries data\datasets\belebele\queries.jsonl --gold data\datasets\belebele\query_gold.json --lancedb
 
+using image search:
+.venv\scripts\python semantic_folding\dataset_benchmark\custom_ar_en\run_benchmark.py --corpus data\datasets\belebele\corpus_ar_en_488.txt --queries data\datasets\belebele\queries.jsonl --gold data\datasets\belebele\query_gold.json --image-search
+
 Main Menu:
   1. Start new run
     Select step to run:

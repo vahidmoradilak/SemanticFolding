@@ -307,6 +307,21 @@ def _retrieval_backend_args(params):
     return args
 
 
+def _image_search_args(params):
+    """Return Step 7 args enabling image-search (SSIM) ranking, if requested.
+
+    Mirrors ``_retrieval_backend_args``: when ``image_search`` is not set the
+    variant runs unchanged (cosine scoring). image-search only supports the
+    numpy retrieval backend, so it is mutually exclusive with ``--lancedb``.
+    """
+    if not params.get("image_search"):
+        return []
+    args = ["--image-search"]
+    args.extend(["--ssim-sigma", str(params.get("ssim_sigma", 1.5))])
+    args.extend(["--ssim-region", params.get("ssim_region", "active")])
+    return args
+
+
 def run_step6_parallel(step6_args, output_json, step_name, num_workers=1,
                        timeout=3600) -> bool:
     """Run Step 6 across ``num_workers`` concurrent subprocesses.
@@ -397,9 +412,11 @@ def run_step6_parallel(step6_args, output_json, step_name, num_workers=1,
 
 def build_variants(query_file, run_dir, corpus_path, params):
     rba = _retrieval_backend_args(params)
+    isa = _image_search_args(params)
+    pure_sf_display = "Pure SF (image/SSIM)" if isa else "Pure SF"
     return {
         "pure_sf": {
-            "display": "Pure SF",
+            "display": pure_sf_display,
             "step7_args": [
                 "--query-file", str(query_file),
                 "--fingerprints", str(run_dir / "phrase_fingerprints"),
@@ -410,7 +427,7 @@ def build_variants(query_file, run_dir, corpus_path, params):
                 "--weighting", params["weighting"],
                 "--spreading-steps", str(params["spreading_steps"]),
                 "--keep-verbs", "--min-word-length", str(params["min_word_length"]),
-            ] + rba,
+            ] + isa + rba,
         },
         "splade_linear": {
             "display": "SF+SPLADE Linear (\u03b1=0.3)",
@@ -470,6 +487,15 @@ def main():
                         help="Use exact scan inside LanceDB instead of ANN index")
     parser.add_argument("--lancedb-limit", type=int, default=200,
                         help="Max ANN candidates returned per query")
+    parser.add_argument("--image-search", action="store_true",
+                        help="Rank with image similarity (masked/windowed SSIM) "
+                             "instead of cosine for the pure_sf variant")
+    parser.add_argument("--ssim-sigma", type=float, default=1.5,
+                        help="Gaussian window sigma for SSIM (default: 1.5)")
+    parser.add_argument("--ssim-region", type=str, default="active",
+                        choices=["active", "full"],
+                        help="SSIM averaging region: 'active' masks to cells "
+                             "active in either image; 'full' uses the whole grid")
     parser.add_argument("--splade-only", action="store_true",
                         help="Only run SPLADE variants + BM25 (skip pure_sf)")
     parser.add_argument("--pure-sf-only", action="store_true",
@@ -495,7 +521,17 @@ def main():
         "lancedb_path": str(args.lancedb_path) if args.lancedb_path else None,
         "lancedb_exact": args.lancedb_exact,
         "lancedb_limit": args.lancedb_limit,
+        "image_search": args.image_search,
+        "ssim_sigma": args.ssim_sigma,
+        "ssim_region": args.ssim_region,
     })
+
+    if params["image_search"] and params["retrieval_backend"] == "lancedb":
+        logger.error(
+            "--image-search is mutually exclusive with --lancedb "
+            "(image scoring requires the numpy retrieval backend)."
+        )
+        sys.exit(1)
 
     # ── Load inputs ──────────────────────────────────────────────────────
     docs = load_corpus(args.corpus)
@@ -824,7 +860,11 @@ def main():
             )
 
     lines.append(f"\n### Detailed Comparison\n")
-    header = "| Metric | " + " | ".join(display_names[v] if v in display_names else v for v in report_order) + " |"
+    detail_names = {
+        vname: all_variant_metrics[vname].get("display", display_names.get(vname, vname))
+        for vname in report_order
+    }
+    header = "| Metric | " + " | ".join(detail_names[v] for v in report_order) + " |"
     sep = "|--------|" + "--------|" * len(report_order)
     lines.append(header)
     lines.append(sep)
