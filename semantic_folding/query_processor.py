@@ -58,6 +58,7 @@ from typing import Dict, List, Optional, Set, Tuple
 import numpy as np
 import scipy.signal
 
+from scipy.ndimage import gaussian_filter
 from scipy.sparse import csr_matrix
 
 from phrase_extractor import (
@@ -1894,6 +1895,216 @@ def rank_documents(
     return filtered[:top_k], metadata
 
 
+def image_ssim(
+    query_grid : np.ndarray,
+    doc_grid   : np.ndarray,
+    sigma      : float = 1.5,
+    region     : str   = "active",
+    eps        : float = 1e-8,
+    k1         : float = 0.01,
+    k2         : float = 0.03,
+) -> float:
+    """
+    Compute a masked, windowed SSIM score between two 2D fingerprint images.
+
+    Each fingerprint grid is treated as a single-channel grayscale image and
+    compared at **fixed alignment** (identical ``(x, y)`` positions), which is
+    valid because the shared Morton layout places semantically related concepts
+    in nearby, consistent cells.
+
+    The score is the standard Wang et al. SSIM, computed with Gaussian-weighted
+    local means / variances / covariance (window sigma ``sigma``):
+
+        SSIM(x,y) = (2·mu_q·mu_d + C1)·(2·cov + C2)
+                  / ((mu_q² + mu_d² + C1)·(var_q + var_d + C2))
+
+    with ``C1 = (k1·L)²``, ``C2 = (k2·L)²`` and ``L`` the dynamic range
+    (max value across both grids).
+
+    **Why the mask (``region="active"``)?**  These sparse semantic grids are
+    typically ~5% dense.  In any Gaussian window where *both* images are zero
+    the SSIM formula degenerates to ≈1.0 (vacuous perfect similarity).  To keep
+    the score discriminative we average the SSIM map only over pixels that are
+    active in **either** image (`q>0 | d>0`) and whose local window actually
+    carries signal (`max(mu_q, mu_d) > eps`).  Pixels in the far background are
+    excluded entirely.
+
+    Parameters
+    ----------
+    query_grid : np.ndarray
+        ``(grid_size, grid_size)`` float32 query fingerprint image.
+    doc_grid : np.ndarray
+        ``(grid_size, grid_size)`` float32 document fingerprint image.
+    sigma : float, optional
+        Gaussian window sigma for the local statistics (default: ``1.5``).
+        Provides the small local-overlap tolerance that substitutes for
+        ``--geometric`` / Z-order spreading.
+    region : str, optional
+        ``"active"`` — mask SSIM to active-union pixels (default).
+        ``"full"`` — average over the entire grid (textbook SSIM; dominated by
+        the zero background on sparse grids).
+    eps : float, optional
+        Small additive constant to keep denominators away from zero.
+    k1, k2 : float, optional
+        SSIM stabilization constants (Wang et al. defaults).
+
+    Returns
+    -------
+    float
+        Mean SSIM in ``[-1, 1]`` over the selected region.  ``0.0`` when the
+        grids are empty, ``L<=0``, or no valid masked pixels exist.
+
+    Notes
+    -----
+    - Both images are L2-normalised up front.  Query fingerprints are *not*
+      normalised by the 2D pipeline (values ~5-15) while document fingerprints
+      are (values ~0.4); without rescaling, the SSIM constants ``C1/C2``
+      (set from ``L``) crush the document signal and ranking becomes noise.
+    - Not guaranteed to beat cosine similarity on retrieval metrics — this is
+      an alternative image-based ranking signal, intended for A/B comparison.
+    - Shapes must match; a mismatch raises ``ValueError``.
+    """
+    if query_grid.shape != doc_grid.shape:
+        raise ValueError(
+            f"image_ssim shape mismatch: {query_grid.shape} vs {doc_grid.shape}"
+        )
+    if query_grid.size == 0:
+        return 0.0
+
+    # L2-normalise both images so the SSIM constants (C1, C2, driven by the
+    # dynamic range L) operate on a common scale.  Query fingerprints are NOT
+    # L2-normalised by the 2D pipeline (values ~5-15), while document
+    # fingerprints ARE normalised in Step 5 (values ~0.4).  Without this
+    # rescaling L is dominated by the query, the constants dwarf the document
+    # signal, and SSIM degenerates to near-random scores.
+    q_norm = float(np.linalg.norm(query_grid.ravel()))
+    d_norm = float(np.linalg.norm(doc_grid.ravel()))
+    if q_norm < 1e-9 or d_norm < 1e-9:
+        return 0.0
+    query_grid = query_grid / q_norm
+    doc_grid   = doc_grid / d_norm
+
+    L = max(float(query_grid.max()), float(doc_grid.max()))
+    if L <= 0:
+        return 0.0
+
+    C1 = (k1 * L) ** 2
+    C2 = (k2 * L) ** 2
+
+    mu_q  = gaussian_filter(query_grid, sigma)
+    mu_d  = gaussian_filter(doc_grid, sigma)
+    var_q = gaussian_filter(query_grid ** 2, sigma) - mu_q ** 2
+    var_d = gaussian_filter(doc_grid ** 2, sigma) - mu_d ** 2
+    cov   = gaussian_filter(query_grid * doc_grid, sigma) - mu_q * mu_d
+
+    ssim_map = ((2 * mu_q * mu_d + C1) * (2 * cov + C2)) / (
+        (mu_q ** 2 + mu_d ** 2 + C1) * (var_q + var_d + C2) + eps
+    )
+
+    if region == "full":
+        return float(ssim_map.mean())
+
+    mask   = (query_grid > 0) | (doc_grid > 0)
+    signal = np.maximum(mu_q, mu_d) > eps
+    valid  = mask & signal
+    if not np.any(valid):
+        return 0.0
+    return float(ssim_map[valid].mean())
+
+
+def rank_documents_image(
+    query_grid     : np.ndarray,
+    doc_grids_2d   : Dict[str, np.ndarray],
+    top_k          : int   = 10,
+    min_similarity : float = 0.0,
+    sigma          : float = 1.5,
+    region         : str   = "active",
+) -> Tuple[List[Tuple[str, float]], Dict]:
+    """
+    Rank documents by image similarity (masked/windowed SSIM) between the
+    query fingerprint image and each precomputed document fingerprint image.
+
+    This is the retrieval-layer swap for ``--image-search``: instead of cosine
+    similarity on the flat fingerprint vectors (:func:`rank_documents`), every
+    document's 2D grid is scored against the query grid at fixed alignment via
+    :func:`image_ssim`.
+
+    Parameters
+    ----------
+    query_grid : np.ndarray
+        ``(grid_size, grid_size)`` float32 query fingerprint image.
+    doc_grids_2d : Dict[str, np.ndarray]
+        Precomputed mapping of ``{doc_id: (grid_size, grid_size) float32 image}``.
+        Should be built once in ``main`` (vectorized via
+        ``build_index_to_xy_table``) and reused across queries.
+    top_k : int, optional
+        Number of top results to return (default: ``10``).
+    min_similarity : float, optional
+        Minimum SSIM threshold; documents below it are excluded.
+    sigma : float, optional
+        SSIM Gaussian window sigma (default: ``1.5``).
+    region : str, optional
+        SSIM averaging region — ``"active"`` (default) or ``"full"``.
+
+    Returns
+    -------
+    results : List[Tuple[str, float]]
+        Ranked ``(doc_id, ssim)`` pairs sorted descending, truncated to
+        ``top_k``, all with score ≥ ``min_similarity``.
+    metadata : Dict
+        ``total_documents``, ``documents_above_threshold``, ``mean_similarity``,
+        ``max_similarity``, plus ``scoring`` / ``ssim_sigma`` / ``ssim_region``.
+    """
+    empty_meta = {
+        "total_documents":           0,
+        "documents_above_threshold": 0,
+        "mean_similarity":           0.0,
+        "max_similarity":            0.0,
+        "scoring":                   "ssim_image",
+        "ssim_sigma":                sigma,
+        "ssim_region":               region,
+    }
+
+    if query_grid is None or not np.any(query_grid):
+        logger.warning("Query fingerprint image is empty — returning no results")
+        return [], empty_meta
+
+    if not doc_grids_2d:
+        logger.warning("No document 2D grids provided — returning no results")
+        return [], empty_meta
+
+    all_scores = [
+        (doc_id, image_ssim(query_grid, doc_grid, sigma=sigma, region=region))
+        for doc_id, doc_grid in doc_grids_2d.items()
+    ]
+
+    raw_scores = [s for _, s in all_scores]
+    mean_sim   = float(np.mean(raw_scores))
+    max_sim    = float(np.max(raw_scores))
+
+    filtered = [
+        (doc_id, score) for doc_id, score in all_scores
+        if score >= min_similarity
+    ]
+    filtered.sort(key=lambda x: x[1], reverse=True)
+
+    metadata = {
+        "total_documents":           len(doc_grids_2d),
+        "documents_above_threshold": len(filtered),
+        "mean_similarity":           mean_sim,
+        "max_similarity":            max_sim,
+        "scoring":                   "ssim_image",
+        "ssim_sigma":                sigma,
+        "ssim_region":               region,
+    }
+
+    logger.info(
+        f"Image ranking (SSIM): {len(filtered)}/{len(doc_grids_2d)} docs above "
+        f"threshold, top score={max_sim:.4f}, mean={mean_sim:.4f}"
+    )
+    return filtered[:top_k], metadata
+
+
 def rank_documents_lancedb(
     query_fp    : csr_matrix,
     storage     : Any,
@@ -2046,6 +2257,7 @@ def process_query(
     splade_scorer       : Optional[SPLADEScorer] = None,
     vocab_fp_index      : Optional[Dict[str, np.ndarray]] = None,
     lancedb_storage     : Optional[Any] = None,
+    doc_grids_2d        : Optional[Dict[str, np.ndarray]] = None,
 ) -> Tuple[List[Tuple[str, float]], Dict]:
     r"""
     Process a single query through the full retrieval pipeline.
@@ -2470,7 +2682,12 @@ def process_query(
 
     logger.debug(f"  [STAGE 3] spreading_steps={spreading_steps}")
 
-    if spreading_steps > 0:
+    if getattr(args, "image_search", False):
+        logger.debug(
+            "  [STAGE 3] spreading skipped — image-search treats the 2D grid "
+            "as an image; SSIM window provides the locality mechanism"
+        )
+    elif spreading_steps > 0:
         grid_size = int(np.sqrt(query_fp.shape[1]))
         query_fp, spreading_metadata = apply_spreading(
             query_fp, grid_size,
@@ -2492,7 +2709,19 @@ def process_query(
     grid_size = int(np.sqrt(query_fp.shape[1]))
 
     with timed() as retrieval_timer:
-        if lancedb_storage is not None:
+        if getattr(args, "image_search", False) and doc_grids_2d is not None:
+            query_grid = _unflatten_vector(
+                query_fp.toarray().ravel(), grid_size, use_morton
+            )
+            results, ranking_metadata = rank_documents_image(
+                query_grid,
+                doc_grids_2d,
+                top_k=getattr(args, "top_k", 10),
+                min_similarity=getattr(args, "min_similarity", 0.0),
+                sigma=getattr(args, "ssim_sigma", 1.5),
+                region=getattr(args, "ssim_region", "active"),
+            )
+        elif lancedb_storage is not None:
             results, ranking_metadata = rank_documents_lancedb(
                 query_fp, lancedb_storage, args,
             )
@@ -2709,6 +2938,24 @@ def parse_args() -> argparse.Namespace:
         help="Apply 3×3 spatial adjacency kernel before scoring. Rewards "
              "documents whose active cells are adjacent (not just overlapping) "
              "the query's active cells on the semantic grid.",
+    )
+
+    # ── Image-search ranking (SSIM) ───────────────────────────────────────────
+    parser.add_argument(
+        "--image-search", dest="image_search", action="store_true", default=False,
+        help="Treat each 2D fingerprint as an image and rank documents by "
+             "masked/windowed SSIM at fixed alignment, instead of cosine "
+             "similarity. Requires the numpy backend (not lancedb).",
+    )
+    parser.add_argument(
+        "--ssim-sigma", dest="ssim_sigma", type=float, default=1.5,
+        help="Gaussian window sigma for the SSIM similarity map.",
+    )
+    parser.add_argument(
+        "--ssim-region", dest="ssim_region", type=str, default="active",
+        choices=["active", "full"],
+        help="SSIM averaging region: 'active' masks to cells active in either "
+             "image (recommended for sparse grids); 'full' uses the whole grid.",
     )
 
     # ── SPLADE scoring & fusion ───────────────────────────────────────────────
@@ -2939,6 +3186,36 @@ def main() -> None:
             if doc_metadata else "  [MAIN LOAD] no doc_metadata"
         )
 
+    # ── Image-search: precompute 2D grids for every document once ─────────────
+    doc_grids_2d: Optional[Dict[str, np.ndarray]] = None
+    if getattr(args, "image_search", False):
+        if args.retrieval_backend == "lancedb":
+            logger.error(
+                "--image-search only supports the numpy retrieval backend "
+                "(lancedb ANN is not available for 2D image scoring)."
+            )
+            sys.exit(1)
+        if getattr(args, "simple_query", False):
+            args.simple_query = False
+            logger.warning(
+                "--image-search forces the 2D/Morton pipeline — "
+                "--simple-query ignored."
+            )
+        table = build_index_to_xy_table(args.grid_size, use_morton)
+        doc_grids_2d = {}
+        for doc_id, fp in doc_fingerprints.items():
+            flat = fp.toarray().ravel()
+            grid = np.zeros((args.grid_size, args.grid_size), dtype=np.float32)
+            nz = np.nonzero(flat)[0]
+            if nz.size:
+                grid[table[nz, 0], table[nz, 1]] = flat[nz]
+            doc_grids_2d[doc_id] = grid
+        logger.info(
+            f"Image-search mode: precomputed 2D grids for "
+            f"{len(doc_grids_2d)} documents "
+            f"(grid={args.grid_size}×{args.grid_size}, use_morton={use_morton})."
+        )
+
     # ── Collect queries ────────────────────────────────────────────────────────
     queries: List[str] = []
 
@@ -3009,6 +3286,7 @@ def main() -> None:
             splade_scorer=splade_scorer,
             vocab_fp_index=vocab_fp_index,
             lancedb_storage=lancedb_storage,
+            doc_grids_2d=doc_grids_2d,
         )
         if not getattr(args, "simple_query", False):
             pq_kwargs["phrase_fp_matrix"] = phrase_fp_matrix

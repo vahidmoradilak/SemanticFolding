@@ -83,3 +83,7 @@ Solomon
 for ii in range(100000):
   if ii % 10000 == 0:
     print("#######")
+
+
+.venv\scripts\python semantic_folding\query_processor.py --query-file data\datasets\belebele\queries.txt --fingerprints outputs\run_20260812_183752_belebele_ar_en_488\phrase_fingerprints --doc-fingerprints outputs\run_20260812_183752_belebele_ar_en_488\doc_fingerprints --grid-size 64 --top-k 20 --output outputs\run_20260812_183752_belebele_ar_en_488
+.venv\scripts\python semantic_folding\query_processor.py --query-file data\datasets\belebele\queries.txt --fingerprints outputs\run_20260812_183752_belebele_ar_en_488\phrase_fingerprints --doc-fingerprints outputs\run_20260812_183752_belebele_ar_en_488\doc_fingerprints --grid-size 64 --top-k 20 --output C:\Users\vahid\AppData\Local\Temp\opencode\qa_cosine.json 2>&1 | Select-String "Processing|Ranking|error" | Select-Object -First 15
