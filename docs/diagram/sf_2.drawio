@@ -1,0 +1,120 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="yJOa50kWQSus2h18FTIm">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="700" pageHeight="700" math="0" shadow="1">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="643AK_nB8r-Kic24wv2c-5" edge="1" parent="1" source="643AK_nB8r-Kic24wv2c-1" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Tahoma;endArrow=openThin;endFill=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=20;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;shadow=0;fixDash=0;snapToPoint=0;" target="DmxLTTFcsQYnUITh2jvF-4" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="231" y="66" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="643AK_nB8r-Kic24wv2c-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;fontFamily=Tahoma;gradientDirection=radial;fillColor=#FAE5C7;fontColor=#143642;fontSize=20;labelBackgroundColor=none;strokeColor=#0F8B8D;rounded=1;shadow=0;fixDash=0;snapToPoint=0;" value="شروع" vertex="1">
+          <mxGeometry height="80" width="109" x="103.75" y="76" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-10" edge="1" parent="1" source="DmxLTTFcsQYnUITh2jvF-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=20;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;shadow=0;fixDash=0;snapToPoint=0;" target="19h22VvuykhQS6jy0w2w-9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DmxLTTFcsQYnUITh2jvF-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Tahoma;fontSize=20;labelBackgroundColor=none;fillColor=#FAE5C7;strokeColor=#0F8B8D;fontColor=#143642;shadow=0;fixDash=0;snapToPoint=0;" value="ورودی‌ها&lt;br&gt;corpus.txt&lt;br&gt;query.json&lt;br&gt;guery_gold.json" vertex="1">
+          <mxGeometry height="120" width="165.5" x="75.5" y="331" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-12" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=20;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;shadow=0;fixDash=0;snapToPoint=0;" target="19h22VvuykhQS6jy0w2w-11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-41" edge="1" parent="1" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=oval;endFill=0;fontSize=14;labelBackgroundColor=none;strokeColor=#82b366;fontColor=default;fillColor=#d5e8d4;strokeWidth=3;edgeStyle=orthogonalEdgeStyle;curved=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="541" y="326" />
+              <mxPoint x="281" y="326" />
+            </Array>
+            <mxPoint x="541" y="396" as="sourcePoint" />
+            <mxPoint x="280.98" y="276" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-9" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Tahoma;rounded=1;fillColor=#FAE5C7;fontColor=#143642;strokeColor=#0F8B8D;fontSize=20;labelBackgroundColor=none;shadow=0;fixDash=0;snapToPoint=0;" value="نمایه سازی &lt;br&gt;(indexing)" vertex="1">
+          <mxGeometry height="60" width="120" x="476" y="361" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-14" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=20;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;shadow=0;fixDash=0;snapToPoint=0;" target="19h22VvuykhQS6jy0w2w-13" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-11" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Tahoma;rounded=1;fontSize=20;labelBackgroundColor=none;fillColor=#FAE5C7;strokeColor=#0F8B8D;fontColor=#143642;shadow=0;fixDash=0;snapToPoint=0;" value="پردازش پرس‌وجوها" vertex="1">
+          <mxGeometry height="60" width="120" x="731" y="361" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-16" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=20;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;shadow=0;fixDash=0;snapToPoint=0;" target="19h22VvuykhQS6jy0w2w-15" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-13" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Tahoma;rounded=1;fontSize=20;labelBackgroundColor=none;fillColor=#FAE5C7;strokeColor=#0F8B8D;fontColor=#143642;shadow=0;fixDash=0;snapToPoint=0;" value="تولید گزارش" vertex="1">
+          <mxGeometry height="60" width="120" x="1031" y="361" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-15" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;fontFamily=Tahoma;rounded=1;fontSize=20;labelBackgroundColor=none;fillColor=#FAE5C7;strokeColor=#0F8B8D;fontColor=#143642;shadow=0;fixDash=0;snapToPoint=0;" value="پایان" vertex="1">
+          <mxGeometry height="80" width="80" x="1237" y="556" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-2" edge="1" parent="1" source="DmxLTTFcsQYnUITh2jvF-7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;fontSize=14;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;labelBorderColor=none;convertToSvg=0;html=1;" target="19h22VvuykhQS6jy0w2w-1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DmxLTTFcsQYnUITh2jvF-7" parent="1" style="rounded=1;fontFamily=Tahoma;fillColor=#d5e8d4;fontSize=14;labelBackgroundColor=none;labelBorderColor=none;convertToSvg=0;svgWhiteSpace=wrap;html=1;whiteSpace=wrap;strokeColor=#82b366;" value="استخراج عبارات" vertex="1">
+          <mxGeometry height="60" width="120" x="221" y="206" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-4" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;fontSize=14;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;labelBorderColor=none;convertToSvg=0;html=1;" target="19h22VvuykhQS6jy0w2w-3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-1" parent="1" style="fontFamily=Tahoma;rounded=1;fillColor=#d5e8d4;fontSize=14;labelBackgroundColor=none;labelBorderColor=none;convertToSvg=0;svgWhiteSpace=wrap;html=1;whiteSpace=wrap;strokeColor=#82b366;" value="ایجاد ماتریس &lt;br&gt;term-contex" vertex="1">
+          <mxGeometry height="60" width="120" x="391" y="206" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-6" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;fontSize=14;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;labelBorderColor=none;convertToSvg=0;html=1;" target="19h22VvuykhQS6jy0w2w-5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-3" parent="1" style="fontFamily=Tahoma;rounded=1;fillColor=#d5e8d4;fontSize=14;labelBackgroundColor=none;labelBorderColor=none;convertToSvg=0;svgWhiteSpace=wrap;html=1;whiteSpace=wrap;strokeColor=#82b366;" value="نگاشت فضای معنایی" vertex="1">
+          <mxGeometry height="60" width="120" x="557" y="206" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-8" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;fontSize=14;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;labelBorderColor=none;convertToSvg=0;html=1;" target="19h22VvuykhQS6jy0w2w-7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-5" parent="1" style="fontFamily=Tahoma;rounded=1;fillColor=#d5e8d4;fontSize=14;labelBackgroundColor=none;labelBorderColor=none;convertToSvg=0;svgWhiteSpace=wrap;html=1;whiteSpace=wrap;strokeColor=#82b366;" value="تولید اثرانگشت عبارات" vertex="1">
+          <mxGeometry height="60" width="120" x="723" y="206" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-7" parent="1" style="fontFamily=Tahoma;rounded=1;fillColor=#d5e8d4;fontSize=14;labelBackgroundColor=none;labelBorderColor=none;convertToSvg=0;svgWhiteSpace=wrap;html=1;whiteSpace=wrap;strokeColor=#82b366;" value="تولید اثرانگشت اسناد" vertex="1">
+          <mxGeometry height="60" width="120" x="891" y="206" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-45" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-46" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;" target="19h22VvuykhQS6jy0w2w-48" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-46" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fontFamily=Tahoma;fontSize=14;labelBackgroundColor=none;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="استخراج عبارات هر کویری" vertex="1">
+          <mxGeometry height="60" width="120" x="321" y="519" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-47" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-48" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;" target="19h22VvuykhQS6jy0w2w-50" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-48" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Tahoma;rounded=1;fontSize=14;labelBackgroundColor=none;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="به دست آوردن اثرانگشت کویری" vertex="1">
+          <mxGeometry height="60" width="120" x="481" y="519" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-49" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-50" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;" target="19h22VvuykhQS6jy0w2w-52" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-50" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Tahoma;rounded=1;fontSize=14;labelBackgroundColor=none;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="مقایسه با تمام اثرانگشت‌های اسناد" vertex="1">
+          <mxGeometry height="60" width="129" x="636" y="519" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-51" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-52" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;" target="19h22VvuykhQS6jy0w2w-53" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-52" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Tahoma;rounded=1;fontSize=14;labelBackgroundColor=none;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="به دست آوردن سند دارای بیشترین شباهت" vertex="1">
+          <mxGeometry height="60" width="129" x="807" y="519" as="geometry" />
+        </mxCell>
+        <mxCell id="19h22VvuykhQS6jy0w2w-53" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Tahoma;rounded=1;fontSize=14;labelBackgroundColor=none;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="مقایسه با پاسخ صحیح" vertex="1">
+          <mxGeometry height="60" width="120" x="977" y="519" as="geometry" />
+        </mxCell>
+        <mxCell id="oQZi5CVL6GP_g0vEb9mr-1" edge="1" parent="1" source="19h22VvuykhQS6jy0w2w-11" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=oval;endFill=0;fontSize=14;labelBackgroundColor=none;strokeColor=#6c8ebf;fontColor=default;fillColor=#dae8fc;strokeWidth=3;edgeStyle=orthogonalEdgeStyle;curved=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="791.01" y="466.03999999999996" />
+              <mxPoint x="376.99" y="466.03999999999996" />
+              <mxPoint x="376.99" y="509.01" />
+            </Array>
+            <mxPoint x="671" y="446" as="sourcePoint" />
+            <mxPoint x="377" y="509" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
