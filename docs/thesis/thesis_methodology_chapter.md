@@ -16,7 +16,7 @@ The Semantic Folding pipeline transforms textual documents into 2D grid represen
   - `_AR_CLITICS` includes `ال`, `و`, `ف`, `ب`, `ل`, `ک`, `ک`, `س`, `بال`, `فل`, `ول`, `فب`
   - `min_word_length = 2` for Arabic (preservesحروف مقطعه like `طه`, `يس`)
 - **English (phrase_extractor.py:extract_raw_phrases_spacy)**:
-  - Unigrams: tokens ≥ 2 chars, `pos_` ∈ {NOUN,PROPN,ADJ,VERB,ADV}, not `is_stop`
+  - Unigrams: tokens ≥ 3 chars, `pos_` ∈ {NOUN,PROPN,ADJ,VERB,ADV}, not `is_stop`
   - Bigrams: spaCy noun chunks + left modifiers + compound chains + conjunction expansion
   - Trigrams: spaCy noun chunks + left-anchored sub-spans
 - **Parameters**: `min_word_length = 2` (Arabic), default English stopword removal
