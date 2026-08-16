@@ -95,14 +95,14 @@ The work is evaluated against **10 benchmarks** (Quran, Belebele, NarrativeQA, P
   - PubMedQA (172): SF+RRF **MRR=1.000, AP=0.946** (BM25 1.000)
   - PopQA (200): SF+RRF 0.990 (BM25 1.000 — entity-centric)
   - SciFact (200): SF+Linear **0.966 / 0.966** (beats BM25 0.947)
-  - SciDocs: SF+Linear 0.947 / 0.644 (ties BM25)
+  - SciDocs: SF+Linear 0.947 / 0.644 (beats BM25 0.946)
   - nfcorpus (200): SF+Linear 0.655 / 0.423 (BM25 0.686 wins)
   - MuSiQue (87): Pure SF 0.507 / 0.306 (BM25 0.622)
 - **4.4 Custom Arabic-English Benchmark** (488 bilingual passages):
   - Cosine vs SSIM: **0.8166 vs 0.6747** MRR; SF+SPLADE Linear **0.8231** best.
 - **4.5 Cross-Lingual Arabic→English**: failed (MRR≈0.02) — languages occupy disjoint semantic spaces.
 - **4.6 Error Analysis**: Quran 11/30 success (thematic query broadening, plural/singular mismatch); PopQA SPLADE noise; cross-lingual failure.
-- **4.7 BM25 Comparison**: SF+SPLADE beats BM25 on 5/10 benchmarks, ties 2, loses 3.
+- **4.7 BM25 Comparison**: SF+SPLADE beats BM25 on 6/10 benchmarks, ties 1, loses 3.
 
 ---
 
