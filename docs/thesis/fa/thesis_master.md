@@ -21,7 +21,7 @@
 | فصل ۴: ارزیابی و نتایج | ✅ نسخهٔ اول | `outputs/COMPREHENSIVE_RESULTS_SUMMARY.md` + `thesis_final_results.md` |
 | فصل ۵: جمع‌بندی و پیشنهادها | ✅ نسخهٔ اول | — |
 | پیوست A/B/C | ✅ نسخهٔ اول | پارامترها / دیتاست‌ها / فرمول معیارها |
-| منابع | ⬜ | تکمیل با سبک دانشگاه تهران |
+| منابع | ✅ نسخهٔ اول | ۵۱ مرجع (۳۶ پروپوزال + ۱۵ جدید) — فرمت IEEE |
 
 **قرارداد اصطلاح‌شناسی** (یکدست در کل متن):
 
@@ -227,6 +227,8 @@ Word2Vec و GloVe فضاهای پیوستهٔ متراکم می‌سازند ک�
 2. اگر هر یک از مترادف‌ها در واژه‌نامهٔ پیکره موجود باشد، اثرانگشت آن (یا میانگین وزن‌دار چند مترادف موجود) به‌عنوان اثرانگشت تقریبی واژهٔ OOV به کار گرفته می‌شود.
 3. وزن این اثرانگشت‌های تقریبی با ضریب کاهشی γ<1 مقیاس می‌شود تا عدم قطعیت نگاشت منعکس گردد.
 
+این سازوکار در قالب یک آزمایش کنترل‌شده روی بنچمارک custom_ar_en ارزیابی شده است؛ در آن واریانت عملیاتیِ «جانشینی سطح-متن» (γ=1) پیاده‌سازی شد و نتایج آن در بخش ۴-۴-۳ گزارش شده است.
+
 این سازوکار بیشترین سود را برای اسم‌های عام دارد؛ نام‌علم‌ها و واژگان بسیار تخصصی بدون پوشش WordNet همچنان تهی می‌مانند (در تحلیل خطاهای فصل ۴ دیده می‌شود).
 
 ## ۳-۵. مرحله ۴: ساخت نقشهٔ معنایی
@@ -373,6 +375,27 @@ random_seed: 42
 
 SF+SPLADE RRF در هر شش معیار از BM25 جلوتر است (MRR ×2.31، AP ×3.02). SF در ۲۱ از ۳۰ پرسش برنده است. ۱۹ پرسش موضوعی (justice, mercy, …) هنوز MRR=0 دارند؛ الگوهای شکست: عبارت‌های کلیدیِ بیش‌ازحد عام و نبود stemming (angels→angel).
 
+### ۴-۴-۳. آزمون شبکهٔ واژگان (WordNet) برای واژگان خارج از پیکره
+
+سازوکار بخش ۳-۴ به‌صورت زیر آزموده شد: روی همان ۴۸۸ پرسش custom_ar_en، هر واژهٔ انگلیسیِ خارج از واژگان پیکره (۷۴۹ مورد) با نخستین مترادف/لمِ WordNetِ موجود در واژگان جانشین شد (۴۴۸ واژهٔ یکتا؛ نرخ پوشش ۸۹.۹٪؛ ۳۷۷ پرسش دست‌خورده) و کل خط لولهٔ Pure SF بدون هیچ تغییر دیگری اجرا گردید:
+
+| معیار | Baseline (Pure SF) | با جانشینی WordNet | Δ |
+|---|---|---|---|
+| MRR | 0.8166 | 0.8044 | −0.012 |
+| P@1 (hit@1) | 0.7664 | 0.7459 | −0.021 |
+| NDCG@20 | 0.8472 | 0.8384 | −0.009 |
+| Wilcoxon p / McNemar p | — | 0.024 / 0.013 | کاهش معنادار |
+
+از ۴۸۸ پرسش، رتبه‌بندی فقط ۴۵ پرسش تغییر کرد: **۱۴ بهبود، ۳۱ افت**.
+
+**تحلیل:** نتیجه منفی اما آموزنده است. بازرسی نگاشت‌ها دو مشکل اصلی را نشان می‌دهد:
+1. **جانشینی صرفیِ زائد:** بخش عمدهٔ «واژگان خارج از پیکره» صرفاً صورت‌های جمع/تصریف‌شده بودند (borders→border، troops→troop، eras→era) که خط لوله از طریق لم‌سازی داخلی خود به‌طور طبیعی مدیریت می‌کند؛ جایگزینی سطح-متن این هم‌ارزی را از بین می‌برد و ساختار عبارت‌سازی (bigram/trigram) را مخدوش می‌کند.
+2. **جانشینی معناشکن در نبود زمینه:** برخی نگاشت‌ها مفهوم را جابه‌جا کردند (five→cinque، orbit→area، located→place، might→power).
+
+نتیجهٔ طراحی: سازوکار شبکهٔ واژگان نباید در سطح متن و با γ=1 اعمال شود؛ نسخهٔ درست، ادغام در سطح اثرانگشت با ضریب میرایی γ<1 و صرفاً برای واژه‌هایی است که پس از لم‌سازی داخلی نیز OOV بمانند. این یافته با آزمایش قبلی OOV-expansion (وزن 0.8 بی‌اثر) سازگار است و به‌عنوان محدودهٔ طراحی روش مستند می‌شود.
+
+منبع: `outputs/custom_ar_en_benchmark/benchmarks/benchmark_20260818_104602/wordnet_oov/` (queries_wordnet.txt، substitutions.json، all_results.json، summary_metrics.json) و اسکریپت‌های `wordnet_oov.py` / `wordnet_eval.py` در همان شاخه.
+
 ## ۴-۵. تحلیل پارامتری
 
 | پارامتر | یافته | منبع |
@@ -504,6 +527,58 @@ This thesis investigates, evaluates, and analyzes the semantic folding approach 
 
 ## منابع
 
-(فهرست مراجع بر اساس سبک دانشگاه تهران تکمیل می‌شود — پایه: ۳۶ منبع پروپوزال + Webber 2015، Hawkins & Ahmad 2016، Cai et al. 2024، Khattab & Zahran SPLADE 2020، Robertson & Zaragoza BM25، مقالات MuSiQue/HippoRAG/BEIR و پایان‌نامه مشهدیزاده ۱۴۰۳.)
+فرمت: IEEE (شماره‌ای) مطابق شیوه‌نامهٔ دانشکده مهندسی برق و کامپیوتر دانشگاه تهران.
+
+[1] Y. Wu and J. Wan, "A survey of text classification based on pre-trained language model," *Neurocomputing*, vol. 616, p. 128921, Feb. 2025, doi: 10.1016/j.neucom.2024.128921.
+[2] H. Wang, J. Li, H. Wu, E. Hovy, and Y. Sun, "Pre-Trained Language Models and Their Applications," *Engineering*, vol. 25, pp. 51–65, Jun. 2023, doi: 10.1016/j.eng.2022.04.024.
+[3] L. Zhang et al., "A survey on complex factual question answering," *AI Open*, vol. 4, pp. 1–12, 2023, doi: 10.1016/j.aiopen.2022.12.003.
+[4] T. H. Alwaneen, A. M. Azmi, H. A. Aboalsamh, E. Cambria, and A. Hussain, "Arabic question answering system: a survey," *Artificial Intelligence Review*, vol. 55, no. 1, 2022, doi: 10.1007/s10462-021-10031-1.
+[5] P. Upadhyay, R. Agarwal, S. Dhiman, A. Sarkar, and S. Chaturvedi, "A comprehensive survey on answer generation methods using NLP," *Natural Language Processing Journal*, vol. 8, p. 100088, Sep. 2024, doi: 10.1016/j.nlp.2024.100088.
+[6] R. Mao et al., "A survey on semantic processing techniques," *Information Fusion*, vol. 101, p. 101988, Jan. 2024, doi: 10.1016/j.inffus.2023.101988.
+[7] Z. Lin et al., "Medical visual question answering: A survey," *Artificial Intelligence in Medicine*, vol. 143, p. 102611, Sep. 2023, doi: 10.1016/j.artmed.2023.102611.
+[8] N. Chen, X. Chen, and J. Pang, "A multilingual dataset of COVID-19 vaccination attitudes on Twitter," *Data in Brief*, vol. 44, p. 108503, Oct. 2022, doi: 10.1016/j.dib.2022.108503.
+[9] C. Rohlfs, "Generalization in neural networks: A broad survey," *Neurocomputing*, vol. 611, p. 128701, Jan. 2025, doi: 10.1016/j.neucom.2024.128701.
+[10] J. Hawkins and S. Ahmad, "Why Neurons Have Thousands of Synapses, a Theory of Sequence Memory in Neocortex," *Frontiers in Neural Circuits*, vol. 10, 2016, doi: 10.3389/fncir.2016.00023.
+[11] S. C. Bhatnagar, G. T. Mandybur, H. W. Buckingham, and O. J. Andy, "Language representation in the human brain: Evidence from cortical mapping," *Brain and Language*, vol. 74, no. 2, 2000, doi: 10.1006/brln.2000.2339.
+[12] B. M. Lake, T. D. Ullman, J. B. Tenenbaum, and S. J. Gershman, "Building machines that learn and think like people," *Behavioral and Brain Sciences*, vol. 40, p. e253, Nov. 2017, doi: 10.1017/S0140525X16001837.
+[13] F. D. S. Webber, "Semantic Folding Theory And its Application in Semantic Fingerprinting," arXiv preprint arXiv:1511.08855, Nov. 2015, doi: 10.48550/arXiv.1511.08855.
+[14] H. Lu, L. Wang, X. Ma, J. Cheng, and M. Zhou, "A survey of graph neural networks and their industrial applications," *Neurocomputing*, vol. 614, p. 128761, Jan. 2025, doi: 10.1016/j.neucom.2024.128761.
+[15] J. P.J. and B. C. Kovoor, "Video Question Answering: A survey of the state-of-the-art," *Journal of Visual Communication and Image Representation*, vol. 105, p. 104320, Dec. 2024, doi: 10.1016/j.jvcir.2024.104320.
+[16] K. Cai et al., "An Evaluative Baseline for Sentence-Level Semantic Division," *Machine Learning and Knowledge Extraction*, vol. 6, no. 1, 2024, doi: 10.3390/make6010003.
+[17] M. Yasunaga, H. Ren, A. Bosselut, P. Liang, and J. Leskovec, "QA-GNN: Reasoning with Language Models and Knowledge Graphs for Question Answering," in *Proc. NAACL-HLT*, Apr. 2021, doi: 10.18653/v1/2021.naacl-main.45.
+[18] J. Heyder, "Hierarchical Temporal Memory Software Agent: In the light of general artificial intelligence criteria," Digitala Vetenskapliga Arkivet, 2018.
+[19] W. B. Levy and R. A. Baxter, "Growing dendrites enhance a neuron's computational power and memory capacity," *Neural Networks*, vol. 164, 2023, doi: 10.1016/j.neunet.2023.04.033.
+[20] C. Wang et al., "Enriching query semantics for code search with reinforcement learning," *Neural Networks*, vol. 145, pp. 22–32, Jan. 2022, doi: 10.1016/j.neunet.2021.09.025.
+[21] P. Anderson et al., "Bottom-Up and Top-Down Attention for Image Captioning and Visual Question Answering," in *Proc. IEEE CVPR*, 2018, doi: 10.1109/CVPR.2018.00636.
+[22] T. Hernández-Del-Toro, F. Martínez-Santiago, and A. Montejo-Ráez, "Assessing classifier's performance," in *Biosignal Processing and Classification Using Computational Learning and Intelligence*, 2021, pp. 131–149, doi: 10.1016/B978-0-12-820125-1.00018-X.
+[23] M. Beck, "Evaluating QA: Metrics, Predictions, and the Null Response," FastForward Labs, 2020. [Online]. Available: https://qa.fastforwardlabs.com/no%20answer/null%20threshold/bert/distilbert/exact%20match/f1/robust%20predictions/2020/06/09/Evaluating_BERT_on_SQuAD.html
+[24] M. Taifi, "MRR vs MAP vs NDCG: Rank-Aware Evaluation Metrics And When To Use Them," Medium — The Startup. [Online]. Available: https://medium.com/swlh/rank-aware-recsys-evaluation-metrics-5191bba16832
+[25] S. Santhosh, "Understanding BLEU and ROUGE score for NLP evaluation," Medium. [Online]. Available: https://medium.com/@sthanikamsanthosh1994/understanding-bleu-and-rouge-score-for-nlp-evaluation-1ab334ecadcb
+[26] P. Rajpurkar, J. Zhang, K. Lopyrev, and P. Liang, "SQuAD: 100,000+ questions for machine comprehension of text," in *Proc. EMNLP*, 2016, doi: 10.18653/v1/d16-1264.
+[27] T. Kwiatkowski et al., "Natural Questions: A Benchmark for Question Answering Research," *Transactions of the Association for Computational Linguistics*, vol. 7, 2019, doi: 10.1162/tacl_a_00276.
+[28] T. Nguyen et al., "MS MARCO: A human generated MAchine reading COmprehension dataset," in *CEUR Workshop Proceedings*, 2016.
+[29] M. Artetxe, S. Ruder, and D. Yogatama, "On the cross-lingual transferability of monolingual representations," in *Proc. ACL*, 2020, doi: 10.18653/v1/2020.acl-main.421.
+[30] C. Antoniou and N. Bassiliades, "A survey on semantic question answering systems," *The Knowledge Engineering Review*, 2022, doi: 10.1017/S0269888921000138.
+[31] S. Anbaraki, "Evaluating and predicting the quality of answers factors in the research gate's question and answer system: A case study of the thematic domain of knowledge management," *Journal of Information Processing and Management*, vol. 36, no. 3, 2021, doi: 10.52547/jipm.36.3.709.
+[32] L. P. Acharya, "A Systematic Approach for Automatically Answering General-Purpose Objective and Subjective Questions," Ph.D. dissertation, Florida Institute of Technology, 2019.
+[33] A. Allam, A. Mohamed, N. Allam, and M. H. Haggag, "The Question Answering Systems: A Survey," *International Journal of Research and Reviews in Information Sciences*, no. October, 2016.
+[34] K. J. Hole and S. Ahmad, "A thousand brains: toward biologically constrained AI," *SN Applied Sciences*, vol. 3, no. 8, p. 743, 2021, doi: 10.1007/s42452-021-04715-0.
+[35] M. W. Mathis, "The neocortical column as a universal template for perception and world-model learning," *Nature Reviews Neuroscience*, 2023, doi: 10.1038/s41583-022-00658-6.
+[36] Cortical.io, "Semantic Folding Benchmark." [Online]. Available: https://www.cortical.io/science/difference-with-other-approaches/
+[37] O. Khattab and A. Zahran, "SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking," in *Proc. ICTIR*, 2020, doi: 10.1145/3404835.3463098.
+[38] T. Formal, C. Lassance, B. Piwowarski, and S. Clinchant, "SPLADE v2: Sparse Lexical and Expansion Model for Information Retrieval," arXiv preprint arXiv:2109.10086, 2021.
+[39] S. Robertson and H. Zaragoza, "The Probabilistic Relevance Framework: BM25 and Beyond," *Foundations and Trends in Information Retrieval*, vol. 3, no. 4, pp. 333–389, 2009, doi: 10.1561/1500000019.
+[40] H. Trivedi, N. Balasubramanian, T. Khot, and A. Sabharwal, "MuSiQue: Multihop Questions via Single-hop Question Composition," *Transactions of the Association for Computational Linguistics*, vol. 10, 2022, doi: 10.1162/tacl_a_00466.
+[41] N. Thakur, N. Reimers, A. Rücklé, A. Srivastava, and I. Gurevych, "BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models," in *Proc. NeurIPS Datasets and Benchmarks Track*, 2021, arXiv:2104.08663.
+[42] B. J. Gutiérrez, N. McNeal, B. Washington, Y. Chen, L. Li, H. Sun, and Y. Su, "HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models," in *Proc. NeurIPS*, 2024, arXiv:2405.14831.
+[43] L. van der Maaten and G. Hinton, "Visualizing Data using t-SNE," *Journal of Machine Learning Research*, vol. 9, pp. 2579–2605, 2008.
+[44] L. McInnes, J. Healy, and J. Melville, "UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction," arXiv preprint arXiv:1802.03426, 2018.
+[45] C. Fellbaum, Ed., *WordNet: An Electronic Lexical Database*. Cambridge, MA: MIT Press, 1998.
+[46] J. Devlin, M.-W. Chang, K. Lee, and K. Toutanova, "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding," in *Proc. NAACL-HLT*, 2019, doi: 10.18653/v1/N19-1423.
+[47] T. Mikolov, I. Sutskever, K. Chen, G. S. Corrado, and J. Dean, "Distributed Representations of Words and Phrases and their Compositionality," in *Advances in Neural Information Processing Systems (NeurIPS)*, 2013.
+[48] J. Pennington, R. Socher, and C. D. Manning, "GloVe: Global Vectors for Word Representation," in *Proc. EMNLP*, 2014, doi: 10.3115/v1/D14-1162.
+[49] P. Bojanowski, E. Grave, A. Joulin, and T. Mikolov, "Enriching Word Vectors with Subword Information," *Transactions of the Association for Computational Linguistics*, vol. 5, pp. 135–146, 2017, doi: 10.1162/tacl_a_00051.
+[50] H. Ritter and T. Kohonen, "Self-organizing semantic maps," *Biological Cybernetics*, vol. 61, no. 4, pp. 241–254, 1989, doi: 10.1007/BF00200253.
+[51] امیرمحمد مشهدیزاده، «کاربرد روش خوشه‌بندی معنایی برای پرسش و پاسخ با جواب‌های چندگزینه‌ای»، پایان‌نامهٔ کارشناسی ارشد، دانشکده مهندسی برق و کامپیوتر، دانشگاه تهران، شهریور ۱۴۰۳.
 
 ---
