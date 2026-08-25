@@ -344,16 +344,15 @@ Source: `semantic_folding/parameters_tuning.md`; `outputs/SESSION_SUMMARY.md`; `
 
 | Dataset | Best SF Method | Best SF MRR | BM25 MRR | SF vs BM25 |
 |---|---|---|---|---|
-| QA-sample (20-doc) | Pure SF (grid=64) | **1.000** | — | SF |
 | Quran (30) | SF+RRF | **0.358** | 0.155 | SF+RRF (2.31×) |
 | Belebele (100) | SF+Linear/RRF | **1.000** | 0.995 | SF+SPLADE |
 | NarrativeQA (50) | SF+RRF | **1.000** | 0.980 | SF+SPLADE |
-| PubMedQA (172) | SF+RRF | **1.000** | 1.000 | Tie |
-| PopQA (200) | SF+RRF | **0.990** | 1.000 | BM25 |
+| PubMedQA (172) | SF+RRF | **1.000** | **1.000** | Tie |
+| PopQA (200) | SF+RRF | 0.990 | **1.000** | BM25 |
 | SciFact (200) | SF+Linear | **0.966** | 0.947 | SF+Linear |
-| SciDocs (100–300) | SF+Linear | **0.947** | 0.946 | Tie |
-| nfcorpus (200) | SF+Linear | **0.655** | 0.686 | BM25 |
-| MuSiQue (87) | Pure SF | **0.507** | 0.622 | BM25 |
+| SciDocs (100–300) | SF+Linear | **0.947** | **0.946** | Tie |
+| nfcorpus (200) | SF+Linear | 0.655 | **0.686** | BM25 |
+| MuSiQue (87) | Pure SF | 0.507 | **0.622** | BM25 |
 | AR-EN (488) | SF+Linear | **0.823** | 0.785 | SF+Linear |
 
 **Key Findings:**
