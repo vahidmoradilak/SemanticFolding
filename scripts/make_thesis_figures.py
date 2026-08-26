@@ -74,9 +74,12 @@ print("fig_pipeline OK")
 
 # ── Fig 4-1: main results grouped bars ──────────────────────────────────────
 benchmarks = ["Belebele", "NarrativeQA", "PubMedQA", "PopQA", "MuSiQue",
-              "Quran", "SciFact", "nfcorpus", "SciDocs", "AR-EN 488", "MIXED 488"]
-sf_best = [1.000, 1.000, 1.000, 0.990, 0.507, 0.358, 0.966, 0.655, 0.947, 0.8248, 0.8231]
-bm25 = [0.995, 0.980, 1.000, 1.000, 0.622, 0.155, 0.947, 0.686, 0.946, 0.7854, 0.7854]
+              "Quran", "SciFact", "nfcorpus", "SciDocs", "AR-EN 488", "MIXED 488",
+              "TyDi-ar*", "MIRACL-ar*"]
+sf_best = [1.000, 1.000, 1.000, 0.990, 0.507, 0.358, 0.966, 0.655, 0.947, 0.8248, 0.8231,
+           0.5436, 0.5420]
+bm25 = [0.995, 0.980, 1.000, 1.000, 0.622, 0.155, 0.947, 0.686, 0.946, 0.7854, 0.7854,
+        0.8806, 0.8152]
 x = np.arange(len(benchmarks)); w = 0.38
 fig, ax = plt.subplots(figsize=(11.5, 4.2))
 ax.bar(x - w / 2, sf_best, w, label="Best SF variant", color="#2b6cb0")
