@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="470" viewBox="0 0 560 470">
+<rect x="195.0" y="14.0" width="170.0" height="42.0" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+<text x="280.0" y="40.6" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a1a">Query</text>
+<rect x="25.0" y="98.0" width="210.0" height="44.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="130.0" y="125.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">Semantic Folding</text>
+<rect x="340.0" y="98.0" width="180.0" height="44.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+<text x="430.0" y="125.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">SPLADE</text>
+<line x1="250.0" y1="56.0" x2="153.2" y2="94.7" stroke="#444" stroke-width="1.6"/>
+<polygon points="145.0,98.0 153.0,88.3 157.4,99.5" fill="#444"/>
+<line x1="310.0" y1="56.0" x2="406.8" y2="94.7" stroke="#444" stroke-width="1.6"/>
+<polygon points="415.0,98.0 402.6,99.5 407.0,88.3" fill="#444"/>
+<rect x="40.0" y="184.0" width="180.0" height="42.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+<text x="130.0" y="210.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">SF Ranking</text>
+<rect x="330.0" y="184.0" width="200.0" height="42.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+<text x="430.0" y="210.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">SPLADE Ranking</text>
+<line x1="130.0" y1="142.0" x2="130.0" y2="175.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="130.0,184.0 124.0,173.0 136.0,173.0" fill="#444"/>
+<line x1="430.0" y1="142.0" x2="430.0" y2="175.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="430.0,184.0 424.0,173.0 436.0,173.0" fill="#444"/>
+<rect x="195.0" y="273.0" width="170.0" height="44.0" rx="9" fill="#F3E8FA" stroke="#7B3FA0" stroke-width="1.6"/>
+<text x="280.0" y="300.6" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a1a">Fusion</text>
+<line x1="150.0" y1="226.0" x2="242.1" y2="271.1" stroke="#444" stroke-width="1.6"/>
+<polygon points="250.0,275.0 237.5,275.5 242.8,264.8" fill="#444"/>
+<line x1="410.0" y1="226.0" x2="317.9" y2="271.1" stroke="#444" stroke-width="1.6"/>
+<polygon points="310.0,275.0 317.2,264.8 322.5,275.5" fill="#444"/>
+<rect x="170.0" y="368.0" width="220.0" height="44.0" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+<text x="280.0" y="395.6" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a1a">Final Ranking</text>
+<line x1="280.0" y1="317.0" x2="280.0" y2="359.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="280.0,368.0 274.0,357.0 286.0,357.0" fill="#444"/>
+<text x="350.0" y="345.0" text-anchor="start" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="normal" fill="#7B3FA0">Linear / RRF</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="340" viewBox="0 0 440 340">
+<rect x="70.0" y="14.0" width="300.0" height="62.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+<text x="220.0" y="40.1" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">‫بازیابی واژگانی‬</text>
+<text x="220.0" y="60.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Lexical Retrieval</text>
+<rect x="70.0" y="135.0" width="300.0" height="70.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+<text x="220.0" y="165.1" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">‫بازیاب عصبی پراکنده‬</text>
+<text x="220.0" y="185.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">SPLADE</text>
+<rect x="70.0" y="264.0" width="300.0" height="62.0" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+<text x="220.0" y="290.1" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">‫بازیابی عصبی‬</text>
+<text x="220.0" y="310.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Neural Retrieval</text>
+<line x1="220.0" y1="84.8" x2="220.0" y2="126.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="220.0,135.0 214.0,124.0 226.0,124.0" fill="#444"/>
+<polygon points="220.0,76.0 226.0,87.0 214.0,87.0" fill="#444"/>
+<line x1="220.0" y1="213.8" x2="220.0" y2="255.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="220.0,264.0 214.0,253.0 226.0,253.0" fill="#444"/>
+<polygon points="220.0,205.0 226.0,216.0 214.0,216.0" fill="#444"/>
+</svg>

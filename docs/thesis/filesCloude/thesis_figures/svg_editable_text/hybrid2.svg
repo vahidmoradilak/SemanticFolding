@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="560" viewBox="0 0 680 560">
+<rect x="250.0" y="18.0" width="180.0" height="44.0" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+<text x="340.0" y="45.6" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a1a">Query</text>
+<rect x="50.0" y="107.0" width="220.0" height="46.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="160.0" y="135.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">Semantic Folding</text>
+<rect x="410.0" y="107.0" width="220.0" height="46.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+<text x="520.0" y="135.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">SPLADE</text>
+<line x1="300.0" y1="62.0" x2="183.3" y2="104.0" stroke="#444" stroke-width="1.6"/>
+<polygon points="175.0,107.0 183.3,97.6 187.4,108.9" fill="#444"/>
+<line x1="380.0" y1="62.0" x2="496.7" y2="104.0" stroke="#444" stroke-width="1.6"/>
+<polygon points="505.0,107.0 492.6,108.9 496.7,97.6" fill="#444"/>
+<rect x="40.0" y="197.0" width="240.0" height="46.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+<text x="160.0" y="225.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">SF Candidate List</text>
+<rect x="390.0" y="197.0" width="260.0" height="46.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+<text x="520.0" y="225.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">SPLADE Candidate List</text>
+<line x1="160.0" y1="153.0" x2="160.0" y2="188.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="160.0,197.0 154.0,186.0 166.0,186.0" fill="#444"/>
+<line x1="520.0" y1="153.0" x2="520.0" y2="188.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="520.0,197.0 514.0,186.0 526.0,186.0" fill="#444"/>
+<rect x="250.0" y="297.0" width="180.0" height="46.0" rx="9" fill="#F3E8FA" stroke="#7B3FA0" stroke-width="1.6"/>
+<text x="340.0" y="325.6" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a1a">Fusion</text>
+<line x1="200.0" y1="243.0" x2="292.3" y2="292.8" stroke="#444" stroke-width="1.6"/>
+<polygon points="300.0,297.0 287.5,297.1 293.2,286.5" fill="#444"/>
+<line x1="480.0" y1="243.0" x2="387.7" y2="292.8" stroke="#444" stroke-width="1.6"/>
+<polygon points="380.0,297.0 386.8,286.5 392.5,297.1" fill="#444"/>
+<rect x="135.0" y="393.0" width="150.0" height="44.0" rx="9" fill="#F3E8FA" stroke="#7B3FA0" stroke-width="1.6"/>
+<text x="210.0" y="420.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Linear</text>
+<rect x="395.0" y="393.0" width="150.0" height="44.0" rx="9" fill="#F3E8FA" stroke="#7B3FA0" stroke-width="1.6"/>
+<text x="470.0" y="420.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">RRF</text>
+<line x1="310.0" y1="343.0" x2="242.3" y2="388.1" stroke="#444" stroke-width="1.6"/>
+<polygon points="235.0,393.0 240.8,381.9 247.5,391.9" fill="#444"/>
+<line x1="370.0" y1="343.0" x2="437.7" y2="388.1" stroke="#444" stroke-width="1.6"/>
+<polygon points="445.0,393.0 432.5,391.9 439.2,381.9" fill="#444"/>
+<rect x="230.0" y="487.0" width="220.0" height="46.0" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+<text x="340.0" y="515.6" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a1a">Final Ranking</text>
+<line x1="210.0" y1="437.0" x2="292.3" y2="482.7" stroke="#444" stroke-width="1.6"/>
+<polygon points="300.0,487.0 287.5,486.9 293.3,476.4" fill="#444"/>
+<line x1="470.0" y1="437.0" x2="387.7" y2="482.7" stroke="#444" stroke-width="1.6"/>
+<polygon points="380.0,487.0 386.7,476.4 392.5,486.9" fill="#444"/>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="345" viewBox="0 0 760 345">
+<text x="590.0" y="26.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">‫قبل: مفاهیم بدون ساختار مکانی‬</text>
+<circle cx="440.0" cy="125.0" r="26" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+<text x="440.0" y="131.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#fff">A</text>
+<circle cx="530.0" cy="125.0" r="26" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+<text x="530.0" y="131.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#fff">E</text>
+<circle cx="620.0" cy="125.0" r="26" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+<text x="620.0" y="131.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#fff">B</text>
+<circle cx="710.0" cy="125.0" r="26" fill="#C46A00" stroke="#fff" stroke-width="2"/>
+<text x="710.0" y="131.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#fff">G</text>
+<circle cx="440.0" cy="215.0" r="26" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+<text x="440.0" y="221.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#fff">F</text>
+<circle cx="530.0" cy="215.0" r="26" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+<text x="530.0" y="221.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#fff">C</text>
+<circle cx="620.0" cy="215.0" r="26" fill="#C46A00" stroke="#fff" stroke-width="2"/>
+<text x="620.0" y="221.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#fff">H</text>
+<circle cx="710.0" cy="215.0" r="26" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+<text x="710.0" y="221.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#fff">D</text>
+<line x1="385.0" y1="170.0" x2="338.8" y2="170.0" stroke="#444" stroke-width="2.5"/>
+<polygon points="330.0,170.0 341.0,164.0 341.0,176.0" fill="#444"/>
+<text x="357.0" y="150.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="normal" fill="#444">‫نگاشت‬</text>
+<text x="170.0" y="26.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">‫بعد: نقشهٔ معنایی دوبعدی‬</text>
+<rect x="20.0" y="45.0" width="270.0" height="255.0" rx="10" fill="#FBFBFB" stroke="#888" stroke-width="1.2"/>
+<circle cx="70.0" cy="110.0" r="20" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+<text x="70.0" y="116.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#fff">A</text>
+<circle cx="110.0" cy="85.0" r="20" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+<text x="110.0" y="91.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#fff">B</text>
+<circle cx="95.0" cy="140.0" r="20" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+<text x="95.0" y="146.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#fff">C</text>
+<circle cx="190.0" cy="120.0" r="20" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+<text x="190.0" y="126.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#fff">D</text>
+<circle cx="240.0" cy="100.0" r="20" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+<text x="240.0" y="106.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#fff">E</text>
+<circle cx="210.0" cy="165.0" r="20" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+<text x="210.0" y="171.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#fff">F</text>
+<circle cx="110.0" cy="255.0" r="20" fill="#C46A00" stroke="#fff" stroke-width="2"/>
+<text x="110.0" y="261.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#fff">G</text>
+<circle cx="170.0" cy="240.0" r="20" fill="#C46A00" stroke="#fff" stroke-width="2"/>
+<text x="170.0" y="246.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#fff">H</text>
+<text x="380.0" y="330.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="normal" fill="#444">‫مفاهیم مرتبط (هم‌رنگ) در نواحی مجاور قرار می‌گیرند‬</text>
+</svg>

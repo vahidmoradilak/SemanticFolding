@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="560" viewBox="0 0 400 560">
+<rect x="50.0" y="16.0" width="300.0" height="44.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+<text x="200.0" y="33.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫پیکرهٔ متنی‬</text>
+<text x="200.0" y="52.3" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">Corpus</text>
+<rect x="50.0" y="76.0" width="300.0" height="44.0" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+<text x="200.0" y="93.5" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫استخراج عبارت‬</text>
+<text x="200.0" y="112.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">Phrase Extraction</text>
+<rect x="50.0" y="136.0" width="300.0" height="44.0" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+<text x="200.0" y="153.5" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫بازنمایی واژه / زمینه‬</text>
+<text x="200.0" y="172.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">Term / Context Representation</text>
+<rect x="50.0" y="196.0" width="300.0" height="44.0" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+<text x="200.0" y="213.5" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫TF-IDF + هم‌رخدادی‬</text>
+<text x="200.0" y="232.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">TF-IDF + Co-occurrence</text>
+<rect x="50.0" y="256.0" width="300.0" height="44.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="200.0" y="273.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫کاهش بُعد‬</text>
+<text x="200.0" y="292.3" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">Dimensionality Reduction</text>
+<rect x="50.0" y="316.0" width="300.0" height="44.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="200.0" y="333.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫فضای معنایی دوبعدی‬</text>
+<text x="200.0" y="352.3" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">2D Semantic Space</text>
+<rect x="50.0" y="376.0" width="300.0" height="44.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="200.0" y="393.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫شبکهٔ ۶۴×۶۴‬</text>
+<text x="200.0" y="412.3" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">64×64 Grid</text>
+<rect x="50.0" y="436.0" width="300.0" height="44.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+<text x="200.0" y="453.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫اثرانگشت عبارت‬</text>
+<text x="200.0" y="472.3" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">Phrase Fingerprint</text>
+<rect x="50.0" y="496.0" width="300.0" height="44.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+<text x="200.0" y="513.5" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫اثرانگشت سند‬</text>
+<text x="200.0" y="532.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">Document Fingerprint</text>
+<line x1="200.0" y1="60.0" x2="200.0" y2="66.2" stroke="#444" stroke-width="1.4"/>
+<polygon points="200.0,75.0 194.0,64.0 206.0,64.0" fill="#444"/>
+<line x1="200.0" y1="120.0" x2="200.0" y2="126.2" stroke="#444" stroke-width="1.4"/>
+<polygon points="200.0,135.0 194.0,124.0 206.0,124.0" fill="#444"/>
+<line x1="200.0" y1="180.0" x2="200.0" y2="186.2" stroke="#444" stroke-width="1.4"/>
+<polygon points="200.0,195.0 194.0,184.0 206.0,184.0" fill="#444"/>
+<line x1="200.0" y1="240.0" x2="200.0" y2="246.2" stroke="#444" stroke-width="1.4"/>
+<polygon points="200.0,255.0 194.0,244.0 206.0,244.0" fill="#444"/>
+<line x1="200.0" y1="300.0" x2="200.0" y2="306.2" stroke="#444" stroke-width="1.4"/>
+<polygon points="200.0,315.0 194.0,304.0 206.0,304.0" fill="#444"/>
+<line x1="200.0" y1="360.0" x2="200.0" y2="366.2" stroke="#444" stroke-width="1.4"/>
+<polygon points="200.0,375.0 194.0,364.0 206.0,364.0" fill="#444"/>
+<line x1="200.0" y1="420.0" x2="200.0" y2="426.2" stroke="#444" stroke-width="1.4"/>
+<polygon points="200.0,435.0 194.0,424.0 206.0,424.0" fill="#444"/>
+<line x1="200.0" y1="480.0" x2="200.0" y2="486.2" stroke="#444" stroke-width="1.4"/>
+<polygon points="200.0,495.0 194.0,484.0 206.0,484.0" fill="#444"/>
+</svg>

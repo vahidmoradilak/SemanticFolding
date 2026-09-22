@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="300" viewBox="0 0 440 300">
+<rect x="80.0" y="16.0" width="280.0" height="58.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="220.0" y="40.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫اثرانگشت عبارات‬</text>
+<text x="220.0" y="59.3" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">Phrase Fingerprints</text>
+<rect x="80.0" y="121.0" width="280.0" height="58.0" rx="9" fill="#F3E8FA" stroke="#7B3FA0" stroke-width="1.6"/>
+<text x="220.0" y="145.5" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫تجمیع وزن‌دار‬</text>
+<text x="220.0" y="164.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">‫وزن هر عبارت: TF-IDF‬</text>
+<rect x="80.0" y="226.0" width="280.0" height="58.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+<text x="220.0" y="250.5" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a1a">‫اثرانگشت سند‬</text>
+<text x="220.0" y="269.4" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#1a1a1a">Document Fingerprint</text>
+<line x1="220.0" y1="74.0" x2="220.0" y2="111.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="220.0,120.0 214.0,109.0 226.0,109.0" fill="#444"/>
+<line x1="220.0" y1="179.0" x2="220.0" y2="216.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="220.0,225.0 214.0,214.0 226.0,214.0" fill="#444"/>
+</svg>

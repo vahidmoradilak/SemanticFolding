@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="360" viewBox="0 0 740 360">
+<text x="560.0" y="24.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">‫(الف) حالت یک‌بعدی‬</text>
+<text x="560.0" y="48.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="normal" fill="#444">‫قبل از هموارسازی‬</text>
+<rect x="390.0" y="150.0" width="34.0" height="1.0" rx="2" fill="#ddd" stroke="#2B5C9E" stroke-width="1"/>
+<text x="407.0" y="166.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="normal" fill="#333">0</text>
+<rect x="436.0" y="150.0" width="34.0" height="1.0" rx="2" fill="#ddd" stroke="#2B5C9E" stroke-width="1"/>
+<text x="453.0" y="166.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="normal" fill="#333">0</text>
+<rect x="482.0" y="150.0" width="34.0" height="1.0" rx="2" fill="#ddd" stroke="#2B5C9E" stroke-width="1"/>
+<text x="499.0" y="166.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="normal" fill="#333">0</text>
+<rect x="528.0" y="70.0" width="34.0" height="80.0" rx="2" fill="#9DB9E0" stroke="#2B5C9E" stroke-width="1"/>
+<text x="545.0" y="166.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="normal" fill="#333">1</text>
+<rect x="574.0" y="150.0" width="34.0" height="1.0" rx="2" fill="#ddd" stroke="#2B5C9E" stroke-width="1"/>
+<text x="591.0" y="166.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="normal" fill="#333">0</text>
+<rect x="620.0" y="150.0" width="34.0" height="1.0" rx="2" fill="#ddd" stroke="#2B5C9E" stroke-width="1"/>
+<text x="637.0" y="166.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="normal" fill="#333">0</text>
+<rect x="666.0" y="150.0" width="34.0" height="1.0" rx="2" fill="#ddd" stroke="#2B5C9E" stroke-width="1"/>
+<text x="683.0" y="166.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="normal" fill="#333">0</text>
+<text x="560.0" y="208.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="normal" fill="#444">‫پس از هموارسازی گاوسی‬</text>
+<rect x="390.0" y="299.2" width="34.0" height="1.0" rx="2" fill="#9CD3B0" stroke="#2E7D4F" stroke-width="1"/>
+<text x="407.0" y="308.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="normal" fill="#333">0.01</text>
+<rect x="436.0" y="296.0" width="34.0" height="4.0" rx="2" fill="#9CD3B0" stroke="#2E7D4F" stroke-width="1"/>
+<text x="453.0" y="308.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="normal" fill="#333">0.05</text>
+<rect x="482.0" y="280.0" width="34.0" height="20.0" rx="2" fill="#9CD3B0" stroke="#2E7D4F" stroke-width="1"/>
+<text x="499.0" y="308.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="normal" fill="#333">0.25</text>
+<rect x="528.0" y="220.0" width="34.0" height="80.0" rx="2" fill="#9CD3B0" stroke="#2E7D4F" stroke-width="1"/>
+<text x="545.0" y="308.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="normal" fill="#333">1.0</text>
+<rect x="574.0" y="280.0" width="34.0" height="20.0" rx="2" fill="#9CD3B0" stroke="#2E7D4F" stroke-width="1"/>
+<text x="591.0" y="308.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="normal" fill="#333">0.25</text>
+<rect x="620.0" y="296.0" width="34.0" height="4.0" rx="2" fill="#9CD3B0" stroke="#2E7D4F" stroke-width="1"/>
+<text x="637.0" y="308.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="normal" fill="#333">0.05</text>
+<rect x="666.0" y="299.2" width="34.0" height="1.0" rx="2" fill="#9CD3B0" stroke="#2E7D4F" stroke-width="1"/>
+<text x="683.0" y="308.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="normal" fill="#333">0.01</text>
+<line x1="360.0" y1="15.0" x2="360.0" y2="345.0" stroke="#bbb" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="185.0" y="24.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">‫(ب) حالت دوبعدی‬</text>
+<rect x="66.0" y="44.0" width="34.0" height="34.0" rx="0" fill="#FEFEFE" stroke="#9aa" stroke-width="0.6"/>
+<rect x="100.0" y="44.0" width="34.0" height="34.0" rx="0" fill="#FBFCFD" stroke="#9aa" stroke-width="0.6"/>
+<rect x="134.0" y="44.0" width="34.0" height="34.0" rx="0" fill="#F5F8FB" stroke="#9aa" stroke-width="0.6"/>
+<rect x="168.0" y="44.0" width="34.0" height="34.0" rx="0" fill="#F2F6FA" stroke="#9aa" stroke-width="0.6"/>
+<rect x="202.0" y="44.0" width="34.0" height="34.0" rx="0" fill="#F5F8FB" stroke="#9aa" stroke-width="0.6"/>
+<rect x="236.0" y="44.0" width="34.0" height="34.0" rx="0" fill="#FBFCFD" stroke="#9aa" stroke-width="0.6"/>
+<rect x="270.0" y="44.0" width="34.0" height="34.0" rx="0" fill="#FEFEFE" stroke="#9aa" stroke-width="0.6"/>
+<rect x="66.0" y="78.0" width="34.0" height="34.0" rx="0" fill="#FBFCFD" stroke="#9aa" stroke-width="0.6"/>
+<rect x="100.0" y="78.0" width="34.0" height="34.0" rx="0" fill="#EDF2F8" stroke="#9aa" stroke-width="0.6"/>
+<rect x="134.0" y="78.0" width="34.0" height="34.0" rx="0" fill="#D1DEED" stroke="#9aa" stroke-width="0.6"/>
+<rect x="168.0" y="78.0" width="34.0" height="34.0" rx="0" fill="#C0D2E7" stroke="#9aa" stroke-width="0.6"/>
+<rect x="202.0" y="78.0" width="34.0" height="34.0" rx="0" fill="#D1DEED" stroke="#9aa" stroke-width="0.6"/>
+<rect x="236.0" y="78.0" width="34.0" height="34.0" rx="0" fill="#EDF2F8" stroke="#9aa" stroke-width="0.6"/>
+<rect x="270.0" y="78.0" width="34.0" height="34.0" rx="0" fill="#FBFCFD" stroke="#9aa" stroke-width="0.6"/>
+<rect x="66.0" y="112.0" width="34.0" height="34.0" rx="0" fill="#F5F8FB" stroke="#9aa" stroke-width="0.6"/>
+<rect x="100.0" y="112.0" width="34.0" height="34.0" rx="0" fill="#D1DEED" stroke="#9aa" stroke-width="0.6"/>
+<rect x="134.0" y="112.0" width="34.0" height="34.0" rx="0" fill="#88AAD2" stroke="#9aa" stroke-width="0.6"/>
+<rect x="168.0" y="112.0" width="34.0" height="34.0" rx="0" fill="#5C8AC1" stroke="#9aa" stroke-width="0.6"/>
+<rect x="202.0" y="112.0" width="34.0" height="34.0" rx="0" fill="#88AAD2" stroke="#9aa" stroke-width="0.6"/>
+<rect x="236.0" y="112.0" width="34.0" height="34.0" rx="0" fill="#D1DEED" stroke="#9aa" stroke-width="0.6"/>
+<rect x="270.0" y="112.0" width="34.0" height="34.0" rx="0" fill="#F5F8FB" stroke="#9aa" stroke-width="0.6"/>
+<rect x="66.0" y="146.0" width="34.0" height="34.0" rx="0" fill="#F2F6FA" stroke="#9aa" stroke-width="0.6"/>
+<rect x="100.0" y="146.0" width="34.0" height="34.0" rx="0" fill="#C0D2E7" stroke="#9aa" stroke-width="0.6"/>
+<rect x="134.0" y="146.0" width="34.0" height="34.0" rx="0" fill="#5C8AC1" stroke="#9aa" stroke-width="0.6"/>
+<rect x="168.0" y="146.0" width="34.0" height="34.0" rx="0" fill="#1F5FAA" stroke="#9aa" stroke-width="0.6"/>
+<rect x="202.0" y="146.0" width="34.0" height="34.0" rx="0" fill="#5C8AC1" stroke="#9aa" stroke-width="0.6"/>
+<rect x="236.0" y="146.0" width="34.0" height="34.0" rx="0" fill="#C0D2E7" stroke="#9aa" stroke-width="0.6"/>
+<rect x="270.0" y="146.0" width="34.0" height="34.0" rx="0" fill="#F2F6FA" stroke="#9aa" stroke-width="0.6"/>
+<rect x="66.0" y="180.0" width="34.0" height="34.0" rx="0" fill="#F5F8FB" stroke="#9aa" stroke-width="0.6"/>
+<rect x="100.0" y="180.0" width="34.0" height="34.0" rx="0" fill="#D1DEED" stroke="#9aa" stroke-width="0.6"/>
+<rect x="134.0" y="180.0" width="34.0" height="34.0" rx="0" fill="#88AAD2" stroke="#9aa" stroke-width="0.6"/>
+<rect x="168.0" y="180.0" width="34.0" height="34.0" rx="0" fill="#5C8AC1" stroke="#9aa" stroke-width="0.6"/>
+<rect x="202.0" y="180.0" width="34.0" height="34.0" rx="0" fill="#88AAD2" stroke="#9aa" stroke-width="0.6"/>
+<rect x="236.0" y="180.0" width="34.0" height="34.0" rx="0" fill="#D1DEED" stroke="#9aa" stroke-width="0.6"/>
+<rect x="270.0" y="180.0" width="34.0" height="34.0" rx="0" fill="#F5F8FB" stroke="#9aa" stroke-width="0.6"/>
+<rect x="66.0" y="214.0" width="34.0" height="34.0" rx="0" fill="#FBFCFD" stroke="#9aa" stroke-width="0.6"/>
+<rect x="100.0" y="214.0" width="34.0" height="34.0" rx="0" fill="#EDF2F8" stroke="#9aa" stroke-width="0.6"/>
+<rect x="134.0" y="214.0" width="34.0" height="34.0" rx="0" fill="#D1DEED" stroke="#9aa" stroke-width="0.6"/>
+<rect x="168.0" y="214.0" width="34.0" height="34.0" rx="0" fill="#C0D2E7" stroke="#9aa" stroke-width="0.6"/>
+<rect x="202.0" y="214.0" width="34.0" height="34.0" rx="0" fill="#D1DEED" stroke="#9aa" stroke-width="0.6"/>
+<rect x="236.0" y="214.0" width="34.0" height="34.0" rx="0" fill="#EDF2F8" stroke="#9aa" stroke-width="0.6"/>
+<rect x="270.0" y="214.0" width="34.0" height="34.0" rx="0" fill="#FBFCFD" stroke="#9aa" stroke-width="0.6"/>
+<rect x="66.0" y="248.0" width="34.0" height="34.0" rx="0" fill="#FEFEFE" stroke="#9aa" stroke-width="0.6"/>
+<rect x="100.0" y="248.0" width="34.0" height="34.0" rx="0" fill="#FBFCFD" stroke="#9aa" stroke-width="0.6"/>
+<rect x="134.0" y="248.0" width="34.0" height="34.0" rx="0" fill="#F5F8FB" stroke="#9aa" stroke-width="0.6"/>
+<rect x="168.0" y="248.0" width="34.0" height="34.0" rx="0" fill="#F2F6FA" stroke="#9aa" stroke-width="0.6"/>
+<rect x="202.0" y="248.0" width="34.0" height="34.0" rx="0" fill="#F5F8FB" stroke="#9aa" stroke-width="0.6"/>
+<rect x="236.0" y="248.0" width="34.0" height="34.0" rx="0" fill="#FBFCFD" stroke="#9aa" stroke-width="0.6"/>
+<rect x="270.0" y="248.0" width="34.0" height="34.0" rx="0" fill="#FEFEFE" stroke="#9aa" stroke-width="0.6"/>
+<text x="185.0" y="168.1" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff">1.0</text>
+<text x="185.0" y="304.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="normal" fill="#444">‫مرکز بیشترین فعال‌سازی را دارد‬</text>
+<rect x="96.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#FFFFFF" stroke="#aaa" stroke-width="0.4"/>
+<rect x="114.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#E6EDF5" stroke="#aaa" stroke-width="0.4"/>
+<rect x="132.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#CDDBEC" stroke="#aaa" stroke-width="0.4"/>
+<rect x="150.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#B4C9E2" stroke="#aaa" stroke-width="0.4"/>
+<rect x="168.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#9BB7D9" stroke="#aaa" stroke-width="0.4"/>
+<rect x="186.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#82A6CF" stroke="#aaa" stroke-width="0.4"/>
+<rect x="204.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#6994C6" stroke="#aaa" stroke-width="0.4"/>
+<rect x="222.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#5082BC" stroke="#aaa" stroke-width="0.4"/>
+<rect x="240.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#3770B3" stroke="#aaa" stroke-width="0.4"/>
+<rect x="258.0" y="316.0" width="18.0" height="12.0" rx="0" fill="#1F5FAA" stroke="#aaa" stroke-width="0.4"/>
+<text x="92.0" y="326.0" text-anchor="end" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="normal" fill="#333">‫کم‬</text>
+<text x="280.0" y="326.0" text-anchor="start" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="normal" fill="#333">‫زیاد‬</text>
+</svg>

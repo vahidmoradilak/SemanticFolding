@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="460" viewBox="0 0 760 460">
+<text x="190.0" y="26.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#2E7D4F">Semantic Folding</text>
+<text x="570.0" y="26.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="17" font-weight="bold" fill="#C46A00">SPLADE</text>
+<rect x="65.0" y="57.0" width="250.0" height="46.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+<text x="190.0" y="85.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Text</text>
+<rect x="65.0" y="137.0" width="250.0" height="46.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="190.0" y="165.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Phrase Extraction</text>
+<rect x="65.0" y="217.0" width="250.0" height="46.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="190.0" y="245.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">term_context_matrix</text>
+<rect x="65.0" y="297.0" width="250.0" height="46.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="190.0" y="325.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Semantic Space</text>
+<rect x="65.0" y="377.0" width="250.0" height="46.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+<text x="190.0" y="405.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Spatial Fingerprint</text>
+<line x1="190.0" y1="103.0" x2="190.0" y2="127.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="190.0,136.0 184.0,125.0 196.0,125.0" fill="#444"/>
+<line x1="190.0" y1="183.0" x2="190.0" y2="207.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="190.0,216.0 184.0,205.0 196.0,205.0" fill="#444"/>
+<line x1="190.0" y1="263.0" x2="190.0" y2="287.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="190.0,296.0 184.0,285.0 196.0,285.0" fill="#444"/>
+<line x1="190.0" y1="343.0" x2="190.0" y2="367.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="190.0,376.0 184.0,365.0 196.0,365.0" fill="#444"/>
+<rect x="445.0" y="57.0" width="250.0" height="46.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+<text x="570.0" y="85.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Text</text>
+<rect x="445.0" y="137.0" width="250.0" height="46.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+<text x="570.0" y="165.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Language Model</text>
+<rect x="445.0" y="217.0" width="250.0" height="46.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+<text x="570.0" y="245.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Sparse Lexical Expansion</text>
+<rect x="445.0" y="297.0" width="250.0" height="46.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+<text x="570.0" y="325.2" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="normal" fill="#1a1a1a">Sparse Vector</text>
+<line x1="570.0" y1="103.0" x2="570.0" y2="127.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="570.0,136.0 564.0,125.0 576.0,125.0" fill="#444"/>
+<line x1="570.0" y1="183.0" x2="570.0" y2="207.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="570.0,216.0 564.0,205.0 576.0,205.0" fill="#444"/>
+<line x1="570.0" y1="263.0" x2="570.0" y2="287.2" stroke="#444" stroke-width="1.6"/>
+<polygon points="570.0,296.0 564.0,285.0 576.0,285.0" fill="#444"/>
+<line x1="380.0" y1="10.0" x2="380.0" y2="450.0" stroke="#bbb" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="190.0" y="445.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#444">‫ساختار فضایی و زمینه‌ای‬</text>
+<text x="570.0" y="445.0" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="normal" fill="#444">‫اطلاعات واژگانی + گسترش عصبی‬</text>
+</svg>
