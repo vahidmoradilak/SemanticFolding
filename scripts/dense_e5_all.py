@@ -23,6 +23,10 @@ QURAN_RUN = sorted((ROOT / "outputs" / "quran_benchmark" / "runs").glob("run_*")
 DATASETS = [
     ("SciFact",  ROOT / "outputs/scifact_benchmark/runs/run_20260719_113649",
      ROOT / "data/datasets/scifact/converted/scifact.jsonl", "jsonl"),
+    ("SciDocs",  ROOT / "outputs/SciDocs_benchmark/runs/run_20260719_163220",
+     ROOT / "data/datasets/scidocs/converted/scidocs.jsonl", "jsonl"),
+    ("NarrativeQA",  ROOT / "outputs/narrativeqa_benchmark/runs/run_20260718_155900",
+     ROOT / "data/datasets/narrativeqa/converted/narrativeqa.jsonl", "jsonl"),
     ("nfcorpus", ROOT / "outputs/nfcorpus_benchmark/runs/run_20260719_102758",
      ROOT / "data/datasets/nfcorpus/converted/nfcorpus.jsonl", "jsonl"),
     ("Belebele", ROOT / "outputs/belebele_benchmark/runs/run_20260717_154235",
