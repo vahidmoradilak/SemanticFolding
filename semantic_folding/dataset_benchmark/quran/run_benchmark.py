@@ -502,8 +502,10 @@ def _run_step7_query(run_dir: Path, question: str, params: dict) -> List[Tuple[s
                 "--fusion-method", params.get("fusion_method", "rrf"),
                 "--rrf-k", str(params.get("rrf_k", 60)),
             ]
+            if "hybrid_alpha" in params:
+                cmd += ["--hybrid-alpha", str(params["hybrid_alpha"])]
         subprocess.run(cmd, cwd=str(PROJECT_ROOT), check=True,
-                       capture_output=False, timeout=300)
+                       capture_output=False, timeout=int(os.environ.get("QURAN_STEP7_TIMEOUT", "300")))
 
         # Read results from JSON output
         if result_json.exists():
@@ -667,6 +669,8 @@ def cli_main():
     parser.add_argument("--splade", action="store_true", default=PIPELINE_DEFAULTS.get("splade", True))
     parser.add_argument("--fusion-method", choices=["linear", "rrf"], default=PIPELINE_DEFAULTS.get("fusion_method", "rrf"))
     parser.add_argument("--rrf-k", type=int, default=PIPELINE_DEFAULTS.get("rrf_k", 60))
+    parser.add_argument("--hybrid-alpha", type=float, default=None,
+                        help="Fusion alpha for linear SPLADE fusion (0 = pure SPLADE)")
     parser.add_argument("--no-splade", action="store_true", dest="no_splade")
 
     args = parser.parse_args()
@@ -675,6 +679,8 @@ def cli_main():
     params["morton"] = not args.no_morton
     if args.no_splade:
         params["splade"] = False
+    if args.hybrid_alpha is not None:
+        params["hybrid_alpha"] = args.hybrid_alpha
 
     # Interactive mode
     if args.mode is None:
