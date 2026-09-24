@@ -946,7 +946,7 @@ class SPLADEScorer:
             if all(os.path.exists(p) for p in [cache_vec, cache_nrm, cache_ids]):
                 self.doc_vectors = np.load(cache_vec)
                 self.doc_norms = np.load(cache_nrm)
-                with open(cache_ids, "r") as f:
+                with open(cache_ids, "r", encoding="utf-8") as f:
                     self.doc_ids = [ln.strip() for ln in f]
                 logger.info(f"Loaded cached SPLADE embeddings ({self.doc_vectors.shape[0]} docs)")
                 return
@@ -970,7 +970,7 @@ class SPLADEScorer:
             os.makedirs(self.cache_dir, exist_ok=True)
             np.save(cache_vec, self.doc_vectors)
             np.save(cache_nrm, self.doc_norms)
-            with open(cache_ids, "w") as f:
+            with open(cache_ids, "w", encoding="utf-8") as f:
                 for did in self.doc_ids:
                     f.write(did + "\n")
             logger.info(f"Cached SPLADE embeddings to {self.cache_dir}")
