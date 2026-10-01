@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="340" viewBox="0 0 400 340">
+  <rect x="50" y="14" width="300" height="62" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="200" y="40.1">‫بازیابی واژگانی‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="200" y="63.4">Lexical Retrieval</text>
+  <rect x="50" y="135" width="300" height="70" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="200" y="165.1">‫بازیاب عصبی تنک</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="200" y="191.4">SPLADE</text>
+  <rect x="50" y="264" width="300" height="62" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="200" y="290.1">‫بازیابی عصبی‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="200" y="314.4">Neural Retrieval</text>
+  <line x1="200" y1="84.8" x2="200" y2="126.2" stroke="#444" stroke-width="1.6"/>
+  <polygon points="200 135 194 124 206 124" fill="#444"/>
+  <polygon points="200 76 206 87 194 87" fill="#444"/>
+  <line x1="200" y1="213.8" x2="200" y2="255.2" stroke="#444" stroke-width="1.6"/>
+  <polygon points="200 264 194 253 206 253" fill="#444"/>
+  <polygon points="200 205 206 216 194 216" fill="#444"/>
+</svg>

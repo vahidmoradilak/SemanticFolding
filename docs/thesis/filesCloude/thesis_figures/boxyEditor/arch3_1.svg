@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="500" viewBox="0 0 800 550">
+  <rect x="36" y="40" width="730" height="200" rx="10" fill="#EAF1FB" fill-opacity="0.35" stroke="#2B5C9E" stroke-width="1.2" stroke-dasharray="6 4"/>
+  <text style="fill: rgb(43, 92, 158); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="401" y="60">‫مرحله اول: نمایه‌سازی (گام‌های ۱ تا ۶؛ یک‌بار اجرا می‌شود)‬</text>
+  <rect x="543.5" y="94" width="205" height="52" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="646" y="115.5">‫استخراج عبارات‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="646" y="134.4">‫(گام ۱)‬</text>
+  <rect x="298.5" y="94" width="205" height="52" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="401" y="115.5">‫ماتریس واژه–مفهوم‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="401" y="134.4">‫(گام ۲)‬</text>
+  <rect x="53.5" y="94" width="205" height="52" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="135" y="85.5" transform="matrix(1, 0, 0, 1, 21, 30)">نقشه معنایی<tspan x="135" dy="1em">​</tspan>‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="156" y="134.4">‫(گام ۳)‬</text>
+  <rect x="543.5" y="169" width="205" height="52" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="646" y="190.5">‫اثرانگشت عبارات‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="646" y="209.4">‫(گام ۴)‬</text>
+  <rect x="298.5" y="169" width="205" height="52" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="401" y="190.5">‫اثرانگشت اسناد‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="401" y="209.4">‫(گام ۵)‬</text>
+  <rect x="53.5" y="169" width="205" height="52" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="156" y="190.5">‫نمایه‌سازی اثرانگشت‌ها‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="156" y="209.4">‫(گام ۶)‬</text>
+  <line x1="543" y1="120" x2="514.8" y2="120" stroke="#444" stroke-width="1.6"/>
+  <polygon points="506 120 517 114 517 126" fill="#444"/>
+  <line x1="298" y1="120" x2="269.8" y2="120" stroke="#444" stroke-width="1.6"/>
+  <polygon points="261 120 272 114 272 126" fill="#444"/>
+  <line x1="156" y1="146" x2="156" y2="157" stroke="#444" stroke-width="1.6"/>
+  <line x1="156" y1="157" x2="646" y2="157" stroke="#444" stroke-width="1.6"/>
+  <line x1="646" y1="157" x2="646" y2="159.2" stroke="#444" stroke-width="1.6"/>
+  <polygon points="646 168 640 157 652 157" fill="#444"/>
+  <line x1="543" y1="195" x2="514.8" y2="195" stroke="#444" stroke-width="1.6"/>
+  <polygon points="506 195 517 189 517 201" fill="#444"/>
+  <line x1="298" y1="195" x2="269.8" y2="195" stroke="#444" stroke-width="1.6"/>
+  <polygon points="261 195 272 189 272 201" fill="#444"/>
+  <rect x="36" y="265" width="730" height="120" rx="10" fill="#FFF1E0" fill-opacity="0.35" stroke="#C46A00" stroke-width="1.2" stroke-dasharray="6 4"/>
+  <text style="fill: rgb(196, 106, 0); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="401" y="285">‫مرحله دوم: پردازش پرس‌وجوها (گام ۷)‬</text>
+  <rect x="591" y="313" width="160" height="54" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="671" y="335.8">‫استخراج عبارات‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="671" y="353.3">‫و اثرانگشت پرس‌وجو‬</text>
+  <rect x="411" y="313" width="160" height="54" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="491" y="335.8">‫شباهت و رتبه‌بندی‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="491" y="361.3">Semantic Folding</text>
+  <rect x="231" y="313" width="160" height="54" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="311" y="335.8">شباهت و رتبه‌بندی</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="311" y="362.3">SPLADE</text>
+  <rect x="51" y="313" width="160" height="54" rx="9" fill="#F3E8FA" stroke="#7B3FA0" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="131" y="335.8">هم‌سنجی نتایج‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="131" y="361.3">Linear / RRF</text>
+  <line x1="591" y1="340" x2="584.8" y2="340" stroke="#444" stroke-width="1.6"/>
+  <polygon points="576 340 587 334 587 346" fill="#444"/>
+  <line x1="411" y1="340" x2="404.8" y2="340" stroke="#444" stroke-width="1.6"/>
+  <polygon points="396 340 407 334 407 346" fill="#444"/>
+  <line x1="231" y1="340" x2="224.8" y2="340" stroke="#444" stroke-width="1.6"/>
+  <polygon points="216 340 227 334 227 346" fill="#444"/>
+  <rect x="36" y="410" width="730" height="105" rx="10" fill="#F4F4F4" fill-opacity="0.35" stroke="#666666" stroke-width="1.2" stroke-dasharray="6 4"/>
+  <text style="fill: rgb(102, 102, 102); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="401" y="430">‫مرحله سوم: ارزیابی و تولید گزارش (گام‌های ۸ و ۹)‬</text>
+  <rect x="411" y="450" width="260" height="44" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="541" y="476.9">‫ارزیابی: MRR, MAP, nDCG‬</text>
+  <rect x="131" y="450" width="260" height="44" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="261" y="476.9">‫تولید گزارش خودکار‬</text>
+  <line x1="411" y1="472" x2="401.8" y2="472" stroke="#444" stroke-width="1.6"/>
+  <polygon points="393 472 404 466 404 478" fill="#444"/>
+</svg>

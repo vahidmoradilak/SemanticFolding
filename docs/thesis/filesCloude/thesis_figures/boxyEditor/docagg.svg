@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="300" viewBox="0 0 440 300">
+  <rect x="80.0" y="16.0" width="280.0" height="58.0" rx="9" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="220" y="39.4">‫اثرانگشت عبارات‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="220" y="64.3">Phrase Fingerprints</text>
+  <rect x="80.0" y="121.0" width="280.0" height="58.0" rx="9" fill="#F3E8FA" stroke="#7B3FA0" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="220" y="142.5">‫تجمیع وزن‌دار‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="220" y="168.4">‫وزن هر عبارت: TF-IDF‬</text>
+  <rect x="80.0" y="226.0" width="280.0" height="58.0" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="220" y="249.5">‫اثرانگشت سند‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="220" y="276.4">Document Fingerprint</text>
+  <line x1="220.0" y1="74.0" x2="220.0" y2="111.2" stroke="#444" stroke-width="1.6"/>
+  <polygon points="220.0,120.0 214.0,109.0 226.0,109.0" fill="#444"/>
+  <line x1="220.0" y1="179.0" x2="220.0" y2="216.2" stroke="#444" stroke-width="1.6"/>
+  <polygon points="220.0,225.0 214.0,214.0 226.0,214.0" fill="#444"/>
+</svg>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="560" viewBox="0 0 330 500">
+  <rect x="11" y="11" width="300" height="44" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="161" y="26.4">‫پیکره متنی‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="161" y="48.3">Corpus</text>
+  <rect x="11" y="71" width="300" height="44" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="161" y="86.5">‫استخراج عبارت‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="161" y="110.4">Phrase Extraction</text>
+  <rect x="11" y="131" width="300" height="44" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="161" y="146.5">ماتریس واژه - مفهوم‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="161" y="170.4">Term - Context Matrix</text>
+  <rect x="11" y="191" width="300" height="44" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="161" y="207.5">‫TF-IDF + هم‌رخدادی‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="161" y="230.4">TF-IDF + Co-occurrence</text>
+  <rect x="11" y="256" width="300" height="44" rx="9" fill="#E6F4EA" stroke-width="1.6" stroke="#2E7D4F"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="161" y="271.4">نگاشت ‫فضای معنایی دوبعدی‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" y="-37" x="-39"><tspan x="161" y="295.3" style="font-family: &quot;Times New Roman&quot;; font-size: 20px; word-spacing: 0px;">2</tspan><tspan style="font-size: 20px; word-spacing: 0px;">D Semantic Space </tspan>Mapping</text>
+  <rect x="11" y="316" width="300" height="44" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="161" y="332.4">‫اثرانگشت عبارات‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="161" y="355.3">Phrases Fingerprint</text>
+  <rect x="11" y="376" width="300" height="44" rx="9" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="161" y="392.5">‫اثرانگشت اسناد‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="161" y="415.4">Documents Fingerprint</text>
+  <line x1="161" y1="55" x2="161" y2="61.2" stroke="#444" stroke-width="1.4"/>
+  <polygon points="161 70 155 59 167 59" fill="#444"/>
+  <line x1="161" y1="115" x2="161" y2="121.2" stroke="#444" stroke-width="1.4"/>
+  <polygon points="161 130 155 119 167 119" fill="#444"/>
+  <line x1="161" y1="175" x2="161" y2="181.2" stroke="#444" stroke-width="1.4"/>
+  <polygon points="161 190 155 179 167 179" fill="#444"/>
+  <line x1="161" y1="235" x2="161" y2="241.2" stroke="#444" stroke-width="1.4"/>
+  <line x1="161" y1="240" x2="161" y2="246.2" stroke="#444" stroke-width="1.4"/>
+  <polygon points="161 255 155 244 167 244" fill="#444"/>
+  <line x1="161" y1="300" x2="161" y2="306.2" stroke="#444" stroke-width="1.4"/>
+  <polygon points="161 315 155 304 167 304" fill="#444"/>
+  <line x1="161" y1="360" x2="161" y2="366.2" stroke="#444" stroke-width="1.4"/>
+  <polygon points="161 375 155 364 167 364" fill="#444"/>
+  <rect x="10.629" y="435.954" width="300" height="44" rx="9" fill="#FFF1E0" stroke-width="1.6" style="stroke-width: 1.6;" stroke="#C46A00"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre; stroke-width: 1;" x="160.629" y="451.454">نمایه‌سازی اثرانگشت‌ها</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre; stroke-width: 1;" x="160.629" y="475.354">Fingerprint Indexing</text>
+  <line x1="160.629" y1="419.954" x2="160.629" y2="426.154" stroke="#444" stroke-width="1.4" style="stroke-width: 1.4;"/>
+  <polygon points="160.629 434.954 154.629 423.954 166.629 423.954" fill="#444" style="stroke-width: 1;"/>
+</svg>

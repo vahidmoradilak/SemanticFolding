@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="345" viewBox="0 0 760 345">
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="590" y="26">‫قبل: مفاهیم بدون ساختار مکانی‬</text>
+  <circle cx="469.578" cy="104.21" r="26" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="469.578" y="109.21">A</text>
+  <circle cx="630.143" cy="226.594" r="26" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="630.143" y="232.594">E</text>
+  <circle cx="645.987" cy="128.986" r="26" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="645.987" y="134.986">B</text>
+  <circle cx="469.148" cy="172.085" r="26" fill="#C46A00" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="469.148" y="178.085">G</text>
+  <circle cx="440" cy="238" r="26" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="440" y="244">F</text>
+  <circle cx="530" cy="238" r="26" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="530" y="244">C</text>
+  <circle cx="703.03" cy="164.477" r="26" fill="#C46A00" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="703.03" y="170.477">H</text>
+  <circle cx="563.587" cy="127.716" r="26" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="563.587" y="133.716">D</text>
+  <line x1="385.0" y1="170.0" x2="338.8" y2="170.0" stroke="#444" stroke-width="2.5"/>
+  <polygon points="330.0,170.0 341.0,164.0 341.0,176.0" fill="#444"/>
+  <text style="fill: rgb(68, 68, 68); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="357" y="150">‫نگاشت‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="170" y="26">‫بعد: نقشه معنایی دوبعدی‬</text>
+  <rect x="20.0" y="45.0" width="270.0" height="255.0" rx="10" fill="#FBFBFB" stroke="#888" stroke-width="1.2"/>
+  <circle cx="70.0" cy="110.0" r="20" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="70" y="116">A</text>
+  <circle cx="110.0" cy="85.0" r="20" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="110" y="91">B</text>
+  <circle cx="95.0" cy="140.0" r="20" fill="#2B5C9E" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="95" y="146">C</text>
+  <circle cx="190.0" cy="120.0" r="20" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="190" y="126">D</text>
+  <circle cx="240.0" cy="100.0" r="20" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="240" y="106">E</text>
+  <circle cx="210.0" cy="165.0" r="20" fill="#2E7D4F" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="210" y="171">F</text>
+  <circle cx="110.0" cy="255.0" r="20" fill="#C46A00" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="110" y="261">G</text>
+  <circle cx="170.0" cy="240.0" r="20" fill="#C46A00" stroke="#fff" stroke-width="2"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="170" y="246">H</text>
+  <text style="fill: rgb(68, 68, 68); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="380" y="330">‫مفاهیم مرتبط (هم‌رنگ) در نواحی مجاور قرار می‌گیرند.‬</text>
+</svg>

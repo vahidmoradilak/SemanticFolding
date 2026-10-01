@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="340" viewBox="0 0 740 340">
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 21px; font-weight: 700; text-anchor: middle; white-space: pre;" x="525" y="24">‫(الف) کاهش حساسیت و بالا رفتن تحمل نویز‬</text>
+  <text style="fill: rgb(178, 58, 46); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="525" y="54">‫بدون گسترش فضایی‬</text>
+  <rect x="405.0" y="68.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="427" y="91">0</text>
+  <rect x="453.0" y="68.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="475" y="91">0</text>
+  <rect x="501.0" y="68.0" width="44.0" height="34.0" rx="4" fill="#2E7D4F" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 21px; font-weight: 700; text-anchor: middle; white-space: pre;" x="523" y="91">1</text>
+  <rect x="549.0" y="68.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="571" y="91">0</text>
+  <rect x="597.0" y="68.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="619" y="91">0</text>
+  <text style="fill: rgb(51, 51, 51); font-family: &quot;B Nazanin&quot;; font-size: 21px; white-space: pre;" x="653" y="91">‫قبل‬</text>
+  <rect x="405.0" y="112.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="427" y="135">0</text>
+  <rect x="453.0" y="112.0" width="44.0" height="34.0" rx="4" fill="#2E7D4F" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 21px; font-weight: 700; text-anchor: middle; white-space: pre;" x="475" y="135">1</text>
+  <rect x="501.0" y="112.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="523" y="135">0</text>
+  <rect x="549.0" y="112.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="571" y="135">0</text>
+  <rect x="597.0" y="112.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="619" y="135">0</text>
+  <text style="fill: rgb(51, 51, 51); font-family: &quot;B Nazanin&quot;; font-size: 21px; white-space: pre;" x="653" y="135">‫بعد‬</text>
+  <text style="fill: rgb(178, 58, 46); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="525" y="172">‫نتیجه: دو نمایش کاملا متفاوت (بدون همپوشانی)‬</text>
+  <text style="fill: rgb(46, 125, 79); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="525" y="204">‫با گسترش فضایی‬</text>
+  <rect x="405.0" y="218.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="427" y="241">0</text>
+  <rect x="453.0" y="218.0" width="44.0" height="34.0" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="475" y="241">0.5</text>
+  <rect x="501.0" y="218.0" width="44.0" height="34.0" rx="4" fill="#2E7D4F" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 21px; font-weight: 700; text-anchor: middle; white-space: pre;" x="523" y="241">1</text>
+  <rect x="549.0" y="218.0" width="44.0" height="34.0" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="571" y="241">0.5</text>
+  <rect x="597.0" y="218.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="619" y="241">0</text>
+  <text style="fill: rgb(51, 51, 51); font-family: &quot;B Nazanin&quot;; font-size: 21px; white-space: pre;" x="653" y="241">‫قبل‬</text>
+  <rect x="405.0" y="262.0" width="44.0" height="34.0" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="427" y="285">0.5</text>
+  <rect x="453.0" y="262.0" width="44.0" height="34.0" rx="4" fill="#2E7D4F" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 21px; font-weight: 700; text-anchor: middle; white-space: pre;" x="475" y="285">1</text>
+  <rect x="501.0" y="262.0" width="44.0" height="34.0" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="523" y="285">0.5</text>
+  <rect x="549.0" y="262.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="571" y="285">0</text>
+  <rect x="597.0" y="262.0" width="44.0" height="34.0" rx="4" fill="#FFFFFF" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="619" y="285">0</text>
+  <text style="fill: rgb(51, 51, 51); font-family: &quot;B Nazanin&quot;; font-size: 21px; white-space: pre;" x="653" y="285">‫بعد‬</text>
+  <text style="fill: rgb(46, 125, 79); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="525" y="320">‫نتیجه: همپوشانی در سلول‌های مجاور‬</text>
+  <line x1="344" y1="15" x2="344" y2="325" stroke="#bbb" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 21px; font-weight: 700; text-anchor: middle; white-space: pre;" x="165" y="24">‫(ب) الگوی گسترش در شبکه‬</text>
+  <rect x="93" y="70" width="45" height="45" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="115.5" y="98.5">0.5</text>
+  <rect x="141" y="70" width="45" height="45" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="163.5" y="98.5">0.5</text>
+  <rect x="189" y="70" width="45" height="45" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="211.5" y="98.5">0.5</text>
+  <rect x="93" y="118" width="45" height="45" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="115.5" y="146.5">0.5</text>
+  <rect x="141" y="118" width="45" height="45" rx="4" fill="#2E7D4F" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(255, 255, 255); font-family: &quot;B Nazanin&quot;; font-size: 21px; font-weight: 700; text-anchor: middle; white-space: pre;" x="163.5" y="146.5">1</text>
+  <rect x="189" y="118" width="45" height="45" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="211.5" y="146.5">0.5</text>
+  <rect x="93" y="166" width="45" height="45" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="115.5" y="194.5">0.5</text>
+  <rect x="141" y="166" width="45" height="45" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="163.5" y="194.5">0.5</text>
+  <rect x="189" y="166" width="45" height="45" rx="4" fill="#96BEA7" stroke="#666" stroke-width="1"/>
+  <text style="fill: rgb(34, 34, 34); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="211.5" y="194.5">0.5</text>
+  <text style="fill: rgb(68, 68, 68); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="165" y="250">‫فعال‌سازی به سلول‌های همسایه گسترش می‌یابد.‬</text>
+  <text style="fill: rgb(68, 68, 68); font-family: &quot;B Nazanin&quot;; font-size: 21px; text-anchor: middle; white-space: pre;" x="165" y="272">‫(مقدار مرکز ۱، همسایه‌ها با میرایی 0.5)‬</text>
+</svg>

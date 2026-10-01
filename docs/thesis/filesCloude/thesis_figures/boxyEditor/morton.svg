@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="330" viewBox="0 0 550 330">
+  <rect x="13" y="50" width="54" height="42" rx="6" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="40" y="79">1</text>
+  <rect x="73" y="50" width="54" height="42" rx="6" fill="#fff" stroke="#ccc" stroke-width="1" stroke-dasharray="4 3"/>
+  <rect x="133" y="50" width="54" height="42" rx="6" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="160" y="79">0</text>
+  <rect x="193" y="50" width="54" height="42" rx="6" fill="#fff" stroke="#ccc" stroke-width="1" stroke-dasharray="4 3"/>
+  <rect x="253" y="50" width="54" height="42" rx="6" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="280" y="79">1</text>
+  <rect x="313" y="50" width="54" height="42" rx="6" fill="#fff" stroke="#ccc" stroke-width="1" stroke-dasharray="4 3"/>
+  <rect x="13" y="130" width="54" height="42" rx="6" fill="#fff" stroke="#ccc" stroke-width="1" stroke-dasharray="4 3"/>
+  <rect x="73" y="130" width="54" height="42" rx="6" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="100" y="159">0</text>
+  <rect x="133" y="130" width="54" height="42" rx="6" fill="#fff" stroke="#ccc" stroke-width="1" stroke-dasharray="4 3"/>
+  <rect x="193" y="130" width="54" height="42" rx="6" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="220" y="159">1</text>
+  <rect x="253" y="130" width="54" height="42" rx="6" fill="#fff" stroke="#ccc" stroke-width="1" stroke-dasharray="4 3"/>
+  <rect x="313" y="130" width="54" height="42" rx="6" fill="#FFF1E0" stroke="#C46A00" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="340" y="159">1</text>
+  <rect x="13" y="250" width="54" height="42" rx="6" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="40" y="279">1</text>
+  <rect x="73" y="250" width="54" height="42" rx="6" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="100" y="279">0</text>
+  <rect x="133" y="250" width="54" height="42" rx="6" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="160" y="279">0</text>
+  <rect x="193" y="250" width="54" height="42" rx="6" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="220" y="279">1</text>
+  <rect x="253" y="250" width="54" height="42" rx="6" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="280" y="279">1</text>
+  <rect x="313" y="250" width="54" height="42" rx="6" fill="#E6F4EA" stroke="#2E7D4F" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="340" y="279">1</text>
+  <line x1="40" y1="92" x2="40" y2="250" stroke="#999" stroke-width="1.1" stroke-dasharray="3 3"/>
+  <line x1="100" y1="172" x2="100" y2="250" stroke="#999" stroke-width="1.1" stroke-dasharray="3 3"/>
+  <line x1="160" y1="92" x2="160" y2="250" stroke="#999" stroke-width="1.1" stroke-dasharray="3 3"/>
+  <line x1="220" y1="172" x2="220" y2="250" stroke="#999" stroke-width="1.1" stroke-dasharray="3 3"/>
+  <line x1="280" y1="92" x2="280" y2="250" stroke="#999" stroke-width="1.1" stroke-dasharray="3 3"/>
+  <line x1="340" y1="172" x2="340" y2="250" stroke="#999" stroke-width="1.1" stroke-dasharray="3 3"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: end; white-space: pre;" x="533" y="77">‫سطر: 101‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: end; white-space: pre;" x="533" y="157">‫ستون: 011‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: end; white-space: pre;" x="533" y="277">مورتون: 100111</text>
+  <text style="fill: rgb(68, 68, 68); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="193" y="22">‫درهم‌تنیدن بیت‌های سطر و ستون‬</text>
+  <text style="fill: rgb(102, 102, 102); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="193" y="320">‫شناسه خطی سلول (بیت‌های متناوب: سطر، ستون، سطر، ...)‬</text>
+</svg>

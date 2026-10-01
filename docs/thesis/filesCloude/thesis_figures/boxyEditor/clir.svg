@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="300" viewBox="0 0 720 300">
+  <rect x="15.0" y="105.0" width="290.0" height="90.0" rx="9" fill="#EAF1FB" stroke="#2B5C9E" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="160" y="145.1">‫پرس‌وجو (انگلیسی)‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="160" y="171.4">What is artificial intelligence?</text>
+  <rect x="415.0" y="35.0" width="290.0" height="80.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="560" y="70.1">‫سند عربی‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="560" y="96.4">‫ما هو الذکاء الاصطناعی؟‬</text>
+  <rect x="415.0" y="185.0" width="290.0" height="80.0" rx="9" fill="#F4F4F4" stroke="#666666" stroke-width="1.6"/>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="560" y="220.1">‫سند آلمانی‬</text>
+  <text style="fill: rgb(26, 26, 26); font-family: &quot;B Nazanin&quot;; font-size: 20px; text-anchor: middle; white-space: pre;" x="560" y="246.4">Was ist künstliche Intelligenz?</text>
+  <line x1="305.0" y1="135.0" x2="405.0" y2="88.7" stroke="#444" stroke-width="1.6"/>
+  <polygon points="413.0,85.0 405.5,95.1 400.5,84.2" fill="#444"/>
+  <line x1="305.0" y1="165.0" x2="405.0" y2="211.3" stroke="#444" stroke-width="1.6"/>
+  <polygon points="413.0,215.0 400.5,215.8 405.5,204.9" fill="#444"/>
+  <text style="fill: rgb(178, 58, 46); font-family: &quot;B Nazanin&quot;; font-size: 20px; font-weight: 700; text-anchor: middle; white-space: pre;" x="360" y="150">?</text>
+</svg>
